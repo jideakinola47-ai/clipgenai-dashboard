@@ -3,13 +3,14 @@ import { useState } from 'react'
 const BACKEND = 'https://web-production-189e9.up.railway.app'
 
 function ScoreBadge({ score }) {
-  const color = score >= 85 ? '#16a34a' : score >= 70 ? '#ca8a04' : '#dc2626'
+  const s = parseInt(score) || 0
+  const color = s >= 85 ? '#16a34a' : s >= 70 ? '#ca8a04' : '#dc2626'
   return (
     <span style={{
       fontSize: 11, fontWeight: 600, color,
-      background: color + '15', borderRadius: 4,
-      padding: '2px 7px',
-    }}>{score}/100</span>
+      background: color + '18', borderRadius: 4,
+      padding: '2px 7px', whiteSpace: 'nowrap'
+    }}>{s > 0 ? `${s}/100` : '—'}</span>
   )
 }
 
@@ -32,27 +33,29 @@ export default function GeneratedClips({ clips }) {
   )
 
   return (
-    <div style={{ maxWidth: 860, margin: '0 auto', padding: '36px 24px' }}>
+    <div style={{ maxWidth: 900, margin: '0 auto', padding: '36px 24px' }}>
       <div style={{ marginBottom: 28 }}>
         <h1 style={{ fontSize: 22, fontWeight: 600, letterSpacing: '-0.5px', marginBottom: 4 }}>
           Generated clips
         </h1>
-        <p style={{ color: '#888', fontSize: 13.5 }}>{clips.length} clips ready to download</p>
+        <p style={{ color: '#888', fontSize: 13.5 }}>{clips.length} clips ready — download or publish directly</p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 16 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 18 }}>
         {clips.map((clip, i) => (
           <div key={clip.id || i} style={{
-            background: '#fff', borderRadius: 12,
+            background: '#fff', borderRadius: 14,
             border: '1px solid #e8e5e0', overflow: 'hidden',
+            boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
           }}>
-            {/* Video preview */}
+            {/* Video */}
             <div style={{
-              background: '#1a1a1a', aspectRatio: '9/16',
-              maxHeight: 200, display: 'flex', alignItems: 'center',
+              background: '#111', aspectRatio: '9/16',
+              maxHeight: 220, display: 'flex', alignItems: 'center',
               justifyContent: 'center', position: 'relative', overflow: 'hidden',
-            }}>
-              {playing === clip.id ? (
+              cursor: 'pointer',
+            }} onClick={() => setPlaying(playing === (clip.id || i) ? null : (clip.id || i))}>
+              {playing === (clip.id || i) ? (
                 <video
                   src={`${BACKEND}${clip.stream_url}`}
                   controls autoPlay
@@ -60,42 +63,55 @@ export default function GeneratedClips({ clips }) {
                   onEnded={() => setPlaying(null)}
                 />
               ) : (
-                <button onClick={() => setPlaying(clip.id)} style={{
-                  background: 'rgba(255,255,255,0.15)', border: '2px solid rgba(255,255,255,0.4)',
-                  borderRadius: '50%', width: 44, height: 44,
-                  color: '#fff', fontSize: 18, display: 'flex',
-                  alignItems: 'center', justifyContent: 'center',
-                }}>▶</button>
+                <>
+                  <div style={{
+                    width: 44, height: 44, borderRadius: '50%',
+                    background: 'rgba(255,255,255,0.15)',
+                    border: '2px solid rgba(255,255,255,0.35)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    color: '#fff', fontSize: 18,
+                  }}>▶</div>
+                  {clip.duration && (
+                    <div style={{
+                      position: 'absolute', bottom: 8, right: 8,
+                      background: 'rgba(0,0,0,0.6)', color: '#fff',
+                      fontSize: 11, padding: '2px 6px', borderRadius: 4,
+                    }}>{Math.round(clip.duration)}s</div>
+                  )}
+                </>
               )}
             </div>
+
             {/* Info */}
             <div style={{ padding: '14px 16px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
-                <div style={{ fontSize: 13, fontWeight: 600, lineHeight: 1.3, flex: 1, marginRight: 8 }}>
-                  {clip.title}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
+                <div style={{
+                  fontSize: 13, fontWeight: 600, lineHeight: 1.3,
+                  flex: 1, marginRight: 8, color: '#1a1a1a',
+                  minHeight: 18,
+                }}>
+                  {clip.title || `Clip ${i + 1}`}
                 </div>
                 <ScoreBadge score={clip.score} />
               </div>
-              <div style={{ fontSize: 12, color: '#999', marginBottom: 14 }}>
-                {clip.duration}s · Viral score
+              <div style={{ fontSize: 12, color: '#aaa', marginBottom: 14 }}>
+                {clip.duration ? `${Math.round(clip.duration)}s` : '—'} · Viral clip
               </div>
               <div style={{ display: 'flex', gap: 8 }}>
                 <a
                   href={`${BACKEND}${clip.download_url}`}
                   download
                   style={{
-                    flex: 1, padding: '8px', borderRadius: 8,
+                    flex: 1, padding: '9px', borderRadius: 8,
                     background: '#5b4cf5', color: '#fff',
-                    fontSize: 12.5, fontWeight: 500, textAlign: 'center',
-                    border: 'none', display: 'block',
+                    fontSize: 13, fontWeight: 500, textAlign: 'center',
+                    display: 'block', border: 'none',
                   }}
-                >
-                  Download
-                </a>
+                >Download</a>
                 <button style={{
-                  flex: 1, padding: '8px', borderRadius: 8,
+                  flex: 1, padding: '9px', borderRadius: 8,
                   background: '#f5f4f1', color: '#444',
-                  fontSize: 12.5, fontWeight: 500, border: 'none',
+                  fontSize: 13, fontWeight: 500, border: 'none',
                 }}>Publish</button>
               </div>
             </div>
