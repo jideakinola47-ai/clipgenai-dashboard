@@ -1,72 +1,33 @@
 import { useState } from 'react'
-export default function Settings({ dark }) {
-  const bg = dark ? '#0f0f0f' : '#f8f7f5'
-  const text = dark ? '#e8e8e8' : '#1a1a1a'
-  const sub = dark ? '#888' : '#666'
-  const card = dark ? '#1a1a1a' : '#fff'
-  const border = dark ? '#2a2a2a' : '#e8e5e0'
-  const inputBg = dark ? '#111' : '#fafaf8'
+export default function Settings() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [saved, setSaved] = useState(false)
-  const save = () => { setSaved(true); setTimeout(() => setSaved(false), 2000) }
-
+  const inputStyle = { width: '100%', padding: '10px 14px', borderRadius: 8, border: '1px solid #2a2a2a', background: '#1a1a1a', color: '#e8e8e8', fontSize: 13.5, outline: 'none' }
   return (
-    <div style={{ maxWidth: 560, margin: '0 auto', padding: '36px 24px', background: bg, minHeight: '100vh' }}>
-      <div style={{ marginBottom: 32 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 700, letterSpacing: '-0.5px', marginBottom: 4, color: text }}>Settings</h1>
-        <p style={{ color: sub, fontSize: 13.5 }}>Manage your account and preferences.</p>
+    <div style={{ padding: '24px', background: '#0d0d0d', minHeight: '100vh', maxWidth: 560 }}>
+      <div style={{ marginBottom: 28 }}>
+        <h1 style={{ fontSize: 22, fontWeight: 700, color: '#fff', marginBottom: 4 }}>Settings</h1>
+        <p style={{ color: '#666', fontSize: 13.5 }}>Manage your account preferences.</p>
       </div>
-
-      {/* Account */}
-      <div style={{ background: card, border: `1px solid ${border}`, borderRadius: 12, padding: '24px', marginBottom: 16 }}>
-        <h2 style={{ fontSize: 14, fontWeight: 700, marginBottom: 18, color: text }}>Account</h2>
-        {[['NAME', name, setName, 'Your full name'], ['EMAIL', email, setEmail, 'Your email address']].map(([label, val, setter, placeholder]) => (
+      <div style={{ background: '#111', border: '1px solid #1f1f1f', borderRadius: 14, padding: '24px', marginBottom: 16 }}>
+        <h2 style={{ fontSize: 14, fontWeight: 600, color: '#fff', marginBottom: 18 }}>Account</h2>
+        {[['NAME', name, setName, 'Your full name'], ['EMAIL', email, setEmail, 'your@email.com']].map(([label, val, setter, ph]) => (
           <div key={label} style={{ marginBottom: 16 }}>
-            <label style={{ fontSize: 11.5, fontWeight: 600, color: sub, display: 'block', marginBottom: 6, letterSpacing: '0.5px' }}>{label}</label>
-            <input
-              value={val}
-              onChange={e => setter(e.target.value)}
-              placeholder={placeholder}
-              style={{
-                width: '100%', padding: '9px 12px', borderRadius: 8,
-                border: `1px solid ${border}`, fontSize: 13.5, outline: 'none',
-                background: inputBg, color: text,
-              }} />
+            <label style={{ fontSize: 11, fontWeight: 600, color: '#555', display: 'block', marginBottom: 6, letterSpacing: '0.8px' }}>{label}</label>
+            <input value={val} onChange={e => setter(e.target.value)} placeholder={ph} style={inputStyle} />
           </div>
         ))}
-        <button onClick={save} style={{
-          padding: '9px 20px', borderRadius: 8, background: '#5b4cf5',
-          color: '#fff', fontWeight: 600, fontSize: 13.5, border: 'none', cursor: 'pointer',
-        }}>{saved ? '✓ Saved' : 'Save changes'}</button>
+        <button onClick={() => { setSaved(true); setTimeout(() => setSaved(false), 2000) }} style={{ padding: '9px 20px', borderRadius: 8, background: 'linear-gradient(135deg, #5b4cf5, #8b5cf6)', color: '#fff', fontWeight: 600, fontSize: 13.5, border: 'none', cursor: 'pointer' }}>
+          {saved ? '✓ Saved' : 'Save changes'}
+        </button>
       </div>
-
-      {/* Plan */}
-      <div style={{ background: card, border: `1px solid ${border}`, borderRadius: 12, padding: '24px', marginBottom: 16 }}>
-        <h2 style={{ fontSize: 14, fontWeight: 700, marginBottom: 6, color: text }}>Subscription</h2>
-        <p style={{ fontSize: 13, color: sub, marginBottom: 16 }}>Manage your ClipGen.AI subscription plan.</p>
-        <div style={{
-          background: dark ? '#111' : '#f8f7f5', borderRadius: 8,
-          padding: '14px 16px', fontSize: 13, color: sub,
-          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        }}>
-          <span>View available plans</span>
-          <button style={{
-            background: '#5b4cf5', color: '#fff', border: 'none',
-            borderRadius: 6, padding: '6px 14px', fontSize: 12.5,
-            fontWeight: 500, cursor: 'pointer',
-          }}>Upgrade</button>
-        </div>
-      </div>
-
-      {/* Preferences */}
-      <div style={{ background: card, border: `1px solid ${border}`, borderRadius: 12, padding: '24px' }}>
-        <h2 style={{ fontSize: 14, fontWeight: 700, marginBottom: 16, color: text }}>Preferences</h2>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <div style={{ fontSize: 13.5, fontWeight: 500, color: text }}>Dark mode</div>
-            <div style={{ fontSize: 12, color: sub, marginTop: 2 }}>Toggle using the ☾ button in the sidebar</div>
-          </div>
+      <div style={{ background: '#111', border: '1px solid #1f1f1f', borderRadius: 14, padding: '24px' }}>
+        <h2 style={{ fontSize: 14, fontWeight: 600, color: '#fff', marginBottom: 6 }}>Subscription</h2>
+        <p style={{ fontSize: 13, color: '#666', marginBottom: 16 }}>Manage your ClipGen.AI plan.</p>
+        <div style={{ background: '#1a1a1a', borderRadius: 8, padding: '14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ fontSize: 13, color: '#888' }}>View and manage your plan</span>
+          <button style={{ background: 'linear-gradient(135deg, #5b4cf5, #8b5cf6)', color: '#fff', border: 'none', borderRadius: 6, padding: '7px 16px', fontSize: 12.5, fontWeight: 500, cursor: 'pointer' }}>Upgrade</button>
         </div>
       </div>
     </div>

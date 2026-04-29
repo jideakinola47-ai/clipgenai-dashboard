@@ -1,327 +1,327 @@
 import { useState } from 'react'
 
 const FAQS = [
-  { q: 'How does ClipGen.AI work?', a: 'You upload a long video, our AI automatically transcribes it, finds the most viral moments, cuts the clips, adds subtitles and reformats everything to 9:16 vertical — ready for TikTok, Reels and Shorts in minutes.' },
+  { q: 'How does ClipGen.AI work?', a: 'Upload a long video — our AI transcribes it, finds the most viral moments, cuts clips, adds subtitles and reformats to 9:16 vertical for TikTok, Reels and Shorts in minutes.' },
   { q: 'What video formats are supported?', a: 'MP4, MOV, AVI and MKV files up to 500MB and 60 minutes long.' },
-  { q: 'How many clips does AI generate per video?', a: 'Between 3 and 10 clips per video depending on your plan, each scored for viral potential.' },
-  { q: 'Is Lithuanian language supported?', a: 'Yes — Lithuanian is fully supported for subtitles and the platform interface.' },
-  { q: 'Can I publish directly to social media?', a: 'Yes — connect your TikTok, Instagram and YouTube accounts and publish clips with one click.' },
-  { q: 'What is a viral score?', a: 'Each clip receives a score from 0 to 100 based on how likely it is to perform well on social media — based on hooks, pacing, emotional impact and content quality.' },
-  { q: 'Can I cancel my subscription anytime?', a: 'Yes — cancel anytime with no fees or commitments. Your clips remain available until the end of your billing period.' },
-  { q: 'How is ClipGen.AI different from Opus Clip?', a: 'ClipGen.AI is built for the European market with full Lithuanian language support, Euro pricing, GDPR compliance, and features designed specifically for European creators and businesses.' },
+  { q: 'How many clips does the AI generate?', a: 'Between 3 and 10 clips per video depending on your plan, each scored for viral potential from 0-100.' },
+  { q: 'Is Lithuanian language supported?', a: 'Yes — Lithuanian is fully supported for subtitles and the platform interface. We support 50+ languages total.' },
+  { q: 'Can I publish directly to social media?', a: 'Yes — connect TikTok, Instagram and YouTube and publish clips with one click directly from the dashboard.' },
+  { q: 'How is ClipGen.AI different from Opus Clip?', a: 'ClipGen.AI is built for the European market with full Lithuanian support, Euro pricing, GDPR compliance and features designed for European creators and businesses.' },
+  { q: 'Can I cancel my subscription anytime?', a: 'Yes — cancel anytime with no fees or long-term commitments.' },
+  { q: 'What is a viral score?', a: 'Each clip receives a score from 0 to 100 based on hooks, pacing, emotional impact and content quality — so you know which clips to post first.' },
+]
+
+const STEPS = [
+  { num: '01', title: 'Upload Your Video', desc: 'Drag and drop any MP4, MOV or AVI. Podcasts, interviews, lectures — up to 500MB, 60 minutes.' },
+  { num: '02', title: 'AI Analyses Content', desc: 'Our AI transcribes the audio, detects emotional peaks, strong hooks and viral potential segments.' },
+  { num: '03', title: 'Clips Are Generated', desc: 'AI cuts the best moments, reformats to 9:16 vertical and burns in accurate subtitles automatically.' },
+  { num: '04', title: 'Publish Everywhere', desc: 'Download your clips or publish directly to TikTok, Instagram Reels and YouTube Shorts instantly.' },
 ]
 
 const FEATURES = [
-  { icon: '⚡', title: 'AI Clip Detection', desc: 'Automatically finds the most viral moments in any video using advanced AI analysis.' },
-  { icon: '📝', title: 'Auto Subtitles', desc: 'Burns in accurate subtitles in 50+ languages including Lithuanian instantly.' },
-  { icon: '📱', title: '9:16 Formatting', desc: 'Perfectly reformats every clip for TikTok, Instagram Reels and YouTube Shorts.' },
-  { icon: '🚀', title: 'Direct Publishing', desc: 'Publish directly to all social platforms in one click from the dashboard.' },
-  { icon: '🎯', title: 'Viral Scoring', desc: 'Every clip gets a 0-100 viral score so you know exactly what will perform.' },
-  { icon: '🌍', title: '50+ Languages', desc: 'Full support for Lithuanian, German, French, Spanish, Polish, Russian and more.' },
+  { icon: '🎯', title: 'Viral Score Badges', desc: 'Every clip gets a score from 0-100 based on hook strength, emotion peaks and shareability metrics.' },
+  { icon: '📝', title: 'Auto Captions', desc: 'AI-generated subtitles in 50+ languages with animated styles that increase watch time by 40%.' },
+  { icon: '🚀', title: 'Direct Publishing', desc: 'Publish directly to TikTok, Instagram Reels and YouTube Shorts simultaneously from one dashboard.' },
+  { icon: '⚡', title: 'Smart Clip Detection', desc: 'AI identifies the most engaging 30-90 second segments from hours of content automatically.' },
+  { icon: '✍', title: 'Hook Title Generator', desc: 'AI writes scroll-stopping hook titles and captions optimised for each platform\'s algorithm.' },
+  { icon: '👥', title: 'Team & Agency Mode', desc: 'Manage multiple clients, white-label the platform, and collaborate with your team members.' },
 ]
 
-const LANGS = ['🇱🇹 Lithuanian','🇬🇧 English','🇩🇪 German','🇫🇷 French','🇪🇸 Spanish','🇵🇱 Polish','🇷🇺 Russian','🇮🇹 Italian','🇵🇹 Portuguese','🇯🇵 Japanese']
+const COMP = [
+  { feature: 'Lithuanian language', us: true, opus: false, klap: false },
+  { feature: 'European market focus', us: true, opus: false, klap: false },
+  { feature: 'Euro pricing', us: true, opus: false, klap: false },
+  { feature: 'Unlimited plan available', us: true, opus: false, klap: false },
+  { feature: 'Agency white-label', us: true, opus: 'Paid', klap: false },
+  { feature: 'API access', us: true, opus: 'Enterprise', klap: false },
+  { feature: 'Team collaboration', us: true, opus: true, klap: false },
+  { feature: 'Direct social publishing', us: true, opus: true, klap: 'Limited' },
+]
 
-export default function Landing({ setPage, dark }) {
+const LANGS = ['🇱🇹 Lietuvių','🇬🇧 English','🇩🇪 Deutsch','🇫🇷 Français','🇪🇸 Español','🇵🇱 Polski','🇷🇺 Русский','🇮🇹 Italiano']
+
+export default function Landing({ setPage }) {
   const [openFaq, setOpenFaq] = useState(null)
-  const [lang, setLang] = useState('🇱🇹 Lithuanian')
-  const [contactName, setContactName] = useState('')
-  const [contactEmail, setContactEmail] = useState('')
-  const [contactMsg, setContactMsg] = useState('')
+  const [lang, setLang] = useState('🇱🇹 Lietuvių')
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [msg, setMsg] = useState('')
   const [sent, setSent] = useState(false)
+  const [billing, setBilling] = useState('monthly')
 
-  const bg = '#ffffff'
-  const text = '#1a1a1a'
-  const sub = '#666666'
-  const card = '#f8f7f5'
-  const border = '#e8e5e0'
-  const purple = '#5b4cf5'
+  const P = '#5b4cf5'
 
   return (
-    <div style={{ background: bg, color: text, minHeight: '100vh', fontFamily: 'DM Sans, -apple-system, sans-serif' }}>
+    <div style={{ fontFamily: 'Inter, -apple-system, sans-serif', color: '#1a1a1a', background: '#fff' }}>
 
       {/* NAV */}
-      <nav style={{
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        padding: '16px 48px', borderBottom: `1px solid ${border}`,
-        position: 'sticky', top: 0, background: bg, zIndex: 100,
-      }}>
+      <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 48px', borderBottom: '1px solid #e8e5e0', position: 'sticky', top: 0, background: '#fff', zIndex: 100 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <img src="/logo.png" alt="ClipGen.AI" style={{ width: 36, height: 36, borderRadius: '50%' }} />
-          <span style={{ fontWeight: 700, fontSize: 16, letterSpacing: '-0.4px' }}>ClipGen.AI</span>
+          <img src="/logo.png" style={{ width: 34, height: 34, borderRadius: '50%' }} />
+          <span style={{ fontWeight: 800, fontSize: 16, letterSpacing: '-0.5px' }}>ClipGen.AI</span>
+        </div>
+        <div className="nav-links" style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+          {[['Features', '#features'], ['How It Works', '#how'], ['Pricing', '#pricing'], ['FAQ', '#faq']].map(([label, href]) => (
+            <a key={label} href={href} style={{ padding: '7px 12px', color: '#666', fontSize: 13.5, borderRadius: 6 }}>{label}</a>
+          ))}
         </div>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          {/* Language selector */}
-          <select value={lang} onChange={e => setLang(e.target.value)} style={{
-            padding: '7px 12px', borderRadius: 8, border: `1px solid ${border}`,
-            background: card, fontSize: 13, color: text, outline: 'none', cursor: 'pointer',
-          }}>
+          <select value={lang} onChange={e => setLang(e.target.value)} style={{ padding: '7px 10px', borderRadius: 8, border: '1px solid #e8e5e0', background: '#f8f7f5', fontSize: 12.5, outline: 'none', cursor: 'pointer' }}>
             {LANGS.map(l => <option key={l}>{l}</option>)}
           </select>
-          <button onClick={() => setPage('pricing')} style={{
-            background: 'none', border: 'none', color: sub, fontSize: 14, cursor: 'pointer', padding: '8px 12px',
-          }}>Pricing</button>
-          <button onClick={() => {
-            const el = document.getElementById('faq')
-            el && el.scrollIntoView({ behavior: 'smooth' })
-          }} style={{
-            background: 'none', border: 'none', color: sub, fontSize: 14, cursor: 'pointer', padding: '8px 12px',
-          }}>FAQ</button>
-          <button onClick={() => setPage('dashboard')} style={{
-            background: purple, color: '#fff', border: 'none',
-            borderRadius: 8, padding: '9px 20px', fontSize: 14, fontWeight: 500, cursor: 'pointer',
-          }}>Get started</button>
+          <button onClick={() => setPage('dashboard')} style={{ background: P, color: '#fff', border: 'none', borderRadius: 8, padding: '9px 20px', fontSize: 13.5, fontWeight: 600, cursor: 'pointer', boxShadow: '0 2px 8px rgba(91,76,245,0.3)' }}>
+            Start Free Trial →
+          </button>
         </div>
       </nav>
 
       {/* HERO */}
-      <div style={{ textAlign: 'center', padding: '72px 24px 56px', maxWidth: 720, margin: '0 auto' }}>
-        <div style={{
-          display: 'inline-flex', alignItems: 'center', gap: 6,
-          background: '#fff5f0', color: '#e85d04', border: '1px solid #ffd7b5',
-          borderRadius: 20, padding: '5px 14px', fontSize: 12.5,
-          fontWeight: 600, marginBottom: 24, letterSpacing: '0.2px',
-        }}>✦ AI-powered video clipping</div>
-        <h1 style={{
-          fontSize: 56, fontWeight: 800, letterSpacing: '-2.5px',
-          lineHeight: 1.05, marginBottom: 20, color: text,
-        }}>
-          Turn long videos into<br />
-          <span style={{ color: purple }}>viral clips</span> automatically
+      <div style={{ textAlign: 'center', padding: '80px 24px 60px', maxWidth: 800, margin: '0 auto' }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#fff5f0', color: '#e85d04', border: '1px solid #ffd7b5', borderRadius: 20, padding: '5px 14px', fontSize: 12, fontWeight: 600, marginBottom: 24, letterSpacing: '0.3px' }}>
+          ✦ Now beating Opus Clip & Klap.ai
+        </div>
+        <h1 className="hero-title" style={{ fontSize: 60, fontWeight: 800, letterSpacing: '-3px', lineHeight: 1.0, marginBottom: 20, color: '#0a0a0a' }}>
+          Turn Long Videos<br />
+          Into <span style={{ color: P }}>Viral Short Clips</span><br />
+          Automatically
         </h1>
-        <p style={{ fontSize: 17, color: sub, lineHeight: 1.65, marginBottom: 36, maxWidth: 540, margin: '0 auto 36px' }}>
-          Upload any video. AI finds the best moments, adds subtitles, formats for TikTok, Reels and Shorts — in minutes.
+        <p style={{ fontSize: 18, color: '#666', lineHeight: 1.65, marginBottom: 36, maxWidth: 560, margin: '0 auto 36px' }}>
+          Upload any long video. AI detects the best moments, cuts clips, adds hook titles — and publishes directly to TikTok, Reels & Shorts.
         </p>
-        <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-          <button onClick={() => setPage('dashboard')} style={{
-            background: purple, color: '#fff', border: 'none',
-            borderRadius: 10, padding: '15px 36px', fontSize: 15,
-            fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 14px rgba(91,76,245,0.35)',
-          }}>Start for free →</button>
-          <button onClick={() => setPage('pricing')} style={{
-            background: '#fff', color: text, border: `1px solid ${border}`,
-            borderRadius: 10, padding: '15px 32px', fontSize: 15,
-            fontWeight: 500, cursor: 'pointer',
-          }}>View pricing</button>
+        <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 28 }}>
+          <button onClick={() => setPage('dashboard')} style={{ background: P, color: '#fff', border: 'none', borderRadius: 10, padding: '15px 36px', fontSize: 15, fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 16px rgba(91,76,245,0.35)' }}>
+            Start Free Trial →
+          </button>
+          <button onClick={() => document.getElementById('how')?.scrollIntoView({ behavior: 'smooth' })} style={{ background: '#fff', color: '#1a1a1a', border: '1px solid #e8e5e0', borderRadius: 10, padding: '15px 32px', fontSize: 15, fontWeight: 500, cursor: 'pointer' }}>
+            ▶ Watch Demo
+          </button>
         </div>
-        {/* Trust line */}
-        <p style={{ fontSize: 12.5, color: '#aaa', marginTop: 20 }}>
-          No credit card required · Cancel anytime · Lithuanian language supported
-        </p>
+        <p style={{ fontSize: 12.5, color: '#bbb' }}>No credit card required · 3 days free · Cancel anytime</p>
       </div>
 
-      {/* DEMO SECTION */}
-      <div style={{ maxWidth: 900, margin: '0 auto 80px', padding: '0 24px' }} id="demo">
-        <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <h2 style={{ fontSize: 32, fontWeight: 700, letterSpacing: '-1px', marginBottom: 8 }}>See it in action</h2>
-          <p style={{ color: sub, fontSize: 15 }}>Upload a video and watch AI generate viral clips live</p>
-        </div>
-        <div style={{
-          background: 'linear-gradient(135deg, #5b4cf5 0%, #8b5cf6 100%)',
-          borderRadius: 20, padding: '48px 32px', textAlign: 'center', color: '#fff',
-          boxShadow: '0 20px 60px rgba(91,76,245,0.25)',
-        }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>✂</div>
-          <div style={{ fontWeight: 700, fontSize: 20, marginBottom: 8 }}>Live AI Demo</div>
-          <div style={{ opacity: 0.85, fontSize: 14, marginBottom: 24, lineHeight: 1.6 }}>
-            Upload any MP4 video and ClipGen.AI will automatically<br />
-            find the best moments and generate ready-to-post clips
-          </div>
-          <button onClick={() => setPage('dashboard')} style={{
-            background: '#fff', color: purple, border: 'none',
-            borderRadius: 10, padding: '13px 32px', fontSize: 15, fontWeight: 700, cursor: 'pointer',
-          }}>Try it now — it's free</button>
+      {/* STATS */}
+      <div style={{ background: '#f8f7f5', padding: '40px 24px' }}>
+        <div className="hero-stats" style={{ maxWidth: 800, margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20, textAlign: 'center' }}>
+          {[['2.4M+','Clips Generated'],['152K','Clips Created'],['96','Avg Viral Share'],['10x','Faster Than Manual']].map(([val, label]) => (
+            <div key={label}>
+              <div style={{ fontSize: 32, fontWeight: 800, color: '#0a0a0a', letterSpacing: '-1px' }}>{val}</div>
+              <div style={{ fontSize: 13, color: '#888', marginTop: 4 }}>{label}</div>
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* ANALYTICS PREVIEW */}
-      <div style={{ background: '#fafaf8', padding: '64px 24px 80px' }}>
+      {/* HOW IT WORKS */}
+      <div id="how" style={{ padding: '80px 24px', maxWidth: 900, margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: 16 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, color: P, letterSpacing: '2px', marginBottom: 12 }}>HOW IT WORKS</div>
+          <h2 style={{ fontSize: 36, fontWeight: 800, letterSpacing: '-1.5px', marginBottom: 8 }}>
+            From Upload to Viral in <span style={{ color: P }}>4 Steps</span>
+          </h2>
+          <p style={{ color: '#888', fontSize: 15 }}>No editing skills needed. Our AI handles everything from analysis to publishing.</p>
+        </div>
+        <div className="steps-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20, marginTop: 48 }}>
+          {STEPS.map((s, i) => (
+            <div key={s.num} style={{ position: 'relative' }}>
+              {i < 3 && <div style={{ position: 'absolute', top: 20, left: '60%', width: '80%', height: 1, background: '#e8e5e0', zIndex: 0 }} />}
+              <div style={{ position: 'relative', zIndex: 1 }}>
+                <div style={{ width: 40, height: 40, borderRadius: 10, background: P + '15', border: `1px solid ${P}30`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: P, marginBottom: 14 }}>{s.num}</div>
+                <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 8 }}>{s.title}</div>
+                <div style={{ fontSize: 12.5, color: '#888', lineHeight: 1.55 }}>{s.desc}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* FEATURES */}
+      <div id="features" style={{ background: '#f8f7f5', padding: '80px 24px' }}>
         <div style={{ maxWidth: 900, margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: 40 }}>
-            <h2 style={{ fontSize: 32, fontWeight: 700, letterSpacing: '-1px', marginBottom: 8 }}>Track your growth</h2>
-            <p style={{ color: sub, fontSize: 15 }}>Monitor views, shares, comments and viral scores over time</p>
+          <div style={{ textAlign: 'center', marginBottom: 48 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: P, letterSpacing: '2px', marginBottom: 12 }}>FEATURES</div>
+            <h2 style={{ fontSize: 36, fontWeight: 800, letterSpacing: '-1.5px', marginBottom: 8 }}>
+              Everything you need to <span style={{ color: P }}>go viral</span>
+            </h2>
+            <p style={{ color: '#888', fontSize: 15 }}>Powerful AI tools built specifically for content creators who want results.</p>
           </div>
-          {/* Fake analytics chart */}
-          <div style={{ background: '#fff', borderRadius: 16, border: `1px solid ${border}`, padding: '28px', marginBottom: 20 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-              <div style={{ fontWeight: 600, fontSize: 15 }}>Monthly Performance</div>
-              <div style={{ fontSize: 12.5, color: sub }}>Last 6 months</div>
-            </div>
-            {/* Chart bars */}
-            <div style={{ display: 'flex', alignItems: 'flex-end', gap: 12, height: 120 }}>
-              {[40, 65, 45, 80, 95, 72].map((h, i) => (
-                <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-                  <div style={{
-                    width: '100%', height: `${h}%`, borderRadius: 6,
-                    background: i === 4 ? purple : `rgba(91,76,245,${0.2 + i*0.08})`,
-                    transition: 'all 0.3s',
-                  }} />
-                  <div style={{ fontSize: 11, color: sub }}>
-                    {['Nov','Dec','Jan','Feb','Mar','Apr'][i]}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-          {/* Stats row */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14 }}>
-            {[
-              { label: 'Total Views', value: '2.4M', change: '+18%' },
-              { label: 'Comments', value: '14.2K', change: '+32%' },
-              { label: 'Shares', value: '8.7K', change: '+24%' },
-              { label: 'Avg Viral Score', value: '84/100', change: '+12%' },
-            ].map(s => (
-              <div key={s.label} style={{
-                background: '#fff', border: `1px solid ${border}`,
-                borderRadius: 12, padding: '18px',
-              }}>
-                <div style={{ fontSize: 22, fontWeight: 700, letterSpacing: '-0.8px', color: text }}>{s.value}</div>
-                <div style={{ fontSize: 12, color: sub, marginTop: 2 }}>{s.label}</div>
-                <div style={{ fontSize: 11.5, color: '#16a34a', fontWeight: 600, marginTop: 4 }}>{s.change}</div>
+          <div className="features-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+            {FEATURES.map(f => (
+              <div key={f.title} style={{ background: '#fff', borderRadius: 14, padding: '24px', border: '1px solid #e8e5e0' }}>
+                <div style={{ width: 44, height: 44, borderRadius: 12, background: P + '12', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, marginBottom: 14 }}>{f.icon}</div>
+                <div style={{ fontWeight: 700, fontSize: 14.5, marginBottom: 8 }}>{f.title}</div>
+                <div style={{ fontSize: 13, color: '#888', lineHeight: 1.6 }}>{f.desc}</div>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* FEATURES */}
-      <div style={{ maxWidth: 900, margin: '0 auto', padding: '80px 24px' }}>
-        <div style={{ textAlign: 'center', marginBottom: 48 }}>
-          <h2 style={{ fontSize: 32, fontWeight: 700, letterSpacing: '-1px', marginBottom: 8 }}>Everything you need</h2>
-          <p style={{ color: sub, fontSize: 15 }}>One platform to create, optimize and publish viral short-form content</p>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 20 }}>
-          {FEATURES.map(f => (
-            <div key={f.title} style={{
-              background: '#fff', border: `1px solid ${border}`,
-              borderRadius: 14, padding: '24px',
-              transition: 'box-shadow 0.2s',
-            }}>
-              <div style={{
-                width: 44, height: 44, borderRadius: 12,
-                background: '#f0eeff', display: 'flex', alignItems: 'center',
-                justifyContent: 'center', fontSize: 22, marginBottom: 14,
-              }}>{f.icon}</div>
-              <div style={{ fontWeight: 600, fontSize: 14.5, marginBottom: 6 }}>{f.title}</div>
-              <div style={{ fontSize: 13.5, color: sub, lineHeight: 1.55 }}>{f.desc}</div>
+      {/* COMPARISON */}
+      <div style={{ padding: '80px 24px', maxWidth: 860, margin: '0 auto' }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48, alignItems: "center" }}>
+          <div>
+            <div style={{ fontSize: 11, fontWeight: 700, color: P, letterSpacing: '2px', marginBottom: 12 }}>WHY CLIPGEN.AI</div>
+            <h2 style={{ fontSize: 32, fontWeight: 800, letterSpacing: '-1.5px', lineHeight: 1.2, marginBottom: 16 }}>
+              Everything Opus Clip and Klap.ai can't do — in one tool you own completely.
+            </h2>
+            {['User-Directed AI — choose "motivational", "funny", "educational" and it adapts', 'Transparent Viral Scoring — understand exactly why each clip was selected', 'White Label Agency Mode — process videos for clients under your own brand', '3x Faster Processing — ready in 3 minutes for any video up to 3 hours long'].map(item => (
+              <div key={item} style={{ display: 'flex', gap: 10, marginBottom: 12, alignItems: 'flex-start' }}>
+                <div style={{ width: 20, height: 20, borderRadius: '50%', background: P, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 11, flexShrink: 0, marginTop: 1 }}>✓</div>
+                <span style={{ fontSize: 13.5, color: '#666', lineHeight: 1.5 }}>{item}</span>
+              </div>
+            ))}
+          </div>
+          <div>
+            <div style={{ background: '#f8f7f5', borderRadius: 14, overflow: 'hidden', border: '1px solid #e8e5e0' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', background: '#fff', padding: '12px 16px', borderBottom: '1px solid #e8e5e0' }}>
+                {['Feature', 'ClipGen.AI', 'Opus Clip', 'Klap'].map((h, i) => (
+                  <div key={h} style={{ fontSize: 11, fontWeight: 700, color: i === 1 ? P : '#aaa', textAlign: i > 0 ? 'center' : 'left', letterSpacing: '0.3px' }}>{h}</div>
+                ))}
+              </div>
+              {COMP.map((row, i) => (
+                <div key={row.feature} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', padding: '10px 16px', background: i % 2 === 0 ? '#fff' : '#f8f7f5', borderBottom: '1px solid #f0ede8' }}>
+                  <div style={{ fontSize: 12.5, color: '#555' }}>{row.feature}</div>
+                  {[row.us, row.opus, row.klap].map((val, j) => (
+                    <div key={j} style={{ textAlign: 'center', fontSize: 13 }}>
+                      {val === true ? <span style={{ color: '#22c55e', fontWeight: 700 }}>✓</span> :
+                       val === false ? <span style={{ color: '#ddd' }}>—</span> :
+                       <span style={{ color: '#f59e0b', fontSize: 10.5, fontWeight: 600 }}>{val}</span>}
+                    </div>
+                  ))}
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
+        </div>
+      </div>
+
+      {/* PRICING */}
+      <div id="pricing" style={{ background: '#f8f7f5', padding: '80px 24px' }}>
+        <div style={{ maxWidth: 900, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: 48 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: P, letterSpacing: '2px', marginBottom: 12 }}>PRICING</div>
+            <h2 style={{ fontSize: 36, fontWeight: 800, letterSpacing: '-1.5px', marginBottom: 8 }}>Start free. Scale as you grow.</h2>
+            <p style={{ color: '#888', fontSize: 15, marginBottom: 20 }}>Cancel anytime.</p>
+            <div style={{ display: 'inline-flex', background: '#e8e5e0', borderRadius: 10, padding: 4 }}>
+              {['monthly', 'yearly'].map(b => (
+                <button key={b} onClick={() => setBilling(b)} style={{ padding: '7px 20px', borderRadius: 8, border: 'none', background: billing === b ? '#fff' : 'transparent', color: billing === b ? '#1a1a1a' : '#888', fontWeight: billing === b ? 600 : 400, fontSize: 13, cursor: 'pointer' }}>
+                  {b === 'monthly' ? 'Monthly' : 'Yearly'}{b === 'yearly' ? ' · Save 5 months' : ''}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="pricing-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+            {[
+              { name: 'Starter', price: billing === 'yearly' ? '€19' : '€29', desc: 'For individual creators getting started', features: ['10 videos/month','Auto subtitles','9:16 format','3 social accounts','Email support'], highlight: false, cta: 'Get Started Free' },
+              { name: 'Pro', price: billing === 'yearly' ? '€39' : '€59', desc: 'For serious content creators who want to go viral', features: ['Everything in Starter','50 videos/month','Transparent scoring','Unlimited social accounts','Priority processing','50+ languages','Priority support'], highlight: true, cta: 'Start Free Trial' },
+              { name: 'Agency', price: billing === 'yearly' ? '€69' : '€99', desc: 'For managing multiple clients at scale', features: ['Everything in Pro','Unlimited videos','White-label branding','Client management','Team members','Custom integrations','SLA guarantee'], highlight: false, cta: 'Contact Sales' },
+            ].map(plan => (
+              <div key={plan.name} style={{
+                background: plan.highlight ? '#fff' : '#fff',
+                border: `2px solid ${plan.highlight ? P : '#e8e5e0'}`,
+                borderRadius: 16, padding: '28px 24px', position: 'relative',
+                boxShadow: plan.highlight ? '0 8px 32px rgba(91,76,245,0.15)' : 'none',
+              }}>
+                {plan.highlight && <div style={{ position: 'absolute', top: -12, left: '50%', transform: 'translateX(-50%)', background: P, color: '#fff', borderRadius: 20, padding: '3px 14px', fontSize: 11, fontWeight: 700 }}>BEST VALUE</div>}
+                <div style={{ fontSize: 12, fontWeight: 700, color: '#aaa', letterSpacing: '0.5px', marginBottom: 6 }}>{plan.name.toUpperCase()}</div>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: 4, marginBottom: 6 }}>
+                  <span style={{ fontSize: 44, fontWeight: 800, letterSpacing: '-2px', color: '#0a0a0a' }}>{plan.price}</span>
+                  <span style={{ fontSize: 14, color: '#aaa' }}>/month</span>
+                </div>
+                <div style={{ fontSize: 13, color: '#888', marginBottom: 20, lineHeight: 1.4 }}>{plan.desc}</div>
+                <button onClick={() => setPage('dashboard')} style={{
+                  width: '100%', padding: '11px', borderRadius: 8,
+                  background: plan.highlight ? P : '#fff',
+                  color: plan.highlight ? '#fff' : P,
+                  border: `2px solid ${P}`,
+                  fontWeight: 700, fontSize: 14, cursor: 'pointer', marginBottom: 22,
+                }}>{plan.cta}</button>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {plan.features.map(f => (
+                    <div key={f} style={{ display: 'flex', gap: 8, fontSize: 13 }}>
+                      <span style={{ color: P, fontWeight: 700, flexShrink: 0 }}>✓</span>
+                      <span style={{ color: '#555' }}>{f}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* FAQ */}
-      <div style={{ background: '#fafaf8', padding: '80px 24px' }} id="faq">
-        <div style={{ maxWidth: 680, margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: 48 }}>
-            <h2 style={{ fontSize: 32, fontWeight: 700, letterSpacing: '-1px', marginBottom: 8 }}>Frequently asked questions</h2>
-            <p style={{ color: sub, fontSize: 15 }}>Everything you need to know about ClipGen.AI</p>
-          </div>
-          {FAQS.map((faq, i) => (
-            <div key={i} style={{
-              background: '#fff', border: `1px solid ${border}`,
-              borderRadius: 12, marginBottom: 10, overflow: 'hidden',
-            }}>
-              <button onClick={() => setOpenFaq(openFaq === i ? null : i)} style={{
-                width: '100%', padding: '18px 20px',
-                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left',
-              }}>
-                <span style={{ fontWeight: 600, fontSize: 14, color: text }}>{faq.q}</span>
-                <span style={{ color: purple, fontSize: 18, fontWeight: 300, marginLeft: 12 }}>
-                  {openFaq === i ? '−' : '+'}
-                </span>
-              </button>
-              {openFaq === i && (
-                <div style={{ padding: '0 20px 18px', fontSize: 13.5, color: sub, lineHeight: 1.6 }}>
-                  {faq.a}
-                </div>
-              )}
-            </div>
-          ))}
+      <div id="faq" style={{ padding: '80px 24px', maxWidth: 680, margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: 48 }}>
+          <h2 style={{ fontSize: 32, fontWeight: 800, letterSpacing: '-1.5px', marginBottom: 8 }}>Frequently asked questions</h2>
+          <p style={{ color: '#888', fontSize: 15 }}>Everything you need to know about ClipGen.AI</p>
         </div>
+        {FAQS.map((faq, i) => (
+          <div key={i} style={{ borderBottom: '1px solid #e8e5e0', overflow: 'hidden' }}>
+            <button onClick={() => setOpenFaq(openFaq === i ? null : i)} style={{
+              width: '100%', padding: '18px 0', display: 'flex', justifyContent: 'space-between',
+              alignItems: 'center', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left',
+            }}>
+              <span style={{ fontWeight: 600, fontSize: 14.5, color: '#1a1a1a' }}>{faq.q}</span>
+              <span style={{ color: P, fontSize: 20, fontWeight: 300, marginLeft: 16, flexShrink: 0 }}>{openFaq === i ? '−' : '+'}</span>
+            </button>
+            {openFaq === i && <div style={{ paddingBottom: 18, fontSize: 14, color: '#666', lineHeight: 1.65 }}>{faq.a}</div>}
+          </div>
+        ))}
       </div>
 
       {/* CONTACT */}
-      <div style={{ maxWidth: 600, margin: '0 auto', padding: '80px 24px' }} id="contact">
-        <div style={{ textAlign: 'center', marginBottom: 40 }}>
-          <h2 style={{ fontSize: 32, fontWeight: 700, letterSpacing: '-1px', marginBottom: 8 }}>Contact us</h2>
-          <p style={{ color: sub, fontSize: 15 }}>Have a question? We'll get back to you as soon as possible.</p>
-        </div>
-        <div style={{ background: '#fff', border: `1px solid ${border}`, borderRadius: 16, padding: '32px' }}>
-          {[['Your name', contactName, setContactName, 'text'],
-            ['Email address', contactEmail, setContactEmail, 'email']].map(([ph, val, setter, type]) => (
-            <div key={ph} style={{ marginBottom: 16 }}>
-              <input
-                type={type} value={val} onChange={e => setter(e.target.value)}
-                placeholder={ph}
-                style={{
-                  width: '100%', padding: '11px 14px', borderRadius: 8,
-                  border: `1px solid ${border}`, fontSize: 14, outline: 'none',
-                  background: '#fafaf8', color: text,
-                }} />
+      <div id="contact" style={{ background: '#f8f7f5', padding: '80px 24px' }}>
+        <div style={{ maxWidth: 560, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: 36 }}>
+            <h2 style={{ fontSize: 32, fontWeight: 800, letterSpacing: '-1.5px', marginBottom: 8 }}>Stay in the loop</h2>
+            <p style={{ color: '#888', fontSize: 15 }}>Have a question? Get in touch and we'll respond quickly.</p>
+          </div>
+          <div style={{ background: '#fff', borderRadius: 16, padding: '32px', border: '1px solid #e8e5e0' }}>
+            <div className="contact-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
+              {[['Your name', name, setName, 'text'], ['Email address', email, setEmail, 'email']].map(([ph, val, setter, type]) => (
+                <input key={ph} type={type} value={val} onChange={e => setter(e.target.value)} placeholder={ph} style={{ padding: '11px 14px', borderRadius: 8, border: '1px solid #e8e5e0', fontSize: 13.5, outline: 'none', background: '#fafaf8', color: '#1a1a1a' }} />
+              ))}
             </div>
-          ))}
-          <textarea
-            value={contactMsg} onChange={e => setContactMsg(e.target.value)}
-            placeholder="Your message"
-            rows={4}
-            style={{
-              width: '100%', padding: '11px 14px', borderRadius: 8,
-              border: `1px solid ${border}`, fontSize: 14, outline: 'none',
-              background: '#fafaf8', color: text, resize: 'vertical',
-              marginBottom: 16, fontFamily: 'inherit',
-            }} />
-          <button
-            onClick={() => {
-              if (contactName && contactEmail && contactMsg) {
-                window.open(`mailto:clipgenai@gmail.com?subject=Contact from ${contactName}&body=${contactMsg}%0A%0AFrom: ${contactName}%0AEmail: ${contactEmail}`)
-                setSent(true)
-              }
-            }}
-            style={{
-              width: '100%', padding: '12px', borderRadius: 8,
-              background: purple, color: '#fff', fontWeight: 600,
-              fontSize: 14, border: 'none', cursor: 'pointer',
-            }}>
-            {sent ? '✓ Message sent!' : 'Send message via Gmail'}
-          </button>
-          <p style={{ textAlign: 'center', fontSize: 12.5, color: '#aaa', marginTop: 12 }}>
-            Or email us directly: clipgenai@gmail.com
-          </p>
+            <textarea value={msg} onChange={e => setMsg(e.target.value)} placeholder="Your message..." rows={4} style={{ width: '100%', padding: '11px 14px', borderRadius: 8, border: '1px solid #e8e5e0', fontSize: 13.5, outline: 'none', background: '#fafaf8', color: '#1a1a1a', resize: 'vertical', marginBottom: 12, fontFamily: 'inherit' }} />
+            <button onClick={() => { if (name && email && msg) { window.open(`mailto:clipgenai@gmail.com?subject=Message from ${name}&body=${msg}`); setSent(true) } }} style={{ width: '100%', padding: '12px', borderRadius: 8, background: P, color: '#fff', fontWeight: 700, fontSize: 14, border: 'none', cursor: 'pointer' }}>
+              {sent ? '✓ Message sent!' : 'Subscribe →'}
+            </button>
+          </div>
         </div>
       </div>
 
       {/* CTA */}
-      <div style={{
-        background: 'linear-gradient(135deg, #5b4cf5 0%, #8b5cf6 100%)',
-        padding: '64px 24px', textAlign: 'center', color: '#fff',
-      }}>
-        <h2 style={{ fontSize: 36, fontWeight: 700, letterSpacing: '-1px', marginBottom: 16 }}>Ready to go viral?</h2>
-        <p style={{ fontSize: 16, opacity: 0.85, marginBottom: 32 }}>
-          Join creators using ClipGen.AI to grow their audience faster
-        </p>
-        <button onClick={() => setPage('dashboard')} style={{
-          background: '#fff', color: purple, border: 'none',
-          borderRadius: 10, padding: '15px 40px', fontSize: 15, fontWeight: 700, cursor: 'pointer',
-        }}>Get started free →</button>
+      <div style={{ background: '#0a0a0a', padding: '80px 24px', textAlign: 'center', color: '#fff' }}>
+        <h2 style={{ fontSize: 40, fontWeight: 800, letterSpacing: '-2px', marginBottom: 16 }}>Ready to go viral?</h2>
+        <p style={{ fontSize: 16, color: '#888', marginBottom: 32 }}>Join thousands of creators turning long videos into viral clips automatically.</p>
+        <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 20 }}>
+          <button onClick={() => setPage('dashboard')} style={{ background: P, color: '#fff', border: 'none', borderRadius: 10, padding: '15px 36px', fontSize: 15, fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 20px rgba(91,76,245,0.4)' }}>⚡ Start Creating Free Clips</button>
+          <button onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })} style={{ background: 'transparent', color: '#888', border: '1px solid #333', borderRadius: 10, padding: '15px 32px', fontSize: 15, cursor: 'pointer' }}>View Pricing</button>
+        </div>
+        <div style={{ display: 'flex', gap: 16, justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap' }}>
+          {['No credit card required','3 days free','Cancel anytime'].map(t => (
+            <span key={t} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#555' }}>
+              <span style={{ color: '#22c55e' }}>✓</span>{t}
+            </span>
+          ))}
+        </div>
       </div>
 
       {/* FOOTER */}
-      <div style={{
-        padding: '24px 48px', borderTop: `1px solid ${border}`,
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        color: sub, fontSize: 13, flexWrap: 'wrap', gap: 12,
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <img src="/logo.png" style={{ width: 24, height: 24, borderRadius: '50%' }} />
-          <span>© 2026 ClipGen.AI</span>
+      <div style={{ background: '#0a0a0a', padding: '32px 48px', borderTop: '1px solid #1a1a1a' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <img src="/logo.png" style={{ width: 26, height: 26, borderRadius: '50%' }} />
+            <span style={{ fontWeight: 700, fontSize: 14, color: '#fff' }}>ClipGen.AI</span>
+          </div>
+          <div style={{ display: 'flex', gap: 20 }}>
+            {[['Product','#features'],['How it Works','#how'],['Pricing','#pricing'],['FAQ','#faq'],['Contact','#contact']].map(([label, href]) => (
+              <a key={label} href={href} style={{ color: '#555', fontSize: 13 }}>{label}</a>
+            ))}
+          </div>
+          <span style={{ color: '#444', fontSize: 12 }}>© 2026 ClipGen.AI — Built for European creators</span>
         </div>
-        <div style={{ display: 'flex', gap: 20 }}>
-          <button onClick={() => setPage('pricing')} style={{ background: 'none', border: 'none', color: sub, cursor: 'pointer', fontSize: 13 }}>Pricing</button>
-          <button onClick={() => document.getElementById('faq')?.scrollIntoView({ behavior: 'smooth' })} style={{ background: 'none', border: 'none', color: sub, cursor: 'pointer', fontSize: 13 }}>FAQ</button>
-          <button onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })} style={{ background: 'none', border: 'none', color: sub, cursor: 'pointer', fontSize: 13 }}>Contact</button>
-        </div>
-        <span>Built for European creators</span>
       </div>
     </div>
   )

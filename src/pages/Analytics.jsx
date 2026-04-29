@@ -1,31 +1,43 @@
-export default function Analytics({ dark }) {
-  const bg = dark ? '#0f0f0f' : '#f8f7f5'
-  const text = dark ? '#e8e8e8' : '#1a1a1a'
-  const sub = dark ? '#888' : '#666'
-  const card = dark ? '#1a1a1a' : '#fff'
-  const border = dark ? '#2a2a2a' : '#e8e5e0'
+export default function Analytics() {
+  const bars = [40, 65, 45, 80, 95, 72]
+  const months = ['Nov','Dec','Jan','Feb','Mar','Apr']
   const stats = [
-    { label: 'Videos processed', value: '0', change: '' },
-    { label: 'Clips generated', value: '0', change: '' },
-    { label: 'Total downloads', value: '0', change: '' },
-    { label: 'Avg viral score', value: '—', change: '' },
+    { label: 'Clips Generated', value: '0', sub: 'This month', color: '#5b4cf5' },
+    { label: 'Total Views', value: '0', sub: 'Across all platforms', color: '#22c55e' },
+    { label: 'Avg Viral Score', value: '—', sub: 'Per clip', color: '#f59e0b' },
+    { label: 'Total Downloads', value: '0', sub: 'All time', color: '#ec4899' },
   ]
   return (
-    <div style={{ maxWidth: 720, margin: '0 auto', padding: '36px 24px', background: bg, minHeight: '100vh' }}>
-      <div style={{ marginBottom: 32 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 700, letterSpacing: '-0.5px', marginBottom: 4, color: text }}>Analytics</h1>
-        <p style={{ color: sub, fontSize: 13.5 }}>Track your clip performance over time.</p>
+    <div style={{ padding: '24px', background: '#0d0d0d', minHeight: '100vh' }}>
+      <div style={{ marginBottom: 24 }}>
+        <h1 style={{ fontSize: 22, fontWeight: 700, color: '#fff', marginBottom: 4 }}>Analytics</h1>
+        <p style={{ color: '#666', fontSize: 13.5 }}>Track your content performance over time.</p>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 14, marginBottom: 28 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 14, marginBottom: 24 }}>
         {stats.map(s => (
-          <div key={s.label} style={{ background: card, border: `1px solid ${border}`, borderRadius: 12, padding: '22px' }}>
-            <div style={{ fontSize: 32, fontWeight: 700, letterSpacing: '-1px', marginBottom: 4, color: text }}>{s.value}</div>
-            <div style={{ fontSize: 12.5, color: sub }}>{s.label}</div>
+          <div key={s.label} style={{ background: '#111', border: '1px solid #1f1f1f', borderRadius: 12, padding: '20px', borderTop: `2px solid ${s.color}` }}>
+            <div style={{ fontSize: 28, fontWeight: 700, color: '#fff', letterSpacing: '-1px', marginBottom: 4 }}>{s.value}</div>
+            <div style={{ fontSize: 13, fontWeight: 500, color: '#ccc', marginBottom: 2 }}>{s.label}</div>
+            <div style={{ fontSize: 11.5, color: '#555' }}>{s.sub}</div>
           </div>
         ))}
       </div>
-      <div style={{ background: card, border: `1px solid ${border}`, borderRadius: 12, padding: '32px', textAlign: 'center', color: sub }}>
-        <div style={{ fontSize: 13.5 }}>Analytics data will appear after your first video is processed</div>
+      <div style={{ background: '#111', border: '1px solid #1f1f1f', borderRadius: 14, padding: '24px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}>
+          <div style={{ fontWeight: 600, color: '#fff', fontSize: 15 }}>Monthly Performance</div>
+          <div style={{ fontSize: 12, color: '#555' }}>Last 6 months</div>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'flex-end', gap: 12, height: 140 }}>
+          {bars.map((h, i) => (
+            <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+              <div style={{ width: '100%', height: `${h}%`, borderRadius: 6, background: i === 4 ? 'linear-gradient(180deg, #8b5cf6, #5b4cf5)' : '#1f1f1f', transition: 'all 0.3s' }} />
+              <div style={{ fontSize: 11, color: '#555' }}>{months[i]}</div>
+            </div>
+          ))}
+        </div>
+        <div style={{ marginTop: 20, padding: '16px', background: '#0d0d0d', borderRadius: 10, textAlign: 'center', color: '#444', fontSize: 13 }}>
+          Process videos to see real analytics data here
+        </div>
       </div>
     </div>
   )
