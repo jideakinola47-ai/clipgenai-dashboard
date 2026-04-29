@@ -38,11 +38,126 @@ const COMP = [
   { feature: 'Direct social publishing', us: true, opus: true, klap: 'Limited' },
 ]
 
-const LANGS = ['🇱🇹 Lietuvių','🇬🇧 English','🇩🇪 Deutsch','🇫🇷 Français','🇪🇸 Español','🇵🇱 Polski','🇷🇺 Русский','🇮🇹 Italiano']
+const LANGS = [
+  {code:'lt', flag:'🇱🇹', label:'Lietuvių'},
+  {code:'en', flag:'🇬🇧', label:'English'},
+  {code:'de', flag:'🇩🇪', label:'Deutsch'},
+  {code:'fr', flag:'🇫🇷', label:'Français'},
+  {code:'es', flag:'🇪🇸', label:'Español'},
+  {code:'pl', flag:'🇵🇱', label:'Polski'},
+  {code:'ru', flag:'🇷🇺', label:'Русский'},
+  {code:'it', flag:'🇮🇹', label:'Italiano'},
+  {code:'pt', flag:'🇵🇹', label:'Português'},
+  {code:'nl', flag:'🇳🇱', label:'Nederlands'},
+  {code:'sv', flag:'🇸🇪', label:'Svenska'},
+  {code:'no', flag:'🇳🇴', label:'Norsk'},
+  {code:'da', flag:'🇩🇰', label:'Dansk'},
+  {code:'fi', flag:'🇫🇮', label:'Suomi'},
+  {code:'ja', flag:'🇯🇵', label:'日本語'},
+  {code:'zh', flag:'🇨🇳', label:'中文'},
+  {code:'ko', flag:'🇰🇷', label:'한국어'},
+  {code:'ar', flag:'🇸🇦', label:'العربية'},
+  {code:'tr', flag:'🇹🇷', label:'Türkçe'},
+  {code:'hi', flag:'🇮🇳', label:'हिन्दी'},
+]
+
+
+const T = {
+  lt: {
+    badge: '✦ Dirbtinio intelekto vaizdo įrašų karpymo platforma',
+    hero1: 'Paversk ilgus vaizdo įrašus į',
+    hero2: 'Viralinius klipus',
+    hero3: 'Automatiškai',
+    sub: 'Įkelk bet kurį vaizdo įrašą. Dirbtinis intelektas suranda geriausias akimirkas, sukarpо klipus, prideda subtitrus ir formatuoja TikTok, Reels ir Shorts.',
+    cta1: 'Pradėti nemokamai →',
+    cta2: '▶ Žiūrėti demonstraciją',
+    trust: 'Nereikia kredito kortelės · 3 dienos nemokamai · Atšaukti galima bet kada',
+    howTitle: 'Nuo įkėlimo iki viralinio per',
+    how4: '4 žingsnius',
+    howSub: 'Nereikia redagavimo įgūdžių. Mūsų DI viską atlieka automatiškai.',
+    featTitle: 'Viskas ko reikia',
+    featSub: 'Galingi DI įrankiai sukurti kūrėjams, kurie nori rezultatų.',
+    faqTitle: 'Dažniausiai užduodami klausimai',
+    faqSub: 'Viskas ką reikia žinoti apie ClipGen.AI',
+    contactTitle: 'Susisiekite su mumis',
+    contactSub: 'Turite klausimą? Parašykite mums.',
+    ctaFinal: 'Pasiruošę tapti viraliais?',
+    ctaFinalSub: 'Prisijunkite prie kūrėjų naudojančių ClipGen.AI.',
+    startBtn: '⚡ Pradėti kurti klipus',
+  },
+  en: {
+    badge: '✦ AI-powered video clipping platform',
+    hero1: 'Turn Long Videos Into',
+    hero2: 'Viral Short Clips',
+    hero3: 'Automatically',
+    sub: 'Upload any long video. AI detects the best moments, cuts clips, adds hook titles — and publishes directly to TikTok, Reels & Shorts.',
+    cta1: 'Start Free Trial →',
+    cta2: '▶ Watch Demo',
+    trust: 'No credit card required · 3 days free · Cancel anytime',
+    howTitle: 'From Upload to Viral in',
+    how4: '4 Steps',
+    howSub: 'No editing skills needed. Our AI handles everything from analysis to publishing.',
+    featTitle: 'Everything you need to go viral',
+    featSub: 'Powerful AI tools built specifically for content creators who want results.',
+    faqTitle: 'Frequently asked questions',
+    faqSub: 'Everything you need to know about ClipGen.AI',
+    contactTitle: 'Stay in the loop',
+    contactSub: 'Have a question? Get in touch and we\'ll respond quickly.',
+    ctaFinal: 'Ready to go viral?',
+    ctaFinalSub: 'Join thousands of creators turning long videos into viral clips automatically.',
+    startBtn: '⚡ Start Creating Free Clips',
+  },
+  de: {
+    badge: '✦ KI-gestützte Video-Clipping-Plattform',
+    hero1: 'Verwandle lange Videos in',
+    hero2: 'Virale Kurzclips',
+    hero3: 'Automatisch',
+    sub: 'Lade ein beliebiges Video hoch. Die KI erkennt die besten Momente, schneidet Clips, fügt Untertitel hinzu und veröffentlicht direkt auf TikTok, Reels & Shorts.',
+    cta1: 'Kostenlos starten →',
+    cta2: '▶ Demo ansehen',
+    trust: 'Keine Kreditkarte erforderlich · 3 Tage kostenlos · Jederzeit kündbar',
+    howTitle: 'Vom Upload bis viral in',
+    how4: '4 Schritten',
+    howSub: 'Keine Bearbeitungskenntnisse erforderlich. Unsere KI übernimmt alles automatisch.',
+    featTitle: 'Alles was du brauchst',
+    featSub: 'Leistungsstarke KI-Tools speziell für Content-Creator.',
+    faqTitle: 'Häufig gestellte Fragen',
+    faqSub: 'Alles was Sie über ClipGen.AI wissen müssen.',
+    contactTitle: 'Kontakt',
+    contactSub: 'Haben Sie eine Frage? Wir antworten schnell.',
+    ctaFinal: 'Bereit viral zu gehen?',
+    ctaFinalSub: 'Schließen Sie sich Tausenden von Creatorn an.',
+    startBtn: '⚡ Clips erstellen',
+  },
+  fr: {
+    badge: '✦ Plateforme de découpe vidéo par IA',
+    hero1: 'Transformez vos longues vidéos en',
+    hero2: 'Clips Viraux',
+    hero3: 'Automatiquement',
+    sub: 'Téléchargez n\'importe quelle vidéo. L\'IA détecte les meilleurs moments, coupe les clips, ajoute des sous-titres et publie directement sur TikTok, Reels & Shorts.',
+    cta1: 'Commencer gratuitement →',
+    cta2: '▶ Voir la démo',
+    trust: 'Aucune carte de crédit requise · 3 jours gratuits · Annulez à tout moment',
+    howTitle: 'Du téléchargement au viral en',
+    how4: '4 étapes',
+    howSub: 'Aucune compétence en montage requise. Notre IA gère tout automatiquement.',
+    featTitle: 'Tout ce dont vous avez besoin',
+    featSub: 'Des outils IA puissants pour les créateurs de contenu.',
+    faqTitle: 'Questions fréquentes',
+    faqSub: 'Tout ce que vous devez savoir sur ClipGen.AI',
+    contactTitle: 'Contactez-nous',
+    contactSub: 'Vous avez une question? Nous répondons rapidement.',
+    ctaFinal: 'Prêt à devenir viral?',
+    ctaFinalSub: 'Rejoignez des milliers de créateurs utilisant ClipGen.AI.',
+    startBtn: '⚡ Créer des clips gratuits',
+  },
+}
+// Fallback to English for unsupported languages
+const getText = (lang) => T[lang] || T['en']
 
 export default function Landing({ setPage }) {
   const [openFaq, setOpenFaq] = useState(null)
-  const [lang, setLang] = useState('🇱🇹 Lietuvių')
+  const [lang, setLang] = useState('lt')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [msg, setMsg] = useState('')
@@ -50,6 +165,7 @@ export default function Landing({ setPage }) {
   const [billing, setBilling] = useState('monthly')
 
   const P = '#5b4cf5'
+  const t = getText(lang)
 
   return (
     <div style={{ fontFamily: 'Inter, -apple-system, sans-serif', color: '#1a1a1a', background: '#fff' }}>
@@ -67,7 +183,7 @@ export default function Landing({ setPage }) {
         </div>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
           <select value={lang} onChange={e => setLang(e.target.value)} style={{ padding: '7px 10px', borderRadius: 8, border: '1px solid #e8e5e0', background: '#f8f7f5', fontSize: 12.5, outline: 'none', cursor: 'pointer' }}>
-            {LANGS.map(l => <option key={l}>{l}</option>)}
+            {LANGS.map(l => <option key={l.code} value={l.code}>{l.flag} {l.label}</option>)}
           </select>
           <button onClick={() => setPage('dashboard')} style={{ background: P, color: '#fff', border: 'none', borderRadius: 8, padding: '9px 20px', fontSize: 13.5, fontWeight: 600, cursor: 'pointer', boxShadow: '0 2px 8px rgba(91,76,245,0.3)' }}>
             Start Free Trial →
@@ -78,25 +194,25 @@ export default function Landing({ setPage }) {
       {/* HERO */}
       <div style={{ textAlign: 'center', padding: '80px 24px 60px', maxWidth: 800, margin: '0 auto' }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#fff5f0', color: '#e85d04', border: '1px solid #ffd7b5', borderRadius: 20, padding: '5px 14px', fontSize: 12, fontWeight: 600, marginBottom: 24, letterSpacing: '0.3px' }}>
-          ✦ Now beating Opus Clip & Klap.ai
+          {t.badge}
         </div>
         <h1 className="hero-title" style={{ fontSize: 60, fontWeight: 800, letterSpacing: '-3px', lineHeight: 1.0, marginBottom: 20, color: '#0a0a0a' }}>
-          Turn Long Videos<br />
-          Into <span style={{ color: P }}>Viral Short Clips</span><br />
-          Automatically
+          {t.hero1}<br />
+          <span style={{ color: P }}>{t.hero2}</span><br />
+          {t.hero3}
         </h1>
         <p style={{ fontSize: 18, color: '#666', lineHeight: 1.65, marginBottom: 36, maxWidth: 560, margin: '0 auto 36px' }}>
-          Upload any long video. AI detects the best moments, cuts clips, adds hook titles — and publishes directly to TikTok, Reels & Shorts.
+          {t.sub}
         </p>
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 28 }}>
           <button onClick={() => setPage('dashboard')} style={{ background: P, color: '#fff', border: 'none', borderRadius: 10, padding: '15px 36px', fontSize: 15, fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 16px rgba(91,76,245,0.35)' }}>
-            Start Free Trial →
+            {t.cta1}
           </button>
           <button onClick={() => document.getElementById('how')?.scrollIntoView({ behavior: 'smooth' })} style={{ background: '#fff', color: '#1a1a1a', border: '1px solid #e8e5e0', borderRadius: 10, padding: '15px 32px', fontSize: 15, fontWeight: 500, cursor: 'pointer' }}>
-            ▶ Watch Demo
+            {t.cta2}
           </button>
         </div>
-        <p style={{ fontSize: 12.5, color: '#bbb' }}>No credit card required · 3 days free · Cancel anytime</p>
+        <p style={{ fontSize: 12.5, color: '#bbb' }}>{t.trust}</p>
       </div>
 
       {/* STATS */}
@@ -152,45 +268,6 @@ export default function Landing({ setPage }) {
                 <div style={{ fontSize: 13, color: '#888', lineHeight: 1.6 }}>{f.desc}</div>
               </div>
             ))}
-          </div>
-        </div>
-      </div>
-
-      {/* COMPARISON */}
-      <div style={{ padding: '80px 24px', maxWidth: 860, margin: '0 auto' }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48, alignItems: "center" }}>
-          <div>
-            <div style={{ fontSize: 11, fontWeight: 700, color: P, letterSpacing: '2px', marginBottom: 12 }}>WHY CLIPGEN.AI</div>
-            <h2 style={{ fontSize: 32, fontWeight: 800, letterSpacing: '-1.5px', lineHeight: 1.2, marginBottom: 16 }}>
-              Everything Opus Clip and Klap.ai can't do — in one tool you own completely.
-            </h2>
-            {['User-Directed AI — choose "motivational", "funny", "educational" and it adapts', 'Transparent Viral Scoring — understand exactly why each clip was selected', 'White Label Agency Mode — process videos for clients under your own brand', '3x Faster Processing — ready in 3 minutes for any video up to 3 hours long'].map(item => (
-              <div key={item} style={{ display: 'flex', gap: 10, marginBottom: 12, alignItems: 'flex-start' }}>
-                <div style={{ width: 20, height: 20, borderRadius: '50%', background: P, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 11, flexShrink: 0, marginTop: 1 }}>✓</div>
-                <span style={{ fontSize: 13.5, color: '#666', lineHeight: 1.5 }}>{item}</span>
-              </div>
-            ))}
-          </div>
-          <div>
-            <div style={{ background: '#f8f7f5', borderRadius: 14, overflow: 'hidden', border: '1px solid #e8e5e0' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', background: '#fff', padding: '12px 16px', borderBottom: '1px solid #e8e5e0' }}>
-                {['Feature', 'ClipGen.AI', 'Opus Clip', 'Klap'].map((h, i) => (
-                  <div key={h} style={{ fontSize: 11, fontWeight: 700, color: i === 1 ? P : '#aaa', textAlign: i > 0 ? 'center' : 'left', letterSpacing: '0.3px' }}>{h}</div>
-                ))}
-              </div>
-              {COMP.map((row, i) => (
-                <div key={row.feature} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', padding: '10px 16px', background: i % 2 === 0 ? '#fff' : '#f8f7f5', borderBottom: '1px solid #f0ede8' }}>
-                  <div style={{ fontSize: 12.5, color: '#555' }}>{row.feature}</div>
-                  {[row.us, row.opus, row.klap].map((val, j) => (
-                    <div key={j} style={{ textAlign: 'center', fontSize: 13 }}>
-                      {val === true ? <span style={{ color: '#22c55e', fontWeight: 700 }}>✓</span> :
-                       val === false ? <span style={{ color: '#ddd' }}>—</span> :
-                       <span style={{ color: '#f59e0b', fontSize: 10.5, fontWeight: 600 }}>{val}</span>}
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </div>
           </div>
         </div>
       </div>
