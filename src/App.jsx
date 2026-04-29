@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Sidebar from './components/Sidebar.jsx'
+import MobileNav from './components/MobileNav.jsx'
 import Dashboard from './pages/Dashboard.jsx'
 import GeneratedClips from './pages/GeneratedClips.jsx'
 import Projects from './pages/Projects.jsx'
@@ -12,6 +13,7 @@ export default function App() {
   const [page, setPage] = useState('landing')
   const [clips, setClips] = useState([])
   const [dark, setDark] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   if (page === 'landing') return <Landing setPage={setPage} dark={dark} />
 
@@ -30,9 +32,32 @@ export default function App() {
 
   return (
     <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', background: bg }}>
-      <Sidebar page={page} setPage={setPage} dark={dark} setDark={setDark} sidebarBg={sidebarBg} border={border} />
-      <main style={{ flex: 1, overflow: 'auto', background: bg, color: dark ? '#e8e8e8' : '#1a1a1a' }}>
-        {pages[page] || pages.dashboard}
+      {/* Desktop sidebar */}
+      <div style={{ display: 'none' }} className="desktop-sidebar-hidden">
+        {/* handled below with media query workaround */}
+      </div>
+      <Sidebar
+        page={page} setPage={setPage}
+        dark={dark} setDark={setDark}
+        sidebarBg={sidebarBg} border={border}
+        mobileMenuOpen={mobileMenuOpen}
+        setMobileMenuOpen={setMobileMenuOpen}
+      />
+      <main style={{
+        flex: 1, overflow: 'auto', background: bg,
+        color: dark ? '#e8e8e8' : '#1a1a1a',
+        display: 'flex', flexDirection: 'column',
+      }}>
+        <MobileNav
+          page={page} setPage={setPage}
+          dark={dark} setDark={setDark}
+          border={border} bg={sidebarBg}
+          mobileMenuOpen={mobileMenuOpen}
+          setMobileMenuOpen={setMobileMenuOpen}
+        />
+        <div style={{ flex: 1, overflow: 'auto' }}>
+          {pages[page] || pages.dashboard}
+        </div>
       </main>
     </div>
   )

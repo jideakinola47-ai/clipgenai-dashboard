@@ -1,7 +1,7 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { font-size: 14px; }
-body { 
-  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+body {
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background: #f8f7f5;
   color: #1a1a1a;
   -webkit-font-smoothing: antialiased;
@@ -9,4 +9,50 @@ body {
 button { cursor: pointer; font-family: inherit; }
 input, select, textarea { font-family: inherit; }
 a { text-decoration: none; color: inherit; }
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&display=swap');
+
+/* MOBILE RESPONSIVE */
+@media (max-width: 768px) {
+  /* Hide sidebar on mobile, show top nav instead */
+  .desktop-sidebar { display: none !important; }
+  .mobile-nav { display: flex !important; }
+
+  /* Landing page */
+  nav { padding: 14px 16px !important; }
+  nav .nav-links { display: none !important; }
+  nav .nav-lang { display: none !important; }
+
+  /* Hero */
+  h1 { font-size: 36px !important; letter-spacing: -1.5px !important; }
+
+  /* Dashboard */
+  .dashboard-grid { grid-template-columns: 1fr !important; }
+
+  /* Clips grid */
+  .clips-grid { grid-template-columns: 1fr 1fr !important; }
+
+  /* Analytics stats */
+  .stats-grid { grid-template-columns: 1fr 1fr !important; }
+
+  /* Pricing */
+  .pricing-grid { grid-template-columns: 1fr !important; }
+
+  /* Features */
+  .features-grid { grid-template-columns: 1fr !important; }
+
+  /* FAQ */
+  .faq-container { padding: 0 16px !important; }
+
+  /* Contact */
+  .contact-container { padding: 0 16px !important; }
+
+  /* Buttons */
+  .hero-buttons { flex-direction: column !important; align-items: stretch !important; }
+  .hero-buttons button { width: 100% !important; }
+}
+
+@media (max-width: 480px) {
+  h1 { font-size: 30px !important; }
+  .clips-grid { grid-template-columns: 1fr !important; }
+}
