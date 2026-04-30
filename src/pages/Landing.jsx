@@ -614,97 +614,36 @@ const TRANSLATIONS = {
     footerTagline: 'Gebouwd voor Europese makers',
   },
 
-  sv: {
-    ...TRANSLATIONS['en'],
-    badge: '✦ AI-powered video clipping platform',
-    hero1: 'Omvandla långa videor till',
-    hero2: 'Virala Klipp',
-    hero3: 'Automatiskt',
-    cta1: 'Börja gratis →',
-    nav: { ...TRANSLATIONS['en'].nav, start: 'Börja gratis →' },
-  },
-  no: {
-    ...TRANSLATIONS['en'],
-    badge: '✦ AI-powered video clipping platform',
-    hero1: 'Gjør lange videoer om til',
-    hero2: 'Virale Klipp',
-    hero3: 'Automatisk',
-    cta1: 'Start gratis →',
-    nav: { ...TRANSLATIONS['en'].nav, start: 'Start gratis →' },
-  },
-  da: {
-    ...TRANSLATIONS['en'],
-    badge: '✦ AI-powered video clipping platform',
-    hero1: 'Forvandl lange videoer til',
-    hero2: 'Virale Klip',
-    hero3: 'Automatisk',
-    cta1: 'Start gratis →',
-    nav: { ...TRANSLATIONS['en'].nav, start: 'Start gratis →' },
-  },
-  fi: {
-    ...TRANSLATIONS['en'],
-    badge: '✦ AI-powered video clipping platform',
-    hero1: 'Muunna pitkät videot',
-    hero2: 'Viraalisiksi Klipeiksi',
-    hero3: 'Automaattisesti',
-    cta1: 'Aloita ilmaiseksi →',
-    nav: { ...TRANSLATIONS['en'].nav, start: 'Aloita ilmaiseksi →' },
-  },
-  ja: {
-    ...TRANSLATIONS['en'],
-    badge: '✦ AI-powered video clipping platform',
-    hero1: '長い動画を',
-    hero2: 'バイラルクリップ',
-    hero3: 'に自動変換',
-    cta1: '無料で始める →',
-    nav: { ...TRANSLATIONS['en'].nav, start: '無料で始める →' },
-  },
-  zh: {
-    ...TRANSLATIONS['en'],
-    badge: '✦ AI-powered video clipping platform',
-    hero1: '将长视频转换为',
-    hero2: '病毒式短片',
-    hero3: '自动完成',
-    cta1: '免费开始 →',
-    nav: { ...TRANSLATIONS['en'].nav, start: '免费开始 →' },
-  },
-  ko: {
-    ...TRANSLATIONS['en'],
-    badge: '✦ AI-powered video clipping platform',
-    hero1: '긴 동영상을',
-    hero2: '바이럴 클립으로',
-    hero3: '자동 변환',
-    cta1: '무료로 시작 →',
-    nav: { ...TRANSLATIONS['en'].nav, start: '무료로 시작 →' },
-  },
-  ar: {
-    ...TRANSLATIONS['en'],
-    badge: '✦ AI-powered video clipping platform',
-    hero1: 'حوّل مقاطع الفيديو الطويلة إلى',
-    hero2: 'مقاطع فيروسية',
-    hero3: 'تلقائياً',
-    cta1: 'ابدأ مجاناً →',
-    nav: { ...TRANSLATIONS['en'].nav, start: 'ابدأ مجاناً →' },
-  },
-  tr: {
-    ...TRANSLATIONS['en'],
-    badge: '✦ AI-powered video clipping platform',
-    hero1: 'Uzun videoları dönüştür',
-    hero2: 'Viral Kliplere',
-    hero3: 'Otomatik olarak',
-    cta1: 'Ücretsiz başla →',
-    nav: { ...TRANSLATIONS['en'].nav, start: 'Ücretsiz başla →' },
-  },
-  hi: {
-    ...TRANSLATIONS['en'],
-    badge: '✦ AI-powered video clipping platform',
-    hero1: 'लंबे वीडियो को बदलें',
-    hero2: 'वायरल क्लिप में',
-    hero3: 'स्वचालित रूप से',
-    cta1: 'मुफ्त शुरू करें →',
-    nav: { ...TRANSLATIONS['en'].nav, start: 'मुफ्त शुरू करें →' },
-  },
+
+
+
+
+
+
+
+
+
+
 }
+
+
+// Add hero-translated languages (rest of UI falls back to English)
+const SIMPLE_LANGS = {
+  sv: { hero1: 'Omvandla långa videor till', hero2: 'Virala Klipp', hero3: 'Automatiskt', cta1: 'Börja gratis →' },
+  no: { hero1: 'Gjør lange videoer om til', hero2: 'Virale Klipp', hero3: 'Automatisk', cta1: 'Start gratis →' },
+  da: { hero1: 'Forvandl lange videoer til', hero2: 'Virale Klip', hero3: 'Automatisk', cta1: 'Start gratis →' },
+  fi: { hero1: 'Muunna pitkät videot', hero2: 'Viraalisiksi Klipeiksi', hero3: 'Automaattisesti', cta1: 'Aloita ilmaiseksi →' },
+  ja: { hero1: '長い動画を', hero2: 'バイラルクリップ', hero3: 'に自動変換', cta1: '無料で始める →' },
+  zh: { hero1: '将长视频转换为', hero2: '病毒式短片', hero3: '自动完成', cta1: '免费开始 →' },
+  ko: { hero1: '긴 동영상을', hero2: '바이럴 클립으로', hero3: '자동 변환', cta1: '무료로 시작 →' },
+  ar: { hero1: 'حوّل مقاطع الفيديو الطويلة إلى', hero2: 'مقاطع فيروسية', hero3: 'تلقائياً', cta1: 'ابدأ مجاناً →' },
+  tr: { hero1: 'Uzun videoları dönüştür', hero2: 'Viral Kliplere', hero3: 'Otomatik olarak', cta1: 'Ücretsiz başla →' },
+  hi: { hero1: 'लंबे वीडियो को बदलें', hero2: 'वायरल क्लिप में', hero3: 'स्वचालित रूप से', cta1: 'मुफ्त शुरू करें →' },
+}
+// Build merged translations (simple langs override hero only)
+Object.keys(SIMPLE_LANGS).forEach(code => {
+  TRANSLATIONS[code] = { ...TRANSLATIONS.en, ...SIMPLE_LANGS[code], nav: { ...TRANSLATIONS.en.nav, start: SIMPLE_LANGS[code].cta1 } }
+})
 
 const LANGS = [
   {code:'lt', flag:'🇱🇹', label:'Lietuvių'},
