@@ -38,19 +38,31 @@ export default function Dashboard({ setClips, setPage }) {
   const pollStatus = async (jobId) => {
     const stepMap = { uploading: 0, transcribing: 1, scoring: 2, cutting: 3, done: 4, failed: -1 }
     let attempts = 0
-    while (attempts < 200) {
-      await new Promise(r => setTimeout(r, 3000))
+    let projectId = null
+    while (attempts < 300) {
+      await new Promise(r => setTimeout(r, 5000))
       attempts++
       try {
         const res = await fetch(`${BACKEND}/status/${jobId}`)
         if (!res.ok) continue
         const data = await res.json()
-        setStep(stepMap[data.status] ?? 0)
+        if (data.project_id) projectId = data.project_id
+        setStep(stepMap[data.status] ?? 2)
         setProgress(data.progress || 0)
         if (data.status === 'done') return data
-        if (data.status === 'failed') throw new Error(data.error || 'Processing failed')
+        if (data.status === 'failed') {
+          // Try fetching directly from project_id if available
+          if (projectId) {
+            const pr = await fetch(`${BACKEND}/project/${projectId}`)
+            if (pr.ok) {
+              const pd = await pr.json()
+              if (pd.status === 'done' && pd.clips?.length > 0) return pd
+            }
+          }
+          throw new Error(data.error || 'Processing failed')
+        }
       } catch (e) {
-        if (e.message?.includes('failed') || e.message?.includes('Processing')) throw e
+        if (e.message && !e.message.includes('fetch')) throw e
       }
     }
     throw new Error('Timed out. Try a shorter video.')
