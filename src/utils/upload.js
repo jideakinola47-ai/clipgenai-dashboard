@@ -1,54 +1,134 @@
-const BACKEND = "https://web-production-189e9.up.railway.app";
+const CLOUDINARY_CLOUD_NAME =
+  import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || "de5jdqth5";
 
-export async function uploadAndProcess(file, onProgress) {
-  onProgress({ stage: "uploading", percent: 10, message: "Uploading video..." });
+const CLOUDINARY_UPLOAD_PRESET =
+  import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || "";
+
+const BACKEND_URL =
+  import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
+
+const BACKEND_PROCESS_ENDPOINT = `${BACKEND_URL}/process-video`;
+
+// ❌ REMOVE THIS (dead)
+// const CLOUDINARY_SIGN_ENDPOINT = ...
+
+// ----------------------------
+// Upload to Cloudinary
+// ----------------------------
+async function uploadVideoToCloudinary(file, onProgress) {
+  if (!CLOUDINARY_UPLOAD_PRESET) {
+    throw new Error("Missing unsigned upload preset.");
+  }
+
+  onProgress({
+    stage: "uploading",
+    percent: 15,
+    message: "Uploading video...",
+  });
 
   const form = new FormData();
   form.append("file", file);
+  form.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
 
-  let jobId;
-  try {
-    const res  = await fetch(`${BACKEND}/upload`, { method: "POST", body: form });
-    const data = await res.json();
-    if (data.error) throw new Error(data.error);
-    jobId = data.job_id;
-    console.log("Job started:", jobId);
-  } catch (e) {
-    throw new Error("Upload failed: " + e.message);
-  }
-
-  onProgress({ stage: "processing", percent: 30, message: "AI is analysing your video..." });
-
-  // Poll for up to 25 minutes (180 polls × 8 seconds)
-  for (let i = 0; i < 180; i++) {
-    await new Promise(r => setTimeout(r, 8000));
-
-    // Keep percent between 30-95, never show 100 until actually done
-    const pct = Math.min(30 + i * 0.36, 95);
-    onProgress({ 
-      stage: "processing", 
-      percent: pct, 
-      message: `Generating clips... ${Math.round(pct)}%` 
-    });
-
-    try {
-      const res  = await fetch(`${BACKEND}/status/${jobId}`);
-      const data = await res.json();
-      console.log(`Poll ${i}: status=${data.status}, clips=${data.clips?.length}`);
-
-      if (data.status === "done" && data.clips?.length > 0) {
-        onProgress({ stage: "done", percent: 100, message: "Clips ready!" });
-        return data.clips;
-      }
-      if (data.status === "failed") {
-        throw new Error(data.error || "Processing failed");
-      }
-      // status === "processing" → keep waiting
-    } catch (e) {
-      if (e.message.includes("failed") || e.message.includes("Processing")) throw e;
-      console.warn("Poll error (will retry):", e);
+  const res = await fetch(
+    `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/video/upload`,
+    {
+      method: "POST",
+      body: form,
     }
+  );
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error?.message || "Cloudinary upload failed");
   }
 
-  throw new Error("Processing timed out after 25 minutes. Please try again.");
+  if (!data.secure_url) {
+    throw new Error("No secure_url returned");
+  }
+
+  onProgress({
+    stage: "uploading",
+    percent: 35,
+    message: "Upload complete",
+  });
+
+  return data.secure_url;
+}
+
+// ----------------------------
+// Poll Vizard status
+// ----------------------------
+
+
+// ----------------------------
+// Main flow
+// ----------------------------
+async function pollProjectStatus(projectId, onProgress) {
+  while (true) {
+    const res = await fetch(`${BACKEND_URL}/project-status/${projectId}`);
+    const data = await res.json();
+
+    console.log("Polling response:", JSON.stringify(data, null, 2));
+
+    const clips = data?.data?.videoClipList;
+    if (clips && clips.length > 0) {
+      return clips;
+    }
+
+    if (data?.code !== 0 && data?.code !== undefined) {
+      throw new Error(`Vizard error: ${data?.message}`);
+    }
+
+    onProgress({ stage: "processing", percent: 70, message: "Processing video..." });
+    await new Promise((r) => setTimeout(r, 5000));
+  }
+}
+
+export async function uploadAndProcess(file, onProgress) {
+  // 1. Upload to Cloudinary
+  const secureUrl = await uploadVideoToCloudinary(file, onProgress);
+
+  onProgress({
+    stage: "processing",
+    percent: 45,
+    message: "Sending video to backend...",
+  });
+
+  // 2. Send to backend
+  const res = await fetch(BACKEND_PROCESS_ENDPOINT, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ secure_url: secureUrl }),
+  });
+
+  // Read text first, then parse
+  const text = await res.text();
+
+  if (!res.ok) {
+    throw new Error(`Backend error ${res.status}: ${text}`);
+  }
+
+  let data;
+  try {
+    data = JSON.parse(text);
+  } catch (e) {
+    throw new Error(`Backend returned invalid JSON:\n${text}`);
+  }
+
+  if (!data.projectId) {
+    throw new Error(`No projectId returned. Got: ${JSON.stringify(data)}`);
+  }
+
+  // 3. Poll until clips are ready
+  const clips = await pollProjectStatus(data.projectId, onProgress);
+
+  onProgress({
+    stage: "done",
+    percent: 100,
+    message: "Clips ready!",
+  });
+
+  return clips;
 }
