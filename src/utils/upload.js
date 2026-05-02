@@ -9,9 +9,6 @@ const BACKEND_URL =
 
 const BACKEND_PROCESS_ENDPOINT = `${BACKEND_URL}/process-video`;
 
-// ❌ REMOVE THIS (dead)
-// const CLOUDINARY_SIGN_ENDPOINT = ...
-
 // ----------------------------
 // Upload to Cloudinary
 // ----------------------------
@@ -60,11 +57,6 @@ async function uploadVideoToCloudinary(file, onProgress) {
 // ----------------------------
 // Poll Vizard status
 // ----------------------------
-
-
-// ----------------------------
-// Main flow
-// ----------------------------
 async function pollProjectStatus(projectId, onProgress) {
   while (true) {
     const res = await fetch(`${BACKEND_URL}/project-status/${projectId}`);
@@ -72,20 +64,32 @@ async function pollProjectStatus(projectId, onProgress) {
 
     console.log("Polling response:", JSON.stringify(data, null, 2));
 
-    const clips = data?.data?.videoClipList;
-    if (clips && clips.length > 0) {
-      return clips;
+    // Still processing
+    if (data?.code === 1000) {
+      onProgress({ stage: "processing", percent: 70, message: "Processing video..." });
+      await new Promise((r) => setTimeout(r, 5000));
+      continue;
     }
 
-    if (data?.code !== 0 && data?.code !== undefined) {
-      throw new Error(`Vizard error: ${data?.message}`);
+    // Done! ✅ Vizard returns "videos" array
+    if (data?.code === 2000) {
+      const clips = data?.videos;
+      if (clips && clips.length > 0) {
+        return clips;
+      }
+      onProgress({ stage: "processing", percent: 85, message: "Almost done..." });
+      await new Promise((r) => setTimeout(r, 5000));
+      continue;
     }
 
-    onProgress({ stage: "processing", percent: 70, message: "Processing video..." });
-    await new Promise((r) => setTimeout(r, 5000));
+    // Error
+    throw new Error(`Vizard error code: ${data?.code} - ${data?.errMsg || "Unknown error"}`);
   }
 }
 
+// ----------------------------
+// Main flow
+// ----------------------------
 export async function uploadAndProcess(file, onProgress) {
   // 1. Upload to Cloudinary
   const secureUrl = await uploadVideoToCloudinary(file, onProgress);
@@ -97,13 +101,15 @@ export async function uploadAndProcess(file, onProgress) {
   });
 
   // 2. Send to backend
+  console.log("Calling backend at:", BACKEND_PROCESS_ENDPOINT);
+  console.log("With URL:", secureUrl);
+
   const res = await fetch(BACKEND_PROCESS_ENDPOINT, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ secure_url: secureUrl }),
   });
 
-  // Read text first, then parse
   const text = await res.text();
 
   if (!res.ok) {

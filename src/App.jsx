@@ -17,7 +17,7 @@ export default function App() {
   }
 
   const pages = {
-    dashboard: <Dashboard setClips={setClips} setPage={setPage} />,
+    dashboard: <Dashboard onClipsReady={(clips) => { setClips(clips); setPage('clips'); }} setPage={setPage} />,
     clips: <GeneratedClips clips={clips} />,
     analytics: <Analytics />,
     pricing: <Pricing setPage={setPage} />,
