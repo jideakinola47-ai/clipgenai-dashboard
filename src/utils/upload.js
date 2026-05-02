@@ -64,25 +64,27 @@ async function pollProjectStatus(projectId, onProgress) {
 
     console.log("Polling response:", JSON.stringify(data, null, 2));
 
-    // Still processing
     if (data?.code === 1000) {
       onProgress({ stage: "processing", percent: 70, message: "Processing video..." });
       await new Promise((r) => setTimeout(r, 5000));
       continue;
     }
 
-    // Done! ✅ Vizard returns "videos" array
     if (data?.code === 2000) {
       const clips = data?.videos;
       if (clips && clips.length > 0) {
-        return clips;
+        // ✅ Clean videoUrl
+        const cleanedClips = clips.map(clip => ({
+          ...clip,
+          videoUrl: clip.videoUrl?.trim().replace(/,$/, '')
+        }));
+        return cleanedClips;
       }
       onProgress({ stage: "processing", percent: 85, message: "Almost done..." });
       await new Promise((r) => setTimeout(r, 5000));
       continue;
     }
 
-    // Error
     throw new Error(`Vizard error code: ${data?.code} - ${data?.errMsg || "Unknown error"}`);
   }
 }
