@@ -1,15 +1,14 @@
 import { useState } from 'react'
-const BACKEND = 'https://web-production-189e9.up.railway.app'
 
 function Score({ score }) {
-  const s = parseInt(score) || 0
+  const s = parseFloat(score) * 10 || 0
   const color = s >= 85 ? '#22c55e' : s >= 70 ? '#f59e0b' : '#f87171'
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
       <div style={{ flex: 1, height: 4, background: '#333', borderRadius: 2 }}>
         <div style={{ width: `${s}%`, height: '100%', background: color, borderRadius: 2 }} />
       </div>
-      <span style={{ fontSize: 12, fontWeight: 700, color, minWidth: 28 }}>{s}</span>
+      <span style={{ fontSize: 12, fontWeight: 700, color, minWidth: 28 }}>{score}</span>
     </div>
   )
 }
@@ -35,18 +34,22 @@ export default function GeneratedClips({ clips }) {
         <h1 style={{ fontSize: 22, fontWeight: 700, color: '#fff', marginBottom: 4 }}>My Clips</h1>
         <p style={{ color: '#666', fontSize: 13.5 }}>{clips.length} clips generated — ready to download or publish</p>
       </div>
-      <div className="clips-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 16 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 16 }}>
         {clips.map((clip, i) => (
-          <div key={clip.id || i} style={{ background: '#111', borderRadius: 14, border: '1px solid #1f1f1f', overflow: 'hidden' }}>
+          <div key={clip.videoId || i} style={{ background: '#111', borderRadius: 14, border: '1px solid #1f1f1f', overflow: 'hidden' }}>
             <div style={{
               background: '#0a0a0a', aspectRatio: '9/16', maxHeight: 200,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               position: 'relative', cursor: 'pointer',
             }} onClick={() => setPlaying(playing === i ? null : i)}>
               {playing === i ? (
-                <video src={`${BACKEND}${clip.stream_url}`} controls autoPlay
+                <video
+                  src={clip.videoUrl}
+                  controls
+                  autoPlay
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  onEnded={() => setPlaying(null)} />
+                  onEnded={() => setPlaying(null)}
+                />
               ) : (
                 <>
                   <div style={{
@@ -54,9 +57,9 @@ export default function GeneratedClips({ clips }) {
                     background: 'rgba(91,76,245,0.3)', border: '2px solid rgba(91,76,245,0.6)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: 18,
                   }}>▶</div>
-                  {clip.duration && (
+                  {clip.videoMsDuration && (
                     <div style={{ position: 'absolute', bottom: 8, right: 8, background: 'rgba(0,0,0,0.7)', color: '#fff', fontSize: 11, padding: '2px 6px', borderRadius: 4 }}>
-                      {Math.round(clip.duration)}s
+                      {Math.round(clip.videoMsDuration / 1000)}s
                     </div>
                   )}
                 </>
@@ -68,18 +71,33 @@ export default function GeneratedClips({ clips }) {
               </div>
               <div style={{ marginBottom: 12 }}>
                 <div style={{ fontSize: 10.5, color: '#555', marginBottom: 4, letterSpacing: '0.5px' }}>VIRAL SCORE</div>
-                <Score score={clip.score} />
+                <Score score={clip.viralScore} />
               </div>
+              {clip.transcript && (
+                <div style={{ fontSize: 11.5, color: '#555', marginBottom: 12, fontStyle: 'italic' }}>
+                  "{clip.transcript}"
+                </div>
+              )}
               <div style={{ display: 'flex', gap: 8 }}>
-                <a href={`${BACKEND}${clip.download_url}`} download style={{
-                  flex: 1, padding: '8px', borderRadius: 8,
-                  background: 'linear-gradient(135deg, #5b4cf5, #8b5cf6)', color: '#fff',
-                  fontSize: 12.5, fontWeight: 600, textAlign: 'center', display: 'block', border: 'none',
-                }}>Download</a>
-                <button style={{
-                  flex: 1, padding: '8px', borderRadius: 8,
-                  background: '#1a1a1a', color: '#aaa', fontSize: 12.5, border: '1px solid #2a2a2a',
-                }}>Publish</button>
+                <a
+                  href={clip.videoUrl}
+                  download
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{
+                    flex: 1, padding: '8px', borderRadius: 8,
+                    background: 'linear-gradient(135deg, #5b4cf5, #8b5cf6)', color: '#fff',
+                    fontSize: 12.5, fontWeight: 600, textAlign: 'center', display: 'block', textDecoration: 'none',
+                  }}>Download</a>
+                <a
+                  href={clip.clipEditorUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{
+                    flex: 1, padding: '8px', borderRadius: 8,
+                    background: '#1a1a1a', color: '#aaa', fontSize: 12.5,
+                    border: '1px solid #2a2a2a', textAlign: 'center', display: 'block', textDecoration: 'none',
+                  }}>Edit</a>
               </div>
             </div>
           </div>
