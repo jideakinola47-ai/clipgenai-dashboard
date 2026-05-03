@@ -37,8 +37,18 @@
     <link rel="apple-touch-icon" href="/logo.jpg" />
     
     <!-- PWA Manifest -->
-    <link rel="manifest" href="/manifest.json" />
-    <script type="module" crossorigin src="/assets/index-BLnChV4X.js"></script>
+    <script>
+  // Don't load manifest in Codespaces environment
+  const isCodespaces = window.location.hostname.includes('github.dev') || 
+                       window.location.hostname.includes('app.github.dev');
+  if (!isCodespaces && 'serviceWorker' in navigator) {
+    const link = document.createElement('link');
+    link.rel = 'manifest';
+    link.href = '/manifest.json';
+    document.head.appendChild(link);
+  }
+</script>
+    <script type="module" crossorigin src="/assets/index-CutnKBdP.js"></script>
     <link rel="stylesheet" crossorigin href="/assets/index-CG-KL9RD.css">
   </head>
   <body>

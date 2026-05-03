@@ -658,21 +658,37 @@ const LANGS = [
   {code:'hi', flag:'🇮🇳', label:'हिन्दी'},
 ]
 
+// Landing.jsx - Fully Responsive
+import { useEffect } from 'react'
+
+// [Keep all your TRANSLATIONS and LANGS arrays exactly as they are - they're fine]
+// ... (paste your TRANSLATIONS and LANGS here)
+
 export default function Landing() {
   const navigate = useNavigate()
   const { isDark } = useTheme()
-  const [lang, setLang] = useState('lt')
+  const [lang, setLang] = useState('en')
   const [openFaq, setOpenFaq] = useState(null)
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [msg, setMsg] = useState('')
   const [sent, setSent] = useState(false)
   const [billing, setBilling] = useState('monthly')
+  const [isMobile, setIsMobile] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   const t = TRANSLATIONS[lang] || TRANSLATIONS['en']
   const P = '#5b4cf5'
 
-  // Theme-aware styles
   const bgColor = isDark ? '#0a0a0a' : '#ffffff'
   const surfaceColor = isDark ? '#141414' : '#f8f7f5'
   const surfaceColor2 = isDark ? '#1a1a1a' : '#ffffff'
@@ -691,20 +707,28 @@ export default function Landing() {
     navigate('/signup')
   }
 
-  return (
-    <div style={{ fontFamily: 'Inter, -apple-system, sans-serif', color: textColor, background: bgColor }}>
+  const scrollToSection = (id) => {
+    const element = document.getElementById(id)
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' })
+    }
+    setIsMenuOpen(false)
+  }
 
-      {/* NAV */}
+  return (
+    <div style={{ fontFamily: 'Inter, -apple-system, sans-serif', color: textColor, background: bgColor, overflowX: 'hidden' }}>
+
+      {/* NAV - Responsive with hamburger */}
       <nav style={{
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: '16px 48px',
+        padding: isMobile ? '12px 16px' : '16px 48px',
         borderBottom: `1px solid ${borderColor}`,
         position: 'sticky',
         top: 0,
         background: bgColor,
-        zIndex: 100
+        zIndex: 1000
       }}>
         <div
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
@@ -713,46 +737,119 @@ export default function Landing() {
           <img src="https://iili.io/BQ9axkJ.md.jpg" style={{ width: 34, height: 34, borderRadius: '50%' }} alt="Logo" />
           <span style={{ fontWeight: 800, fontSize: 16, letterSpacing: '-0.5px', color: textColor }}>ClipGen.AI</span>
         </div>
-        <div className="nav-links" style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
-          {[['features', t.nav.features], ['how', t.nav.how], ['pricing', t.nav.pricing], ['faq', t.nav.faq]].map(([id, label]) => (
-            <button key={id} onClick={() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })}
-              style={{ padding: '7px 12px', color: textMuted, fontSize: 13.5, background: 'none', border: 'none', cursor: 'pointer' }}>{label}</button>
-          ))}
-        </div>
+
+        {/* Desktop Navigation */}
+        {!isMobile && (
+          <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+            {[['features', t.nav.features], ['how', t.nav.how], ['pricing', t.nav.pricing], ['faq', t.nav.faq]].map(([id, label]) => (
+              <button key={id} onClick={() => scrollToSection(id)}
+                style={{ padding: '7px 12px', color: textMuted, fontSize: 13.5, background: 'none', border: 'none', cursor: 'pointer' }}>
+                {label}
+              </button>
+            ))}
+          </div>
+        )}
+
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
           <select value={lang} onChange={e => setLang(e.target.value)}
             style={{
-              padding: '7px 10px',
+              padding: isMobile ? '6px 8px' : '7px 10px',
               borderRadius: 8,
               border: `1px solid ${borderColor}`,
               background: inputBg,
-              fontSize: 12.5,
+              fontSize: isMobile ? 11 : 12.5,
               outline: 'none',
               cursor: 'pointer',
-              color: textColor
+              color: textColor,
+              maxWidth: isMobile ? '70px' : 'auto'
             }}>
-            {LANGS.map(l => <option key={l.code} value={l.code}>{l.flag} {l.label}</option>)}
+            {LANGS.slice(0, isMobile ? 5 : 20).map(l => <option key={l.code} value={l.code}>{l.flag} {isMobile ? '' : l.label}</option>)}
           </select>
           <ThemeToggle />
+          
+          {/* Only show Start button on desktop */}
+          {!isMobile && (
+            <button onClick={handleGetStarted}
+              style={{
+                background: P,
+                color: '#fff',
+                border: 'none',
+                borderRadius: 8,
+                padding: '9px 20px',
+                fontSize: 13.5,
+                fontWeight: 600,
+                cursor: 'pointer',
+                boxShadow: '0 2px 8px rgba(91,76,245,0.3)',
+                whiteSpace: 'nowrap'
+              }}>
+              {t.nav.start}
+            </button>
+          )}
+          
+          {/* Hamburger Menu for Mobile - only visible on mobile */}
+          {isMobile && (
+            <button 
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              style={{
+                background: 'none',
+                border: 'none',
+                fontSize: 22,
+                cursor: 'pointer',
+                color: textColor,
+                padding: '4px 8px',
+                display: 'flex',
+                alignItems: 'center',
+                marginLeft: 'auto'
+              }}
+            >
+              {isMenuOpen ? '✕' : '☰'}
+            </button>
+          )}
+        </div>
+      </nav>
+
+      {/* Mobile Menu Dropdown - includes the Start button */}
+      {isMobile && isMenuOpen && (
+        <div style={{
+          position: 'absolute',
+          top: '65px',
+          left: 0,
+          right: 0,
+          background: bgColor,
+          borderBottom: `1px solid ${borderColor}`,
+          padding: '16px 20px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 12,
+          zIndex: 999,
+          boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+        }}>
+          {[['features', t.nav.features], ['how', t.nav.how], ['pricing', t.nav.pricing], ['faq', t.nav.faq]].map(([id, label]) => (
+            <button key={id} onClick={() => scrollToSection(id)}
+              style={{ padding: '10px 0', color: textColor, fontSize: 14, background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}>
+              {label}
+            </button>
+          ))}
           <button onClick={handleGetStarted}
             style={{
               background: P,
               color: '#fff',
               border: 'none',
               borderRadius: 8,
-              padding: '9px 20px',
-              fontSize: 13.5,
+              padding: '12px',
+              fontSize: 14,
               fontWeight: 600,
               cursor: 'pointer',
-              boxShadow: '0 2px 8px rgba(91,76,245,0.3)'
+              marginTop: 8,
+              width: '100%'
             }}>
             {t.nav.start}
           </button>
         </div>
-      </nav>
+      )}
 
-      {/* HERO */}
-      <div style={{ textAlign: 'center', padding: '80px 24px 60px', maxWidth: 800, margin: '0 auto' }}>
+      {/* HERO - Responsive */}
+      <div style={{ textAlign: 'center', padding: isMobile ? '40px 20px' : '80px 24px 60px', maxWidth: 800, margin: '0 auto' }}>
         <div style={{
           display: 'inline-flex',
           alignItems: 'center',
@@ -768,11 +865,11 @@ export default function Landing() {
         }}>
           {t.badge}
         </div>
-        <h1 className="hero-title" style={{
-          fontSize: 60,
+        <h1 style={{
+          fontSize: isMobile ? 32 : 60,
           fontWeight: 800,
-          letterSpacing: '-3px',
-          lineHeight: 1.05,
+          letterSpacing: isMobile ? '-1px' : '-3px',
+          lineHeight: 1.2,
           marginBottom: 20,
           color: textColor
         }}>
@@ -780,17 +877,19 @@ export default function Landing() {
           <span style={{ color: P }}>{t.hero2}</span><br />
           {t.hero3}
         </h1>
-        <p style={{ fontSize: 18, color: textMuted, lineHeight: 1.65, maxWidth: 560, margin: '0 auto 36px' }}>{t.heroSub}</p>
+        <p style={{ fontSize: isMobile ? 16 : 18, color: textMuted, lineHeight: 1.65, maxWidth: 560, margin: '0 auto 36px' }}>{t.heroSub}</p>
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 20 }}>
-          <button onClick={handleGetStarted} style={{ background: P, color: '#fff', border: 'none', borderRadius: 10, padding: '15px 36px', fontSize: 15, fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 16px rgba(91,76,245,0.35)' }}>{t.cta1}</button>
-          <button onClick={() => document.getElementById('how')?.scrollIntoView({ behavior: 'smooth' })}
+          <button onClick={handleGetStarted} style={{ background: P, color: '#fff', border: 'none', borderRadius: 10, padding: isMobile ? '12px 24px' : '15px 36px', fontSize: isMobile ? 14 : 15, fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 16px rgba(91,76,245,0.35)' }}>
+            {t.cta1}
+          </button>
+          <button onClick={() => scrollToSection('how')}
             style={{
               background: surfaceColor2,
               color: textColor,
               border: `1px solid ${borderColor}`,
               borderRadius: 10,
-              padding: '15px 32px',
-              fontSize: 15,
+              padding: isMobile ? '12px 24px' : '15px 32px',
+              fontSize: isMobile ? 14 : 15,
               fontWeight: 500,
               cursor: 'pointer'
             }}>{t.cta2}</button>
@@ -798,70 +897,67 @@ export default function Landing() {
         <p style={{ fontSize: 12.5, color: isDark ? '#555' : '#bbb' }}>{t.trust}</p>
       </div>
 
-      {/* STATS */}
-      <div style={{ background: surfaceColor, padding: '40px 24px' }}>
-        <div className="hero-stats" style={{ maxWidth: 800, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20, textAlign: 'center' }}>
+      {/* STATS - Responsive Grid */}
+      <div style={{ background: surfaceColor, padding: isMobile ? '30px 20px' : '40px 24px' }}>
+        <div style={{ maxWidth: 800, margin: '0 auto', display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap: 20, textAlign: 'center' }}>
           {['2.4M+', '152K', '96', '10x'].map((val, i) => (
             <div key={i}>
-              <div style={{ fontSize: 32, fontWeight: 800, color: textColor, letterSpacing: '-1px' }}>{val}</div>
+              <div style={{ fontSize: isMobile ? 24 : 32, fontWeight: 800, color: textColor, letterSpacing: '-1px' }}>{val}</div>
               <div style={{ fontSize: 13, color: textMuted, marginTop: 4 }}>{t.statsLabels[i]}</div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* HOW IT WORKS */}
-      <div id="how" style={{ padding: '80px 24px', maxWidth: 900, margin: '0 auto' }}>
+      {/* HOW IT WORKS - Responsive Grid */}
+      <div id="how" style={{ padding: isMobile ? '50px 20px' : '80px 24px', maxWidth: 900, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 48 }}>
           <div style={{ fontSize: 11, fontWeight: 700, color: P, letterSpacing: '2px', marginBottom: 12 }}>{t.howLabel}</div>
-          <h2 style={{ fontSize: 36, fontWeight: 800, letterSpacing: '-1.5px', marginBottom: 8, color: textColor }}>
+          <h2 style={{ fontSize: isMobile ? 28 : 36, fontWeight: 800, letterSpacing: '-1.5px', marginBottom: 8, color: textColor }}>
             {t.howTitle} <span style={{ color: P }}>{t.howTitle2}</span>
           </h2>
-          <p style={{ color: textMuted, fontSize: 15 }}>{t.howSub}</p>
+          <p style={{ color: textMuted, fontSize: isMobile ? 14 : 15 }}>{t.howSub}</p>
         </div>
-        <div className="steps-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(4, 1fr)', gap: 30 }}>
           {t.steps.map((s, i) => (
             <div key={i} style={{ position: 'relative' }}>
-              {i < 3 && <div style={{ position: 'absolute', top: 20, left: '60%', width: '80%', height: 1, background: borderColor, zIndex: 0 }} />}
-              <div style={{ position: 'relative', zIndex: 1 }}>
-                <div style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: 10,
-                  background: P + '15',
-                  border: `1px solid ${P}30`,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: 12,
-                  fontWeight: 700,
-                  color: P,
-                  marginBottom: 14
-                }}>0{i + 1}</div>
-                <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 8, color: textColor }}>{s.title}</div>
-                <div style={{ fontSize: 12.5, color: textMuted, lineHeight: 1.55 }}>{s.desc}</div>
-              </div>
+              <div style={{
+                width: 40,
+                height: 40,
+                borderRadius: 10,
+                background: P + '15',
+                border: `1px solid ${P}30`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 12,
+                fontWeight: 700,
+                color: P,
+                marginBottom: 14
+              }}>0{i + 1}</div>
+              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 8, color: textColor }}>{s.title}</div>
+              <div style={{ fontSize: 12.5, color: textMuted, lineHeight: 1.55 }}>{s.desc}</div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* FEATURES */}
-      <div id="features" style={{ background: surfaceColor, padding: '80px 24px' }}>
+      {/* FEATURES - Responsive Grid */}
+      <div id="features" style={{ background: surfaceColor, padding: isMobile ? '50px 20px' : '80px 24px' }}>
         <div style={{ maxWidth: 900, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 48 }}>
             <div style={{ fontSize: 11, fontWeight: 700, color: P, letterSpacing: '2px', marginBottom: 12 }}>{t.featLabel}</div>
-            <h2 style={{ fontSize: 36, fontWeight: 800, letterSpacing: '-1.5px', marginBottom: 8, color: textColor }}>
+            <h2 style={{ fontSize: isMobile ? 28 : 36, fontWeight: 800, letterSpacing: '-1.5px', marginBottom: 8, color: textColor }}>
               {t.featTitle} <span style={{ color: P }}>{t.featTitle2}</span>
             </h2>
-            <p style={{ color: textMuted, fontSize: 15 }}>{t.featSub}</p>
+            <p style={{ color: textMuted, fontSize: isMobile ? 14 : 15 }}>{t.featSub}</p>
           </div>
-          <div className="features-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: 20 }}>
             {t.features.map((f, i) => (
               <div key={i} style={{
                 background: cardBg,
                 borderRadius: 14,
-                padding: '24px',
+                padding: '20px',
                 border: `1px solid ${borderColor}`
               }}>
                 <div style={{
@@ -883,17 +979,17 @@ export default function Landing() {
         </div>
       </div>
 
-      {/* PRICING */}
-      <div id="pricing" style={{ padding: '80px 24px' }}>
+      {/* PRICING - Responsive */}
+      <div id="pricing" style={{ padding: isMobile ? '50px 20px' : '80px 24px' }}>
         <div style={{ maxWidth: 900, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 48 }}>
             <div style={{ fontSize: 11, fontWeight: 700, color: P, letterSpacing: '2px', marginBottom: 12 }}>{t.pricingLabel}</div>
-            <h2 style={{ fontSize: 36, fontWeight: 800, letterSpacing: '-1.5px', marginBottom: 8, color: textColor }}>{t.pricingTitle}</h2>
-            <p style={{ color: textMuted, fontSize: 15, marginBottom: 20 }}>{t.pricingSub}</p>
+            <h2 style={{ fontSize: isMobile ? 28 : 36, fontWeight: 800, letterSpacing: '-1.5px', marginBottom: 8, color: textColor }}>{t.pricingTitle}</h2>
+            <p style={{ color: textMuted, fontSize: isMobile ? 14 : 15, marginBottom: 20 }}>{t.pricingSub}</p>
             <div style={{ display: 'inline-flex', background: surfaceColor, borderRadius: 10, padding: 4 }}>
               {['monthly', 'yearly'].map(b => (
                 <button key={b} onClick={() => setBilling(b)} style={{
-                  padding: '7px 20px',
+                  padding: isMobile ? '5px 16px' : '7px 20px',
                   borderRadius: 8,
                   border: 'none',
                   background: billing === b ? cardBg : 'transparent',
@@ -907,15 +1003,14 @@ export default function Landing() {
               ))}
             </div>
           </div>
-          <div className="pricing-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: 20 }}>
             {t.plans.map((plan, i) => (
               <div key={i} style={{
                 background: cardBg,
                 border: `2px solid ${i === 1 ? P : borderColor}`,
                 borderRadius: 16,
-                padding: '28px 24px',
-                position: 'relative',
-                boxShadow: i === 1 ? `0 8px 32px ${isDark ? 'rgba(91,76,245,0.2)' : 'rgba(91,76,245,0.15)'}` : 'none'
+                padding: '24px',
+                position: 'relative'
               }}>
                 {i === 1 && <div style={{ position: 'absolute', top: -12, left: '50%', transform: 'translateX(-50%)', background: P, color: '#fff', borderRadius: 20, padding: '3px 14px', fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap' }}>BEST VALUE</div>}
                 <div style={{ fontSize: 12, fontWeight: 700, color: textMuted, letterSpacing: '0.5px', marginBottom: 6 }}>{plan.name.toUpperCase()}</div>
@@ -937,7 +1032,7 @@ export default function Landing() {
                   marginBottom: 22
                 }}>{plan.cta}</button>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                  {plan.features.map((f, j) => (
+                  {plan.features.slice(0, isMobile ? 4 : 7).map((f, j) => (
                     <div key={j} style={{ display: 'flex', gap: 8, fontSize: 13 }}>
                       <span style={{ color: P, fontWeight: 700, flexShrink: 0 }}>✓</span>
                       <span style={{ color: textMuted }}>{f}</span>
@@ -950,19 +1045,19 @@ export default function Landing() {
         </div>
       </div>
 
-      {/* FAQ */}
-      <div id="faq" style={{ background: surfaceColor, padding: '80px 24px' }}>
+      {/* FAQ - Responsive */}
+      <div id="faq" style={{ background: surfaceColor, padding: isMobile ? '50px 20px' : '80px 24px' }}>
         <div style={{ maxWidth: 680, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 48 }}>
             <div style={{ fontSize: 11, fontWeight: 700, color: P, letterSpacing: '2px', marginBottom: 12 }}>{t.faqLabel}</div>
-            <h2 style={{ fontSize: 32, fontWeight: 800, letterSpacing: '-1.5px', marginBottom: 8, color: textColor }}>{t.faqTitle}</h2>
-            <p style={{ color: textMuted, fontSize: 15 }}>{t.faqSub}</p>
+            <h2 style={{ fontSize: isMobile ? 28 : 32, fontWeight: 800, letterSpacing: '-1.5px', marginBottom: 8, color: textColor }}>{t.faqTitle}</h2>
+            <p style={{ color: textMuted, fontSize: isMobile ? 14 : 15 }}>{t.faqSub}</p>
           </div>
-          {t.faqs.map((faq, i) => (
+          {t.faqs.slice(0, isMobile ? 4 : 8).map((faq, i) => (
             <div key={i} style={{ borderBottom: `1px solid ${borderColor}` }}>
               <button onClick={() => setOpenFaq(openFaq === i ? null : i)} style={{
                 width: '100%',
-                padding: '18px 0',
+                padding: isMobile ? '14px 0' : '18px 0',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
@@ -971,7 +1066,7 @@ export default function Landing() {
                 cursor: 'pointer',
                 textAlign: 'left'
               }}>
-                <span style={{ fontWeight: 600, fontSize: 14.5, color: textColor }}>{faq.q}</span>
+                <span style={{ fontWeight: 600, fontSize: isMobile ? 13.5 : 14.5, color: textColor }}>{faq.q}</span>
                 <span style={{ color: P, fontSize: 20, fontWeight: 300, marginLeft: 16, flexShrink: 0 }}>{openFaq === i ? '−' : '+'}</span>
               </button>
               {openFaq === i && <div style={{ paddingBottom: 18, fontSize: 14, color: textMuted, lineHeight: 1.65 }}>{faq.a}</div>}
@@ -980,20 +1075,20 @@ export default function Landing() {
         </div>
       </div>
 
-      {/* CONTACT */}
-      <div id="contact" style={{ padding: '80px 24px' }}>
+      {/* CONTACT - Responsive */}
+      <div id="contact" style={{ padding: isMobile ? '50px 20px' : '80px 24px' }}>
         <div style={{ maxWidth: 560, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 36 }}>
-            <h2 style={{ fontSize: 32, fontWeight: 800, letterSpacing: '-1.5px', marginBottom: 8, color: textColor }}>{t.contactTitle}</h2>
-            <p style={{ color: textMuted, fontSize: 15 }}>{t.contactSub}</p>
+            <h2 style={{ fontSize: isMobile ? 28 : 32, fontWeight: 800, letterSpacing: '-1.5px', marginBottom: 8, color: textColor }}>{t.contactTitle}</h2>
+            <p style={{ color: textMuted, fontSize: isMobile ? 14 : 15 }}>{t.contactSub}</p>
           </div>
           <div style={{
             background: cardBg,
             borderRadius: 16,
-            padding: '32px',
+            padding: isMobile ? '20px' : '32px',
             border: `1px solid ${borderColor}`
           }}>
-            <div className="contact-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 12, marginBottom: 12 }}>
               <input value={name} onChange={e => setName(e.target.value)} placeholder={t.namePh} style={{
                 padding: '11px 14px',
                 borderRadius: 8,
@@ -1013,7 +1108,7 @@ export default function Landing() {
                 color: textColor
               }} />
             </div>
-            <textarea value={msg} onChange={e => setMsg(e.target.value)} placeholder={t.msgPh} rows={4} style={{
+            <textarea value={msg} onChange={e => setMsg(e.target.value)} placeholder={t.msgPh} rows={isMobile ? 3 : 4} style={{
               width: '100%',
               padding: '11px 14px',
               borderRadius: 8,
@@ -1044,41 +1139,43 @@ export default function Landing() {
         </div>
       </div>
 
-      {/* CTA */}
-      <div style={{ background: isDark ? '#0a0a0a' : '#f0f0f0', padding: '80px 24px', textAlign: 'center' }}>
-        <h2 style={{ fontSize: 40, fontWeight: 800, letterSpacing: '-2px', marginBottom: 16, color: textColor }}>{t.ctaFinalTitle}</h2>
-        <p style={{ fontSize: 16, color: textMuted, marginBottom: 32 }}>{t.ctaFinalSub}</p>
+      {/* CTA - Responsive */}
+      <div style={{ background: isDark ? '#0a0a0a' : '#f0f0f0', padding: isMobile ? '50px 20px' : '80px 24px', textAlign: 'center' }}>
+        <h2 style={{ fontSize: isMobile ? 28 : 40, fontWeight: 800, letterSpacing: '-1.5px', marginBottom: 16, color: textColor }}>{t.ctaFinalTitle}</h2>
+        <p style={{ fontSize: isMobile ? 14 : 16, color: textMuted, marginBottom: 32 }}>{t.ctaFinalSub}</p>
         <button onClick={handleGetStarted} style={{
           background: P,
           color: '#fff',
           border: 'none',
           borderRadius: 10,
-          padding: '15px 36px',
-          fontSize: 15,
+          padding: isMobile ? '12px 28px' : '15px 36px',
+          fontSize: isMobile ? 14 : 15,
           fontWeight: 700,
           cursor: 'pointer',
           boxShadow: '0 4px 20px rgba(91,76,245,0.4)'
         }}>{t.ctaFinalBtn}</button>
       </div>
 
-      {/* FOOTER */}
+      {/* FOOTER - Responsive */}
       <div style={{
         background: isDark ? '#0a0a0a' : '#f8f7f5',
-        padding: '28px 48px',
+        padding: isMobile ? '20px 20px' : '28px 48px',
         borderTop: `1px solid ${borderColor}`,
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
         flexWrap: 'wrap',
-        gap: 12
+        gap: 12,
+        textAlign: isMobile ? 'center' : 'left',
+        flexDirection: isMobile ? 'column' : 'row'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <img src="https://iili.io/BQ9axkJ.md.jpg" style={{ width: 26, height: 26, borderRadius: '50%' }} alt="Logo" />
           <span style={{ fontWeight: 700, fontSize: 14, color: textColor }}>ClipGen.AI</span>
         </div>
-        <div style={{ display: 'flex', gap: 16 }}>
+        <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', justifyContent: 'center' }}>
           {[['features', t.nav.features], ['how', t.nav.how], ['pricing', t.nav.pricing], ['faq', t.nav.faq], ['contact', t.contactTitle]].map(([id, label]) => (
-            <button key={id} onClick={() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })}
+            <button key={id} onClick={() => scrollToSection(id)}
               style={{ color: textMuted, fontSize: 13, background: 'none', border: 'none', cursor: 'pointer' }}>{label}</button>
           ))}
         </div>
