@@ -5,7 +5,7 @@ import { useTheme } from '../contexts/ThemeContext'
 import ThemeToggle from './ThemeToggle'
 import { useAuth } from '../contexts/AuthContext'
 
-const API_BASE_URL = 'https://obscure-space-pancake-x59gxvw69545c6qr5-8000.app.github.dev';
+const API_BASE_URL = 'https://web-production-189e9.up.railway.app';
 
 const NAV = [
   { id: 'dashboard', label: 'Dashboard', icon: '⊞', path: '/dashboard' },

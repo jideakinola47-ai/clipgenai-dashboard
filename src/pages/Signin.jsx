@@ -194,31 +194,6 @@ export default function Signin() {
           <div style={{ flex: 1, height: 1, background: theme.border }} />
         </div>
 
-        {/* Social Signin */}
-        <div style={{ display: 'flex', gap: 12 }}>
-          {['Google', 'Apple', 'GitHub'].map(provider => (
-            <button
-              key={provider}
-              style={{
-                flex: 1,
-                padding: '10px',
-                borderRadius: 8,
-                background: theme.bg,
-                border: `1px solid ${theme.border}`,
-                color: theme.text,
-                fontSize: 13,
-                fontWeight: 500,
-                cursor: 'pointer',
-                transition: 'all 0.2s',
-              }}
-              onMouseEnter={(e) => e.target.style.background = theme.inputBg}
-              onMouseLeave={(e) => e.target.style.background = theme.bg}
-            >
-              {provider}
-            </button>
-          ))}
-        </div>
-
         {/* Sign Up Link */}
         <div style={{ textAlign: 'center', marginTop: 24 }}>
           <span style={{ color: theme.textMuted, fontSize: 13 }}>

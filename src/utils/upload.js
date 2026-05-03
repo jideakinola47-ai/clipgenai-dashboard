@@ -1,5 +1,5 @@
 // utils/upload.js
-const API_BASE_URL = 'https://obscure-space-pancake-x59gxvw69545c6qr5-8000.app.github.dev';
+const API_BASE_URL = 'https://web-production-189e9.up.railway.app';
 
 export async function uploadAndProcess(videoUrl, videoType = 2, subtitleLang = 'auto',onProgress) {
   try {

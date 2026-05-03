@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { useTheme } from '../contexts/ThemeContext'
 import { useAuth } from '../contexts/AuthContext'
 
-const API_BASE_URL = 'https://obscure-space-pancake-x59gxvw69545c6qr5-8000.app.github.dev';
+const API_BASE_URL = 'https://web-production-189e9.up.railway.app';
 
 function Score({ score }) {
   const { isDark } = useTheme()
@@ -231,27 +231,7 @@ function VideoRow({ video, clips, onOpenCarousel }) {
                 >
                   Download
                 </a>
-                {clip.clip_editor_url && (
-                  <a
-                    href={clip.clip_editor_url}
-                    target="_blank"
-                    rel="noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                    style={{
-                      flex: 1,
-                      padding: '5px',
-                      borderRadius: 6,
-                      background: 'transparent',
-                      border: `1px solid ${theme.border}`,
-                      color: theme.textMuted,
-                      fontSize: 10,
-                      textAlign: 'center',
-                      textDecoration: 'none',
-                    }}
-                  >
-                    Edit
-                  </a>
-                )}
+                
               </div>
             </div>
           </div>
