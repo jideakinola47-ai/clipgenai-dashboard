@@ -81,7 +81,7 @@ export default function Signup() {
       }}>
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <img src="/logo.png" style={{ width: 48, height: 48, borderRadius: '50%', marginBottom: 16 }} alt="Logo" />
+          <img src="/logo.jpg" style={{ width: 48, height: 48, borderRadius: '50%', marginBottom: 16 }} alt="Logo" />
           <h1 style={{ fontSize: 28, fontWeight: 700, color: theme.text, marginBottom: 8 }}>Create Account</h1>
           <p style={{ color: theme.textMuted, fontSize: 14 }}>Start creating viral clips today</p>
         </div>
