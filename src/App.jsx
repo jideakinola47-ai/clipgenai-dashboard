@@ -12,6 +12,7 @@ import Signup from './pages/Signup.jsx'
 import Signin from './pages/Signin.jsx'
 import Sidebar from './components/Sidebar.jsx'
 import MobileNav from './components/MobileNav.jsx'
+import { useState, useEffect } from 'react'
 
 // Protected Route wrapper
 function ProtectedRoute() {
@@ -39,14 +40,27 @@ function ProtectedRoute() {
 }
 
 // Layout component for authenticated pages
+// Layout component for authenticated pages
 function AppLayout() {
   const { user } = useAuth()
-  
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   return (
     <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
-      <Sidebar />
+      {/* Only show Sidebar on desktop */}
+      {!isMobile && <Sidebar />}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-        <MobileNav />
+        {/* Only show MobileNav on mobile */}
+        {isMobile && <MobileNav />}
         <main style={{ flex: 1, overflow: 'auto' }}>
           <Outlet />
         </main>
