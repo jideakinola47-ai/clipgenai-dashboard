@@ -78,7 +78,7 @@ export async function uploadAndProcess(videoUrl, videoType = 2, subtitleLang = '
     onProgress({ stage: "polling", percent: 60, message: "Clip Gen AI is generating clips..." });
     
     let attempts = 0;
-    const maxAttempts = 50; // Increased for longer videos
+    const maxAttempts = 100; // Increased for longer videos
     let completed = false;
     let clipsData = null;
     
