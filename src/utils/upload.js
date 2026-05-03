@@ -1,142 +1,141 @@
-const CLOUDINARY_CLOUD_NAME =
-  import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || "de5jdqth5";
+// utils/upload.js
+const API_BASE_URL = 'https://obscure-space-pancake-x59gxvw69545c6qr5-8000.app.github.dev';
 
-const CLOUDINARY_UPLOAD_PRESET =
-  import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || "";
-
-const BACKEND_URL =
-  import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
-
-const BACKEND_PROCESS_ENDPOINT = `${BACKEND_URL}/process-video`;
-
-// ----------------------------
-// Upload to Cloudinary
-// ----------------------------
-async function uploadVideoToCloudinary(file, onProgress) {
-  if (!CLOUDINARY_UPLOAD_PRESET) {
-    throw new Error("Missing unsigned upload preset.");
-  }
-
-  onProgress({
-    stage: "uploading",
-    percent: 15,
-    message: "Uploading video...",
-  });
-
-  const form = new FormData();
-  form.append("file", file);
-  form.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
-
-  const res = await fetch(
-    `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/video/upload`,
-    {
-      method: "POST",
-      body: form,
-    }
-  );
-
-  const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(data.error?.message || "Cloudinary upload failed");
-  }
-
-  if (!data.secure_url) {
-    throw new Error("No secure_url returned");
-  }
-
-  onProgress({
-    stage: "uploading",
-    percent: 35,
-    message: "Upload complete",
-  });
-
-  return data.secure_url;
-}
-
-// ----------------------------
-// Poll Vizard status
-// ----------------------------
-async function pollProjectStatus(projectId, onProgress) {
-  while (true) {
-    const res = await fetch(`${BACKEND_URL}/project-status/${projectId}`);
-    const data = await res.json();
-
-    console.log("Polling response:", JSON.stringify(data, null, 2));
-
-    if (data?.code === 1000) {
-      onProgress({ stage: "processing", percent: 70, message: "Processing video..." });
-      await new Promise((r) => setTimeout(r, 5000));
-      continue;
-    }
-
-    if (data?.code === 2000) {
-      const clips = data?.videos;
-      if (clips && clips.length > 0) {
-        // ✅ Clean videoUrl
-        const cleanedClips = clips.map(clip => ({
-          ...clip,
-          videoUrl: clip.videoUrl?.trim().replace(/,$/, '')
-        }));
-        return cleanedClips;
-      }
-      onProgress({ stage: "processing", percent: 85, message: "Almost done..." });
-      await new Promise((r) => setTimeout(r, 5000));
-      continue;
-    }
-
-    throw new Error(`Vizard error code: ${data?.code} - ${data?.errMsg || "Unknown error"}`);
-  }
-}
-
-// ----------------------------
-// Main flow
-// ----------------------------
-export async function uploadAndProcess(file, onProgress) {
-  // 1. Upload to Cloudinary
-  const secureUrl = await uploadVideoToCloudinary(file, onProgress);
-
-  onProgress({
-    stage: "processing",
-    percent: 45,
-    message: "Sending video to backend...",
-  });
-
-  // 2. Send to backend
-  console.log("Calling backend at:", BACKEND_PROCESS_ENDPOINT);
-  console.log("With URL:", secureUrl);
-
-  const res = await fetch(BACKEND_PROCESS_ENDPOINT, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ secure_url: secureUrl }),
-  });
-
-  const text = await res.text();
-
-  if (!res.ok) {
-    throw new Error(`Backend error ${res.status}: ${text}`);
-  }
-
-  let data;
+export async function uploadAndProcess(videoUrl, videoType = 2, subtitleLang = 'auto',onProgress) {
   try {
-    data = JSON.parse(text);
-  } catch (e) {
-    throw new Error(`Backend returned invalid JSON:\n${text}`);
+    console.log('Processing video URL:', videoUrl);
+    console.log('Video type:', videoType);
+    
+    onProgress({ stage: "auth", percent: 10, message: "Authenticating..." });
+    
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      throw new Error('No authentication token found. Please login again.');
+    }
+    
+    // Send directly to your backend (which will use Vizard)
+    onProgress({ stage: "processing", percent: 30, message: "Sending to Clip Gen AI..." });
+    
+    const requestBody = {
+      video_url: videoUrl,
+      video_type: videoType,
+      lang: subtitleLang,
+      subtitle_switch: 1,
+    };
+    
+    // Add ext only for direct URLs (videoType = 1)
+    if (videoType === 1) {
+      requestBody.ext = "mp4";
+    }
+    
+    console.log('Request body:', requestBody);
+    
+    const processResponse = await fetch(`${API_BASE_URL}/process-video`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(requestBody),
+    });
+    
+    if (!processResponse.ok) {
+      const errorData = await processResponse.json();
+      console.error('Processing error:', errorData);
+      throw new Error(errorData.detail || 'Processing failed');
+    }
+    
+    const processData = await processResponse.json();
+    console.log('Processing started:', processData);
+    
+    if (processData.is_duplicate) {
+      onProgress({ stage: "complete", percent: 100, message: "Video already processed!" });
+      
+      // Get existing clips
+      const clipsResponse = await fetch(`${API_BASE_URL}/video-clips/${processData.video_id}`, {
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+      
+      if (!clipsResponse.ok) {
+        throw new Error('Failed to fetch existing clips');
+      }
+      
+      const clipsData = await clipsResponse.json();
+      console.log('Existing clips:', clipsData);
+      
+      return clipsData.clips.map((clip, index) => ({
+        videoUrl: clip.clip_url,
+        videoId: clip.id,
+        duration: clip.clip_duration,
+        transcript: clip.transcript,
+        viralScore: clip.viral_score ? parseFloat(clip.viral_score) * 10 : Math.floor(Math.random() * 30 + 70),
+        title: clip.title || `Clip ${index + 1}`,
+        clipEditorUrl: clip.clip_editor_url,
+      }));
+    }
+    
+    // Poll for status
+    onProgress({ stage: "polling", percent: 60, message: "Clip Gen AI is generating clips..." });
+    
+    let attempts = 0;
+    const maxAttempts = 50; // Increased for longer videos
+    let completed = false;
+    let clipsData = null;
+    
+    while (attempts < maxAttempts && !completed) {
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      
+      try {
+        const statusResponse = await fetch(`${API_BASE_URL}/project-status/${processData.project_id}`, {
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+        
+        if (statusResponse.ok) {
+          const status = await statusResponse.json();
+          console.log(`Status (${attempts + 1}):`, status.code);
+          
+          if (status.code === 2000 && status.videos && status.videos.length > 0) {
+            completed = true;
+            clipsData = status;
+            break;
+          } else if (status.code === 2000) {
+            console.log('Project complete but no videos yet, still processing...');
+          }
+        }
+      } catch (err) {
+        console.warn('Status check failed:', err);
+      }
+      
+      attempts++;
+      onProgress({ 
+        stage: "polling", 
+        percent: 60 + (attempts / maxAttempts) * 35, 
+        message: `Generating clips... (${attempts}/${maxAttempts})` 
+      });
+    }
+    
+    onProgress({ stage: "complete", percent: 100, message: "Complete!" });
+    
+    if (!clipsData || !clipsData.videos || clipsData.videos.length === 0) {
+      throw new Error('No clips were generated. The video might be too short or unsupported.');
+    }
+    
+    console.log('Clips generated:', clipsData.videos.length);
+    
+    // Transform clips for frontend
+    return clipsData.videos.map((clip, index) => ({
+      videoUrl: clip.videoUrl,
+      videoId: clip.videoId,
+      duration: clip.videoMsDuration,
+      transcript: clip.transcript,
+      viralScore: clip.viralScore ? parseFloat(clip.viralScore) * 10 : Math.floor(Math.random() * 30 + 70),
+      title: clip.title || `Clip ${index + 1}`,
+      clipEditorUrl: clip.clipEditorUrl,
+      viralReason: clip.viralReason,
+    }));
+    
+  } catch (error) {
+    console.error('Processing error:', error);
+    throw new Error(error.message || 'Processing failed. Please try again.');
   }
-
-  if (!data.projectId) {
-    throw new Error(`No projectId returned. Got: ${JSON.stringify(data)}`);
-  }
-
-  // 3. Poll until clips are ready
-  const clips = await pollProjectStatus(data.projectId, onProgress);
-
-  onProgress({
-    stage: "done",
-    percent: 100,
-    message: "Clips ready!",
-  });
-
-  return clips;
 }

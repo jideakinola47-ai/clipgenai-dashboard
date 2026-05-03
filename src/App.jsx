@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom'
 import { ThemeProvider } from './contexts/ThemeContext'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
+import { LanguageProvider } from './contexts/LanguageContext'
 import Landing from './pages/Landing.jsx'
 import Dashboard from './pages/Dashboard.jsx'
 import GeneratedClips from './pages/GeneratedClips.jsx'
@@ -41,8 +42,6 @@ function ProtectedRoute() {
 function AppLayout() {
   const { user } = useAuth()
   
-  if (!user) return null
-  
   return (
     <div style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
       <Sidebar />
@@ -60,29 +59,31 @@ export default function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <BrowserRouter>
-          <Routes>
-            {/* Public routes */}
-            <Route path="/" element={<Landing />} />
-            <Route path="/pricing-landing" element={<Landing />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/signin" element={<Signin />} />
-            
-            {/* Protected routes */}
-            <Route element={<ProtectedRoute />}>
-              <Route element={<AppLayout />}>
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/clips" element={<GeneratedClips />} />
-                <Route path="/analytics" element={<Analytics />} />
-                <Route path="/pricing" element={<Pricing />} />
-                <Route path="/settings" element={<Settings />} />
+        <LanguageProvider> {/* Add LanguageProvider here */}
+          <BrowserRouter>
+            <Routes>
+              {/* Public routes */}
+              <Route path="/" element={<Landing />} />
+              <Route path="/pricing-landing" element={<Landing />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/signin" element={<Signin />} />
+              
+              {/* Protected routes - uncomment the ProtectedRoute wrapper */}
+              <Route element={<ProtectedRoute />}>
+                <Route element={<AppLayout />}>
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/clips" element={<GeneratedClips />} />
+                  <Route path="/analytics" element={<Analytics />} />
+                  <Route path="/pricing" element={<Pricing />} />
+                  <Route path="/settings" element={<Settings />} />
+                </Route>
               </Route>
-            </Route>
-            
-            {/* Redirect any unknown routes */}
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
-          </Routes>
-        </BrowserRouter>
+              
+              {/* Redirect any unknown routes */}
+              <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            </Routes>
+          </BrowserRouter>
+        </LanguageProvider>
       </AuthProvider>
     </ThemeProvider>
   )

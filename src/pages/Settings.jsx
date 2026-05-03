@@ -1,13 +1,50 @@
-import { useState } from 'react'
+// Settings.jsx
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTheme } from '../contexts/ThemeContext'
+import { useAuth } from '../contexts/AuthContext'
+
+const API_BASE_URL = 'https://obscure-space-pancake-x59gxvw69545c6qr5-8000.app.github.dev';
 
 export default function Settings() {
-  const navigate = useNavigate()
-  const { isDark } = useTheme()
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [saved, setSaved] = useState(false)
+  const navigate = useNavigate();
+  const { isDark } = useTheme();
+  const { user, token, getAuthHeader } = useAuth();
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [plan, setPlan] = useState('');
+  const [stats, setStats] = useState(null);
+  const [saved, setSaved] = useState(false);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    // Load user data from API
+    const loadUserData = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/user-details`, {
+          headers: getAuthHeader(),
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to load user data');
+        }
+        
+        const data = await response.json();
+        setName(data.full_name);
+        setEmail(data.email);
+        setPlan(data.plan_type);
+        setStats(data.usage);
+      } catch (error) {
+        console.error('Error loading user data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    if (user) {
+      loadUserData();
+    }
+  }, [user]);
   
   const theme = {
     bg: isDark ? '#0d0d0d' : '#f8f7f5',
@@ -29,6 +66,20 @@ export default function Settings() {
     fontSize: 13.5, 
     outline: 'none',
     transition: 'all 0.2s',
+  }
+  
+  const handleSave = async () => {
+    // Note: You'll need to add an update endpoint to your backend
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  };
+  
+  if (loading) {
+    return (
+      <div style={{ padding: '32px', background: theme.bg, minHeight: '100vh' }}>
+        <div style={{ textAlign: 'center', color: theme.text }}>Loading...</div>
+      </div>
+    );
   }
   
   return (
@@ -70,11 +121,12 @@ export default function Settings() {
               onChange={e => setEmail(e.target.value)} 
               placeholder="your@email.com" 
               style={inputStyle} 
+              disabled
             />
           </div>
           
           <button 
-            onClick={() => { setSaved(true); setTimeout(() => setSaved(false), 2000) }} 
+            onClick={handleSave} 
             style={{ 
               padding: '9px 20px', 
               borderRadius: 8, 
@@ -97,6 +149,58 @@ export default function Settings() {
           background: theme.cardBg, 
           border: `1px solid ${theme.border}`, 
           borderRadius: 14, 
+          padding: '24px',
+          marginBottom: 16
+        }}>
+          <h2 style={{ fontSize: 14, fontWeight: 600, color: theme.text, marginBottom: 6 }}>Usage Statistics</h2>
+          <p style={{ fontSize: 13, color: theme.textMuted, marginBottom: 16 }}>Your current usage this month.</p>
+          
+          <div style={{ 
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: 16,
+            marginBottom: 16,
+          }}>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: 28, fontWeight: 700, color: theme.accent }}>
+                {stats?.total_videos_processed || 0}
+              </div>
+              <div style={{ fontSize: 12, color: theme.textMuted }}>Videos Processed</div>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: 28, fontWeight: 700, color: theme.accent }}>
+                {stats?.total_clips_generated || 0}
+              </div>
+              <div style={{ fontSize: 12, color: theme.textMuted }}>Clips Generated</div>
+            </div>
+          </div>
+          
+          <div style={{
+            background: theme.bg,
+            borderRadius: 8,
+            padding: '12px',
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+              <span style={{ fontSize: 12, color: theme.textMuted }}>Monthly Quota Usage</span>
+              <span style={{ fontSize: 12, fontWeight: 600, color: theme.text }}>
+                {stats?.videos_used_this_month || 0} / {stats?.monthly_limit || 10}
+              </span>
+            </div>
+            <div style={{ background: theme.border, borderRadius: 4, height: 6, overflow: 'hidden' }}>
+              <div style={{
+                width: `${stats?.usage_percentage || 0}%`,
+                height: '100%',
+                background: `linear-gradient(90deg, ${theme.accent}, #8b5cf6)`,
+                borderRadius: 4,
+              }} />
+            </div>
+          </div>
+        </div>
+        
+        <div style={{ 
+          background: theme.cardBg, 
+          border: `1px solid ${theme.border}`, 
+          borderRadius: 14, 
           padding: '24px' 
         }}>
           <h2 style={{ fontSize: 14, fontWeight: 600, color: theme.text, marginBottom: 6 }}>Subscription</h2>
@@ -112,64 +216,34 @@ export default function Settings() {
             flexWrap: 'wrap',
             gap: 12,
           }}>
-            <span style={{ fontSize: 13, color: theme.textMuted }}>Current plan: <strong style={{ color: theme.accent }}>Pro Plan</strong></span>
-            <button 
-              onClick={() => navigate('/pricing')}
-              style={{ 
-                background: `linear-gradient(135deg, ${theme.accent}, #8b5cf6)`, 
-                color: '#fff', 
-                border: 'none', 
-                borderRadius: 6, 
-                padding: '7px 16px', 
-                fontSize: 12.5, 
-                fontWeight: 500, 
-                cursor: 'pointer',
-                transition: 'opacity 0.2s',
-              }}
-              onMouseEnter={(e) => e.target.style.opacity = '0.9'}
-              onMouseLeave={(e) => e.target.style.opacity = '1'}
-            >
-              Upgrade Plan
-            </button>
-          </div>
-          
-          <div style={{ 
-            marginTop: 16, 
-            paddingTop: 16, 
-            borderTop: `1px solid ${theme.border}`,
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            gap: 12,
-          }}>
-            <span style={{ fontSize: 12, color: theme.textMuted }}>Next billing date: <strong>May 15, 2026</strong></span>
-            <button 
-              style={{ 
-                background: 'transparent', 
-                color: '#f87171', 
-                border: `1px solid #f87171`, 
-                borderRadius: 6, 
-                padding: '6px 14px', 
-                fontSize: 12, 
-                fontWeight: 500, 
-                cursor: 'pointer',
-                transition: 'all 0.2s',
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.background = '#f87171'
-                e.target.style.color = '#fff'
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.background = 'transparent'
-                e.target.style.color = '#f87171'
-              }}
-            >
-              Cancel Subscription
-            </button>
+            <span style={{ fontSize: 13, color: theme.textMuted }}>
+              Current plan: <strong style={{ color: theme.accent }}>
+                {plan === 'pro' ? 'Pro Plan' : plan === 'agency' ? 'Enterprise Plan' : 'Starter Plan'}
+              </strong>
+            </span>
+            {plan !== 'pro' && (
+              <button 
+                onClick={() => navigate('/pricing')}
+                style={{ 
+                  background: `linear-gradient(135deg, ${theme.accent}, #8b5cf6)`, 
+                  color: '#fff', 
+                  border: 'none', 
+                  borderRadius: 6, 
+                  padding: '7px 16px', 
+                  fontSize: 12.5, 
+                  fontWeight: 500, 
+                  cursor: 'pointer',
+                  transition: 'opacity 0.2s',
+                }}
+                onMouseEnter={(e) => e.target.style.opacity = '0.9'}
+                onMouseLeave={(e) => e.target.style.opacity = '1'}
+              >
+                Upgrade Plan
+              </button>
+            )}
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

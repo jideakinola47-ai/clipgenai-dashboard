@@ -710,7 +710,7 @@ export default function Landing() {
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}
         >
-          <img src="/logo.png" style={{ width: 34, height: 34, borderRadius: '50%' }} alt="Logo" />
+          <img src="https://iili.io/BQ9axkJ.md.jpg" style={{ width: 34, height: 34, borderRadius: '50%' }} alt="Logo" />
           <span style={{ fontWeight: 800, fontSize: 16, letterSpacing: '-0.5px', color: textColor }}>ClipGen.AI</span>
         </div>
         <div className="nav-links" style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
@@ -1073,7 +1073,7 @@ export default function Landing() {
         gap: 12
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <img src="/logo.png" style={{ width: 26, height: 26, borderRadius: '50%' }} alt="Logo" />
+          <img src="https://iili.io/BQ9axkJ.md.jpg" style={{ width: 26, height: 26, borderRadius: '50%' }} alt="Logo" />
           <span style={{ fontWeight: 700, fontSize: 14, color: textColor }}>ClipGen.AI</span>
         </div>
         <div style={{ display: 'flex', gap: 16 }}>
