@@ -1,6 +1,8 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import {useTheme} from '../contexts/ThemeContext.jsx'
+import ThemeToggle from '../components/ThemeToggle.jsx'
 
-// ── FULL TRANSLATIONS ──────────────────────────────────────────────────────
 const TRANSLATIONS = {
   en: {
     nav: { features: 'Features', how: 'How It Works', pricing: 'Pricing', faq: 'FAQ', start: 'Start Free Trial →' },
@@ -614,19 +616,7 @@ const TRANSLATIONS = {
     footerTagline: 'Gebouwd voor Europese makers',
   },
 
-
-
-
-
-
-
-
-
-
-
 }
-
-
 // Add hero-translated languages (rest of UI falls back to English)
 const SIMPLE_LANGS = {
   sv: { hero1: 'Omvandla långa videor till', hero2: 'Virala Klipp', hero3: 'Automatiskt', cta1: 'Börja gratis →' },
@@ -668,7 +658,9 @@ const LANGS = [
   {code:'hi', flag:'🇮🇳', label:'हिन्दी'},
 ]
 
-export default function Landing({ setPage }) {
+export default function Landing() {
+  const navigate = useNavigate()
+  const { isDark } = useTheme()
   const [lang, setLang] = useState('lt')
   const [openFaq, setOpenFaq] = useState(null)
   const [name, setName] = useState('')
@@ -680,33 +672,80 @@ export default function Landing({ setPage }) {
   const t = TRANSLATIONS[lang] || TRANSLATIONS['en']
   const P = '#5b4cf5'
 
+  // Theme-aware styles
+  const bgColor = isDark ? '#0a0a0a' : '#ffffff'
+  const surfaceColor = isDark ? '#141414' : '#f8f7f5'
+  const surfaceColor2 = isDark ? '#1a1a1a' : '#ffffff'
+  const textColor = isDark ? '#ffffff' : '#0a0a0a'
+  const textMuted = isDark ? '#888888' : '#666666'
+  const borderColor = isDark ? '#2a2a2a' : '#e8e5e0'
+  const inputBg = isDark ? '#1a1a1a' : '#fafaf8'
+  const cardBg = isDark ? '#141414' : '#ffffff'
+
   const prices = {
     monthly: ['€29', '€59', '€99'],
     yearly: ['€19', '€39', '€69'],
   }
 
+  const handleGetStarted = () => {
+    navigate('/signup')
+  }
+
   return (
-    <div style={{ fontFamily: 'Inter, -apple-system, sans-serif', color: '#1a1a1a', background: '#fff' }}>
+    <div style={{ fontFamily: 'Inter, -apple-system, sans-serif', color: textColor, background: bgColor }}>
 
       {/* NAV */}
-      <nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 48px', borderBottom: '1px solid #e8e5e0', position: 'sticky', top: 0, background: '#fff', zIndex: 100 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <img src="/logo.png" style={{ width: 34, height: 34, borderRadius: '50%' }} />
-          <span style={{ fontWeight: 800, fontSize: 16, letterSpacing: '-0.5px' }}>ClipGen.AI</span>
+      <nav style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '16px 48px',
+        borderBottom: `1px solid ${borderColor}`,
+        position: 'sticky',
+        top: 0,
+        background: bgColor,
+        zIndex: 100
+      }}>
+        <div
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }}
+        >
+          <img src="/logo.png" style={{ width: 34, height: 34, borderRadius: '50%' }} alt="Logo" />
+          <span style={{ fontWeight: 800, fontSize: 16, letterSpacing: '-0.5px', color: textColor }}>ClipGen.AI</span>
         </div>
         <div className="nav-links" style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
           {[['features', t.nav.features], ['how', t.nav.how], ['pricing', t.nav.pricing], ['faq', t.nav.faq]].map(([id, label]) => (
             <button key={id} onClick={() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })}
-              style={{ padding: '7px 12px', color: '#666', fontSize: 13.5, background: 'none', border: 'none', cursor: 'pointer' }}>{label}</button>
+              style={{ padding: '7px 12px', color: textMuted, fontSize: 13.5, background: 'none', border: 'none', cursor: 'pointer' }}>{label}</button>
           ))}
         </div>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
           <select value={lang} onChange={e => setLang(e.target.value)}
-            style={{ padding: '7px 10px', borderRadius: 8, border: '1px solid #e8e5e0', background: '#f8f7f5', fontSize: 12.5, outline: 'none', cursor: 'pointer' }}>
+            style={{
+              padding: '7px 10px',
+              borderRadius: 8,
+              border: `1px solid ${borderColor}`,
+              background: inputBg,
+              fontSize: 12.5,
+              outline: 'none',
+              cursor: 'pointer',
+              color: textColor
+            }}>
             {LANGS.map(l => <option key={l.code} value={l.code}>{l.flag} {l.label}</option>)}
           </select>
-          <button onClick={() => setPage('dashboard')}
-            style={{ background: P, color: '#fff', border: 'none', borderRadius: 8, padding: '9px 20px', fontSize: 13.5, fontWeight: 600, cursor: 'pointer', boxShadow: '0 2px 8px rgba(91,76,245,0.3)' }}>
+          <ThemeToggle />
+          <button onClick={handleGetStarted}
+            style={{
+              background: P,
+              color: '#fff',
+              border: 'none',
+              borderRadius: 8,
+              padding: '9px 20px',
+              fontSize: 13.5,
+              fontWeight: 600,
+              cursor: 'pointer',
+              boxShadow: '0 2px 8px rgba(91,76,245,0.3)'
+            }}>
             {t.nav.start}
           </button>
         </div>
@@ -714,29 +753,58 @@ export default function Landing({ setPage }) {
 
       {/* HERO */}
       <div style={{ textAlign: 'center', padding: '80px 24px 60px', maxWidth: 800, margin: '0 auto' }}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: '#fff5f0', color: '#e85d04', border: '1px solid #ffd7b5', borderRadius: 20, padding: '5px 14px', fontSize: 12, fontWeight: 600, marginBottom: 24 }}>
+        <div style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 6,
+          background: isDark ? '#1a1a1a' : '#fff5f0',
+          color: '#e85d04',
+          border: `1px solid ${isDark ? '#333' : '#ffd7b5'}`,
+          borderRadius: 20,
+          padding: '5px 14px',
+          fontSize: 12,
+          fontWeight: 600,
+          marginBottom: 24
+        }}>
           {t.badge}
         </div>
-        <h1 className="hero-title" style={{ fontSize: 60, fontWeight: 800, letterSpacing: '-3px', lineHeight: 1.05, marginBottom: 20, color: '#0a0a0a' }}>
+        <h1 className="hero-title" style={{
+          fontSize: 60,
+          fontWeight: 800,
+          letterSpacing: '-3px',
+          lineHeight: 1.05,
+          marginBottom: 20,
+          color: textColor
+        }}>
           {t.hero1}<br />
           <span style={{ color: P }}>{t.hero2}</span><br />
           {t.hero3}
         </h1>
-        <p style={{ fontSize: 18, color: '#666', lineHeight: 1.65, maxWidth: 560, margin: '0 auto 36px' }}>{t.heroSub}</p>
+        <p style={{ fontSize: 18, color: textMuted, lineHeight: 1.65, maxWidth: 560, margin: '0 auto 36px' }}>{t.heroSub}</p>
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 20 }}>
-          <button onClick={() => setPage('dashboard')} style={{ background: P, color: '#fff', border: 'none', borderRadius: 10, padding: '15px 36px', fontSize: 15, fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 16px rgba(91,76,245,0.35)' }}>{t.cta1}</button>
-          <button onClick={() => document.getElementById('how')?.scrollIntoView({ behavior: 'smooth' })} style={{ background: '#fff', color: '#1a1a1a', border: '1px solid #e8e5e0', borderRadius: 10, padding: '15px 32px', fontSize: 15, fontWeight: 500, cursor: 'pointer' }}>{t.cta2}</button>
+          <button onClick={handleGetStarted} style={{ background: P, color: '#fff', border: 'none', borderRadius: 10, padding: '15px 36px', fontSize: 15, fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 16px rgba(91,76,245,0.35)' }}>{t.cta1}</button>
+          <button onClick={() => document.getElementById('how')?.scrollIntoView({ behavior: 'smooth' })}
+            style={{
+              background: surfaceColor2,
+              color: textColor,
+              border: `1px solid ${borderColor}`,
+              borderRadius: 10,
+              padding: '15px 32px',
+              fontSize: 15,
+              fontWeight: 500,
+              cursor: 'pointer'
+            }}>{t.cta2}</button>
         </div>
-        <p style={{ fontSize: 12.5, color: '#bbb' }}>{t.trust}</p>
+        <p style={{ fontSize: 12.5, color: isDark ? '#555' : '#bbb' }}>{t.trust}</p>
       </div>
 
       {/* STATS */}
-      <div style={{ background: '#f8f7f5', padding: '40px 24px' }}>
+      <div style={{ background: surfaceColor, padding: '40px 24px' }}>
         <div className="hero-stats" style={{ maxWidth: 800, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20, textAlign: 'center' }}>
-          {['2.4M+','152K','96','10x'].map((val, i) => (
+          {['2.4M+', '152K', '96', '10x'].map((val, i) => (
             <div key={i}>
-              <div style={{ fontSize: 32, fontWeight: 800, color: '#0a0a0a', letterSpacing: '-1px' }}>{val}</div>
-              <div style={{ fontSize: 13, color: '#888', marginTop: 4 }}>{t.statsLabels[i]}</div>
+              <div style={{ fontSize: 32, fontWeight: 800, color: textColor, letterSpacing: '-1px' }}>{val}</div>
+              <div style={{ fontSize: 13, color: textMuted, marginTop: 4 }}>{t.statsLabels[i]}</div>
             </div>
           ))}
         </div>
@@ -746,19 +814,32 @@ export default function Landing({ setPage }) {
       <div id="how" style={{ padding: '80px 24px', maxWidth: 900, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 48 }}>
           <div style={{ fontSize: 11, fontWeight: 700, color: P, letterSpacing: '2px', marginBottom: 12 }}>{t.howLabel}</div>
-          <h2 style={{ fontSize: 36, fontWeight: 800, letterSpacing: '-1.5px', marginBottom: 8 }}>
+          <h2 style={{ fontSize: 36, fontWeight: 800, letterSpacing: '-1.5px', marginBottom: 8, color: textColor }}>
             {t.howTitle} <span style={{ color: P }}>{t.howTitle2}</span>
           </h2>
-          <p style={{ color: '#888', fontSize: 15 }}>{t.howSub}</p>
+          <p style={{ color: textMuted, fontSize: 15 }}>{t.howSub}</p>
         </div>
         <div className="steps-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20 }}>
           {t.steps.map((s, i) => (
             <div key={i} style={{ position: 'relative' }}>
-              {i < 3 && <div style={{ position: 'absolute', top: 20, left: '60%', width: '80%', height: 1, background: '#e8e5e0', zIndex: 0 }} />}
+              {i < 3 && <div style={{ position: 'absolute', top: 20, left: '60%', width: '80%', height: 1, background: borderColor, zIndex: 0 }} />}
               <div style={{ position: 'relative', zIndex: 1 }}>
-                <div style={{ width: 40, height: 40, borderRadius: 10, background: P + '15', border: `1px solid ${P}30`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: P, marginBottom: 14 }}>0{i+1}</div>
-                <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 8 }}>{s.title}</div>
-                <div style={{ fontSize: 12.5, color: '#888', lineHeight: 1.55 }}>{s.desc}</div>
+                <div style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: 10,
+                  background: P + '15',
+                  border: `1px solid ${P}30`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: 12,
+                  fontWeight: 700,
+                  color: P,
+                  marginBottom: 14
+                }}>0{i + 1}</div>
+                <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 8, color: textColor }}>{s.title}</div>
+                <div style={{ fontSize: 12.5, color: textMuted, lineHeight: 1.55 }}>{s.desc}</div>
               </div>
             </div>
           ))}
@@ -766,21 +847,36 @@ export default function Landing({ setPage }) {
       </div>
 
       {/* FEATURES */}
-      <div id="features" style={{ background: '#f8f7f5', padding: '80px 24px' }}>
+      <div id="features" style={{ background: surfaceColor, padding: '80px 24px' }}>
         <div style={{ maxWidth: 900, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 48 }}>
             <div style={{ fontSize: 11, fontWeight: 700, color: P, letterSpacing: '2px', marginBottom: 12 }}>{t.featLabel}</div>
-            <h2 style={{ fontSize: 36, fontWeight: 800, letterSpacing: '-1.5px', marginBottom: 8 }}>
+            <h2 style={{ fontSize: 36, fontWeight: 800, letterSpacing: '-1.5px', marginBottom: 8, color: textColor }}>
               {t.featTitle} <span style={{ color: P }}>{t.featTitle2}</span>
             </h2>
-            <p style={{ color: '#888', fontSize: 15 }}>{t.featSub}</p>
+            <p style={{ color: textMuted, fontSize: 15 }}>{t.featSub}</p>
           </div>
           <div className="features-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
             {t.features.map((f, i) => (
-              <div key={i} style={{ background: '#fff', borderRadius: 14, padding: '24px', border: '1px solid #e8e5e0' }}>
-                <div style={{ width: 44, height: 44, borderRadius: 12, background: P + '12', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, marginBottom: 14 }}>{f.icon}</div>
-                <div style={{ fontWeight: 700, fontSize: 14.5, marginBottom: 8 }}>{f.title}</div>
-                <div style={{ fontSize: 13, color: '#888', lineHeight: 1.6 }}>{f.desc}</div>
+              <div key={i} style={{
+                background: cardBg,
+                borderRadius: 14,
+                padding: '24px',
+                border: `1px solid ${borderColor}`
+              }}>
+                <div style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 12,
+                  background: P + '12',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: 22,
+                  marginBottom: 14
+                }}>{f.icon}</div>
+                <div style={{ fontWeight: 700, fontSize: 14.5, marginBottom: 8, color: textColor }}>{f.title}</div>
+                <div style={{ fontSize: 13, color: textMuted, lineHeight: 1.6 }}>{f.desc}</div>
               </div>
             ))}
           </div>
@@ -792,11 +888,20 @@ export default function Landing({ setPage }) {
         <div style={{ maxWidth: 900, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 48 }}>
             <div style={{ fontSize: 11, fontWeight: 700, color: P, letterSpacing: '2px', marginBottom: 12 }}>{t.pricingLabel}</div>
-            <h2 style={{ fontSize: 36, fontWeight: 800, letterSpacing: '-1.5px', marginBottom: 8 }}>{t.pricingTitle}</h2>
-            <p style={{ color: '#888', fontSize: 15, marginBottom: 20 }}>{t.pricingSub}</p>
-            <div style={{ display: 'inline-flex', background: '#e8e5e0', borderRadius: 10, padding: 4 }}>
-              {['monthly','yearly'].map(b => (
-                <button key={b} onClick={() => setBilling(b)} style={{ padding: '7px 20px', borderRadius: 8, border: 'none', background: billing === b ? '#fff' : 'transparent', color: billing === b ? '#1a1a1a' : '#888', fontWeight: billing === b ? 600 : 400, fontSize: 13, cursor: 'pointer' }}>
+            <h2 style={{ fontSize: 36, fontWeight: 800, letterSpacing: '-1.5px', marginBottom: 8, color: textColor }}>{t.pricingTitle}</h2>
+            <p style={{ color: textMuted, fontSize: 15, marginBottom: 20 }}>{t.pricingSub}</p>
+            <div style={{ display: 'inline-flex', background: surfaceColor, borderRadius: 10, padding: 4 }}>
+              {['monthly', 'yearly'].map(b => (
+                <button key={b} onClick={() => setBilling(b)} style={{
+                  padding: '7px 20px',
+                  borderRadius: 8,
+                  border: 'none',
+                  background: billing === b ? cardBg : 'transparent',
+                  color: billing === b ? textColor : textMuted,
+                  fontWeight: billing === b ? 600 : 400,
+                  fontSize: 13,
+                  cursor: 'pointer'
+                }}>
                   {b === 'monthly' ? t.monthly : t.yearly}
                 </button>
               ))}
@@ -804,20 +909,38 @@ export default function Landing({ setPage }) {
           </div>
           <div className="pricing-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
             {t.plans.map((plan, i) => (
-              <div key={i} style={{ background: '#fff', border: `2px solid ${i === 1 ? P : '#e8e5e0'}`, borderRadius: 16, padding: '28px 24px', position: 'relative', boxShadow: i === 1 ? '0 8px 32px rgba(91,76,245,0.15)' : 'none' }}>
+              <div key={i} style={{
+                background: cardBg,
+                border: `2px solid ${i === 1 ? P : borderColor}`,
+                borderRadius: 16,
+                padding: '28px 24px',
+                position: 'relative',
+                boxShadow: i === 1 ? `0 8px 32px ${isDark ? 'rgba(91,76,245,0.2)' : 'rgba(91,76,245,0.15)'}` : 'none'
+              }}>
                 {i === 1 && <div style={{ position: 'absolute', top: -12, left: '50%', transform: 'translateX(-50%)', background: P, color: '#fff', borderRadius: 20, padding: '3px 14px', fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap' }}>BEST VALUE</div>}
-                <div style={{ fontSize: 12, fontWeight: 700, color: '#aaa', letterSpacing: '0.5px', marginBottom: 6 }}>{plan.name.toUpperCase()}</div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: textMuted, letterSpacing: '0.5px', marginBottom: 6 }}>{plan.name.toUpperCase()}</div>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 4, marginBottom: 6 }}>
-                  <span style={{ fontSize: 44, fontWeight: 800, letterSpacing: '-2px', color: '#0a0a0a' }}>{prices[billing][i]}</span>
-                  <span style={{ fontSize: 14, color: '#aaa' }}>/month</span>
+                  <span style={{ fontSize: 44, fontWeight: 800, letterSpacing: '-2px', color: textColor }}>{prices[billing][i]}</span>
+                  <span style={{ fontSize: 14, color: textMuted }}>/month</span>
                 </div>
-                <div style={{ fontSize: 13, color: '#888', marginBottom: 20, lineHeight: 1.4 }}>{plan.desc}</div>
-                <button onClick={() => setPage('dashboard')} style={{ width: '100%', padding: '11px', borderRadius: 8, background: i === 1 ? P : '#fff', color: i === 1 ? '#fff' : P, border: `2px solid ${P}`, fontWeight: 700, fontSize: 14, cursor: 'pointer', marginBottom: 22 }}>{plan.cta}</button>
+                <div style={{ fontSize: 13, color: textMuted, marginBottom: 20, lineHeight: 1.4 }}>{plan.desc}</div>
+                <button onClick={handleGetStarted} style={{
+                  width: '100%',
+                  padding: '11px',
+                  borderRadius: 8,
+                  background: i === 1 ? P : 'transparent',
+                  color: i === 1 ? '#fff' : P,
+                  border: `2px solid ${P}`,
+                  fontWeight: 700,
+                  fontSize: 14,
+                  cursor: 'pointer',
+                  marginBottom: 22
+                }}>{plan.cta}</button>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                   {plan.features.map((f, j) => (
                     <div key={j} style={{ display: 'flex', gap: 8, fontSize: 13 }}>
                       <span style={{ color: P, fontWeight: 700, flexShrink: 0 }}>✓</span>
-                      <span style={{ color: '#555' }}>{f}</span>
+                      <span style={{ color: textMuted }}>{f}</span>
                     </div>
                   ))}
                 </div>
@@ -828,20 +951,30 @@ export default function Landing({ setPage }) {
       </div>
 
       {/* FAQ */}
-      <div id="faq" style={{ background: '#f8f7f5', padding: '80px 24px' }}>
+      <div id="faq" style={{ background: surfaceColor, padding: '80px 24px' }}>
         <div style={{ maxWidth: 680, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 48 }}>
             <div style={{ fontSize: 11, fontWeight: 700, color: P, letterSpacing: '2px', marginBottom: 12 }}>{t.faqLabel}</div>
-            <h2 style={{ fontSize: 32, fontWeight: 800, letterSpacing: '-1.5px', marginBottom: 8 }}>{t.faqTitle}</h2>
-            <p style={{ color: '#888', fontSize: 15 }}>{t.faqSub}</p>
+            <h2 style={{ fontSize: 32, fontWeight: 800, letterSpacing: '-1.5px', marginBottom: 8, color: textColor }}>{t.faqTitle}</h2>
+            <p style={{ color: textMuted, fontSize: 15 }}>{t.faqSub}</p>
           </div>
           {t.faqs.map((faq, i) => (
-            <div key={i} style={{ borderBottom: '1px solid #e8e5e0' }}>
-              <button onClick={() => setOpenFaq(openFaq === i ? null : i)} style={{ width: '100%', padding: '18px 0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}>
-                <span style={{ fontWeight: 600, fontSize: 14.5, color: '#1a1a1a' }}>{faq.q}</span>
+            <div key={i} style={{ borderBottom: `1px solid ${borderColor}` }}>
+              <button onClick={() => setOpenFaq(openFaq === i ? null : i)} style={{
+                width: '100%',
+                padding: '18px 0',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                textAlign: 'left'
+              }}>
+                <span style={{ fontWeight: 600, fontSize: 14.5, color: textColor }}>{faq.q}</span>
                 <span style={{ color: P, fontSize: 20, fontWeight: 300, marginLeft: 16, flexShrink: 0 }}>{openFaq === i ? '−' : '+'}</span>
               </button>
-              {openFaq === i && <div style={{ paddingBottom: 18, fontSize: 14, color: '#666', lineHeight: 1.65 }}>{faq.a}</div>}
+              {openFaq === i && <div style={{ paddingBottom: 18, fontSize: 14, color: textMuted, lineHeight: 1.65 }}>{faq.a}</div>}
             </div>
           ))}
         </div>
@@ -851,17 +984,60 @@ export default function Landing({ setPage }) {
       <div id="contact" style={{ padding: '80px 24px' }}>
         <div style={{ maxWidth: 560, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 36 }}>
-            <h2 style={{ fontSize: 32, fontWeight: 800, letterSpacing: '-1.5px', marginBottom: 8 }}>{t.contactTitle}</h2>
-            <p style={{ color: '#888', fontSize: 15 }}>{t.contactSub}</p>
+            <h2 style={{ fontSize: 32, fontWeight: 800, letterSpacing: '-1.5px', marginBottom: 8, color: textColor }}>{t.contactTitle}</h2>
+            <p style={{ color: textMuted, fontSize: 15 }}>{t.contactSub}</p>
           </div>
-          <div style={{ background: '#fff', borderRadius: 16, padding: '32px', border: '1px solid #e8e5e0' }}>
+          <div style={{
+            background: cardBg,
+            borderRadius: 16,
+            padding: '32px',
+            border: `1px solid ${borderColor}`
+          }}>
             <div className="contact-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
-              <input value={name} onChange={e => setName(e.target.value)} placeholder={t.namePh} style={{ padding: '11px 14px', borderRadius: 8, border: '1px solid #e8e5e0', fontSize: 13.5, outline: 'none', background: '#fafaf8', color: '#1a1a1a' }} />
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder={t.emailPh} style={{ padding: '11px 14px', borderRadius: 8, border: '1px solid #e8e5e0', fontSize: 13.5, outline: 'none', background: '#fafaf8', color: '#1a1a1a' }} />
+              <input value={name} onChange={e => setName(e.target.value)} placeholder={t.namePh} style={{
+                padding: '11px 14px',
+                borderRadius: 8,
+                border: `1px solid ${borderColor}`,
+                fontSize: 13.5,
+                outline: 'none',
+                background: inputBg,
+                color: textColor
+              }} />
+              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder={t.emailPh} style={{
+                padding: '11px 14px',
+                borderRadius: 8,
+                border: `1px solid ${borderColor}`,
+                fontSize: 13.5,
+                outline: 'none',
+                background: inputBg,
+                color: textColor
+              }} />
             </div>
-            <textarea value={msg} onChange={e => setMsg(e.target.value)} placeholder={t.msgPh} rows={4} style={{ width: '100%', padding: '11px 14px', borderRadius: 8, border: '1px solid #e8e5e0', fontSize: 13.5, outline: 'none', background: '#fafaf8', color: '#1a1a1a', resize: 'vertical', marginBottom: 12, fontFamily: 'inherit' }} />
+            <textarea value={msg} onChange={e => setMsg(e.target.value)} placeholder={t.msgPh} rows={4} style={{
+              width: '100%',
+              padding: '11px 14px',
+              borderRadius: 8,
+              border: `1px solid ${borderColor}`,
+              fontSize: 13.5,
+              outline: 'none',
+              background: inputBg,
+              color: textColor,
+              resize: 'vertical',
+              marginBottom: 12,
+              fontFamily: 'inherit'
+            }} />
             <button onClick={() => { if (name && email && msg) { window.open(`mailto:clipgenai@gmail.com?subject=Message from ${name}&body=${msg}`); setSent(true) } }}
-              style={{ width: '100%', padding: '12px', borderRadius: 8, background: P, color: '#fff', fontWeight: 700, fontSize: 14, border: 'none', cursor: 'pointer' }}>
+              style={{
+                width: '100%',
+                padding: '12px',
+                borderRadius: 8,
+                background: P,
+                color: '#fff',
+                fontWeight: 700,
+                fontSize: 14,
+                border: 'none',
+                cursor: 'pointer'
+              }}>
               {sent ? t.sentMsg : t.sendBtn}
             </button>
           </div>
@@ -869,27 +1045,45 @@ export default function Landing({ setPage }) {
       </div>
 
       {/* CTA */}
-      <div style={{ background: '#0a0a0a', padding: '80px 24px', textAlign: 'center', color: '#fff' }}>
-        <h2 style={{ fontSize: 40, fontWeight: 800, letterSpacing: '-2px', marginBottom: 16 }}>{t.ctaFinalTitle}</h2>
-        <p style={{ fontSize: 16, color: '#888', marginBottom: 32 }}>{t.ctaFinalSub}</p>
-        <button onClick={() => setPage('dashboard')} style={{ background: P, color: '#fff', border: 'none', borderRadius: 10, padding: '15px 36px', fontSize: 15, fontWeight: 700, cursor: 'pointer', boxShadow: '0 4px 20px rgba(91,76,245,0.4)' }}>{t.ctaFinalBtn}</button>
+      <div style={{ background: isDark ? '#0a0a0a' : '#f0f0f0', padding: '80px 24px', textAlign: 'center' }}>
+        <h2 style={{ fontSize: 40, fontWeight: 800, letterSpacing: '-2px', marginBottom: 16, color: textColor }}>{t.ctaFinalTitle}</h2>
+        <p style={{ fontSize: 16, color: textMuted, marginBottom: 32 }}>{t.ctaFinalSub}</p>
+        <button onClick={handleGetStarted} style={{
+          background: P,
+          color: '#fff',
+          border: 'none',
+          borderRadius: 10,
+          padding: '15px 36px',
+          fontSize: 15,
+          fontWeight: 700,
+          cursor: 'pointer',
+          boxShadow: '0 4px 20px rgba(91,76,245,0.4)'
+        }}>{t.ctaFinalBtn}</button>
       </div>
 
       {/* FOOTER */}
-      <div style={{ background: '#0a0a0a', padding: '28px 48px', borderTop: '1px solid #1a1a1a', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+      <div style={{
+        background: isDark ? '#0a0a0a' : '#f8f7f5',
+        padding: '28px 48px',
+        borderTop: `1px solid ${borderColor}`,
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+        gap: 12
+      }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <img src="/logo.png" style={{ width: 26, height: 26, borderRadius: '50%' }} />
-          <span style={{ fontWeight: 700, fontSize: 14, color: '#fff' }}>ClipGen.AI</span>
+          <img src="/logo.png" style={{ width: 26, height: 26, borderRadius: '50%' }} alt="Logo" />
+          <span style={{ fontWeight: 700, fontSize: 14, color: textColor }}>ClipGen.AI</span>
         </div>
         <div style={{ display: 'flex', gap: 16 }}>
           {[['features', t.nav.features], ['how', t.nav.how], ['pricing', t.nav.pricing], ['faq', t.nav.faq], ['contact', t.contactTitle]].map(([id, label]) => (
             <button key={id} onClick={() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })}
-              style={{ color: '#555', fontSize: 13, background: 'none', border: 'none', cursor: 'pointer' }}>{label}</button>
+              style={{ color: textMuted, fontSize: 13, background: 'none', border: 'none', cursor: 'pointer' }}>{label}</button>
           ))}
         </div>
-        <span style={{ color: '#444', fontSize: 12 }}>© 2026 ClipGen.AI — {t.footerTagline}</span>
+        <span style={{ color: isDark ? '#444' : '#999', fontSize: 12 }}>© 2026 ClipGen.AI — {t.footerTagline}</span>
       </div>
     </div>
   )
 }
-// placeholder

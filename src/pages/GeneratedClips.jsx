@@ -1,11 +1,13 @@
 import { useState } from 'react'
+import { useTheme } from '../contexts/ThemeContext'
 
 function Score({ score }) {
+  const { isDark } = useTheme()
   const s = parseFloat(score) * 10 || 0
   const color = s >= 85 ? '#22c55e' : s >= 70 ? '#f59e0b' : '#f87171'
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-      <div style={{ flex: 1, height: 4, background: '#333', borderRadius: 2 }}>
+      <div style={{ flex: 1, height: 4, background: isDark ? '#333' : '#e8e5e0', borderRadius: 2 }}>
         <div style={{ width: `${s}%`, height: '100%', background: color, borderRadius: 2 }} />
       </div>
       <span style={{ fontSize: 12, fontWeight: 700, color, minWidth: 28 }}>{score}</span>
@@ -14,33 +16,50 @@ function Score({ score }) {
 }
 
 export default function GeneratedClips({ clips }) {
+  const { isDark } = useTheme()
   const [playing, setPlaying] = useState(null)
-
-  if (!clips || clips.length === 0) return (
-    <div style={{ padding: '40px 24px', background: '#0d0d0d', minHeight: '100vh' }}>
-      <h1 style={{ fontSize: 22, fontWeight: 700, color: '#fff', marginBottom: 8 }}>My Clips</h1>
-      <p style={{ color: '#666', fontSize: 13.5, marginBottom: 40 }}>Your AI-generated clips will appear here.</p>
-      <div style={{ border: '2px dashed #2a2a2a', borderRadius: 14, padding: '60px 24px', textAlign: 'center', color: '#444' }}>
+  
+  const theme = {
+    bg: isDark ? '#0d0d0d' : '#f8f7f5',
+    cardBg: isDark ? '#111' : '#ffffff',
+    border: isDark ? '#1f1f1f' : '#e8e5e0',
+    text: isDark ? '#fff' : '#0a0a0a',
+    textMuted: isDark ? '#666' : '#888',
+  }
+  
+  // Get clips from sessionStorage if not passed as prop
+  const storedClips = clips || (typeof window !== 'undefined' ? JSON.parse(sessionStorage.getItem('generatedClips') || '[]') : [])
+  
+  if (!storedClips || storedClips.length === 0) return (
+    <div style={{ padding: '40px 24px', background: theme.bg, minHeight: '100vh' }}>
+      <h1 style={{ fontSize: 22, fontWeight: 700, color: theme.text, marginBottom: 8 }}>My Clips</h1>
+      <p style={{ color: theme.textMuted, fontSize: 13.5, marginBottom: 40 }}>Your AI-generated clips will appear here.</p>
+      <div style={{ border: `2px dashed ${theme.border}`, borderRadius: 14, padding: '60px 24px', textAlign: 'center', color: theme.textMuted }}>
         <div style={{ fontSize: 40, marginBottom: 12 }}>✂</div>
-        <div style={{ fontSize: 15, fontWeight: 500, color: '#666' }}>No clips yet</div>
+        <div style={{ fontSize: 15, fontWeight: 500, color: theme.textMuted }}>No clips yet</div>
         <div style={{ fontSize: 13, marginTop: 6 }}>Upload a video from the Dashboard to generate clips</div>
       </div>
     </div>
   )
 
   return (
-    <div style={{ padding: '24px', background: '#0d0d0d', minHeight: '100vh' }}>
+    <div style={{ padding: '24px', background: theme.bg, minHeight: '100vh' }}>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 700, color: '#fff', marginBottom: 4 }}>My Clips</h1>
-        <p style={{ color: '#666', fontSize: 13.5 }}>{clips.length} clips generated — ready to download or publish</p>
+        <h1 style={{ fontSize: 22, fontWeight: 700, color: theme.text, marginBottom: 4 }}>My Clips</h1>
+        <p style={{ color: theme.textMuted, fontSize: 13.5 }}>{storedClips.length} clips generated — ready to download or publish</p>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 16 }}>
-        {clips.map((clip, i) => (
-          <div key={clip.videoId || i} style={{ background: '#111', borderRadius: 14, border: '1px solid #1f1f1f', overflow: 'hidden' }}>
+        {storedClips.map((clip, i) => (
+          <div key={clip.videoId || i} style={{ background: theme.cardBg, borderRadius: 14, border: `1px solid ${theme.border}`, overflow: 'hidden' }}>
             <div style={{
-              background: '#0a0a0a', aspectRatio: '9/16', maxHeight: 200,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              position: 'relative', cursor: 'pointer',
+              background: isDark ? '#0a0a0a' : '#f0f0f0',
+              aspectRatio: '9/16',
+              maxHeight: 200,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              position: 'relative',
+              cursor: 'pointer',
             }} onClick={() => setPlaying(playing === i ? null : i)}>
               {playing === i ? (
                 <video
@@ -66,15 +85,15 @@ export default function GeneratedClips({ clips }) {
               )}
             </div>
             <div style={{ padding: '14px' }}>
-              <div style={{ fontWeight: 600, fontSize: 13, color: '#fff', marginBottom: 8, lineHeight: 1.3 }}>
+              <div style={{ fontWeight: 600, fontSize: 13, color: theme.text, marginBottom: 8, lineHeight: 1.3 }}>
                 {clip.title || `Clip ${i + 1}`}
               </div>
               <div style={{ marginBottom: 12 }}>
-                <div style={{ fontSize: 10.5, color: '#555', marginBottom: 4, letterSpacing: '0.5px' }}>VIRAL SCORE</div>
+                <div style={{ fontSize: 10.5, color: theme.textMuted, marginBottom: 4, letterSpacing: '0.5px' }}>VIRAL SCORE</div>
                 <Score score={clip.viralScore} />
               </div>
               {clip.transcript && (
-                <div style={{ fontSize: 11.5, color: '#555', marginBottom: 12, fontStyle: 'italic' }}>
+                <div style={{ fontSize: 11.5, color: theme.textMuted, marginBottom: 12, fontStyle: 'italic' }}>
                   "{clip.transcript}"
                 </div>
               )}
@@ -95,8 +114,9 @@ export default function GeneratedClips({ clips }) {
                   rel="noreferrer"
                   style={{
                     flex: 1, padding: '8px', borderRadius: 8,
-                    background: '#1a1a1a', color: '#aaa', fontSize: 12.5,
-                    border: '1px solid #2a2a2a', textAlign: 'center', display: 'block', textDecoration: 'none',
+                    background: isDark ? '#1a1a1a' : '#f0f0f0',
+                    color: theme.textMuted, fontSize: 12.5,
+                    border: `1px solid ${theme.border}`, textAlign: 'center', display: 'block', textDecoration: 'none',
                   }}>Edit</a>
               </div>
             </div>
