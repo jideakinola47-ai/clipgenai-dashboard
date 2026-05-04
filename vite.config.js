@@ -4,13 +4,24 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
-    // Let Vite automatically handle HMR in Codespaces
-    hmr: true, // This tells Vite to auto-configure
-    watch: {
-      usePolling: true,
-      interval: 100,
-    },
     host: true,
     port: 5173,
+    hmr: {
+      clientPort: 443,
+    },
+    watch: {
+  usePolling: true,
+  interval: 500,      // check every 500ms
+  binaryInterval: 1000,
+},
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        entryFileNames: 'assets/[name]-[hash].js',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]',
+      },
+    },
   },
 })

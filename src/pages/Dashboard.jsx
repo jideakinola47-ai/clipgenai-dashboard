@@ -1,7 +1,7 @@
 // Dashboard.jsx - Mobile Responsive Version
-import { useState } from "react";
+import { useState,useRef  } from "react";
 import { useNavigate } from "react-router-dom";
-import { uploadAndProcess } from "../utils/upload";
+import { uploadAndProcess,uploadVideoFile } from "../utils/upload";
 import { useTheme } from '../contexts/ThemeContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -32,6 +32,9 @@ export default function Dashboard() {
   const [autoCap, setAutoCap] = useState(true);
   const [viral, setViral] = useState(true);
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const fileInputRef = useRef(null);
+
 
   const theme = {
     bg: isDark ? '#0d0d0d' : '#f8f7f5',
@@ -213,6 +216,103 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+      {/* File Upload Section */}
+<div style={{ 
+  background: theme.cardBg, 
+  border: `1px solid ${theme.border}`, 
+  borderRadius: 16, 
+  padding: "20px",
+  marginBottom: 24 
+}}>
+  <label style={{ fontSize: 12, fontWeight: 600, color: theme.textMuted, display: 'block', marginBottom: 8, letterSpacing: '0.5px' }}>
+    OR UPLOAD VIDEO FILE
+  </label>
+  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+    <input
+      type="file"
+      accept="video/*"
+      ref={fileInputRef}
+      onChange={(e) => setSelectedFile(e.target.files[0])}
+      disabled={!!progress}
+      style={{
+        padding: "10px",
+        borderRadius: 8,
+        border: `1px solid ${theme.border}`,
+        background: !!progress ? theme.textMuted + '30' : theme.inputBg,
+        color: theme.text,
+        fontSize: 14,
+        opacity: !!progress ? 0.6 : 1,
+        cursor: !!progress ? 'not-allowed' : 'pointer',
+      }}
+    />
+    {selectedFile && (
+      <button
+        onClick={async () => {
+          if (!selectedFile || progress) return;
+          setError("");
+          setProgress({ stage: "uploading", percent: 0, message: "Starting upload..." });
+          try {
+            const clips = await uploadVideoFile(selectedFile, subtitleLang, (p) => setProgress(p));
+            if (clips && clips.length > 0) {
+              sessionStorage.setItem('generatedClips', JSON.stringify(clips));
+              navigate('/clips');
+            } else {
+              setError(t('noClipsError'));
+              setProgress(null);
+            }
+          } catch (e) {
+            setError(e.message || t('generalError'));
+            setProgress(null);
+          }
+        }}
+        disabled={!!progress}
+        style={{
+          background: `linear-gradient(135deg, ${theme.accent}, #8b5cf6)`,
+          color: '#fff',
+          border: 'none',
+          borderRadius: 8,
+          padding: '10px 16px',
+          fontSize: 14,
+          fontWeight: 600,
+          cursor: !!progress ? 'not-allowed' : 'pointer',
+          opacity: !!progress ? 0.6 : 1,
+        }}
+      >
+        Upload & Generate Clips
+      </button>
+    )}
+  </div>
+  <p style={{ fontSize: 12, color: theme.textMuted, marginTop: 8 }}>
+    Supports MP4, MOV, AVI, MKV (max 100MB recommended)
+  </p>
+  
+  {/* Show progress inside this card if upload is active */}
+  {progress && progress.stage === 'uploading' && (
+    <div style={{ marginTop: 12 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+        <span style={{ fontSize: 12, color: theme.textMuted }}>{progress.message}</span>
+        <span style={{ fontSize: 12, fontWeight: 600, color: theme.accent }}>{Math.round(progress.percent)}%</span>
+      </div>
+      <div style={{ background: theme.border, borderRadius: 4, height: 6 }}>
+        <div style={{ width: `${progress.percent}%`, height: '100%', background: `linear-gradient(90deg, ${theme.accent}, #a855f7)`, borderRadius: 4, transition: 'width 0.3s' }} />
+      </div>
+    </div>
+  )}
+  
+  {/* Also show polling progress if needed */}
+  {progress && progress.stage === 'polling' && (
+    <div style={{ marginTop: 12 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+        <span style={{ fontSize: 12, color: theme.textMuted }}>{progress.message}</span>
+        <span style={{ fontSize: 12, fontWeight: 600, color: theme.accent }}>{Math.round(progress.percent)}%</span>
+      </div>
+      <div style={{ background: theme.border, borderRadius: 4, height: 6 }}>
+        <div style={{ width: `${progress.percent}%`, height: '100%', background: `linear-gradient(90deg, ${theme.accent}, #a855f7)`, borderRadius: 4, transition: 'width 0.3s' }} />
+      </div>
+    </div>
+  )}
+</div>
 
       {/* Video URL Input - Mobile Responsive */}
       <div style={{ 

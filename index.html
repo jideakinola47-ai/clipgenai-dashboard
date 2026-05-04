@@ -36,18 +36,6 @@
     <link rel="icon" type="image/jpg" href="/logo.jpg" />
     <link rel="apple-touch-icon" href="/logo.jpg" />
     
-    <!-- PWA Manifest -->
-    <script>
-  // Don't load manifest in Codespaces environment
-  const isCodespaces = window.location.hostname.includes('github.dev') || 
-                       window.location.hostname.includes('app.github.dev');
-  if (!isCodespaces && 'serviceWorker' in navigator) {
-    const link = document.createElement('link');
-    link.rel = 'manifest';
-    link.href = '/manifest.json';
-    document.head.appendChild(link);
-  }
-</script>
   </head>
   <body>
     <div id="root"></div>

@@ -78,7 +78,7 @@ export async function uploadAndProcess(videoUrl, videoType = 2, subtitleLang = '
     onProgress({ stage: "polling", percent: 60, message: "Clip Gen AI is generating clips..." });
     
     let attempts = 0;
-    const maxAttempts = 100; // Increased for longer videos
+    const maxAttempts = 200; // Increased for longer videos
     let completed = false;
     let clipsData = null;
     
@@ -137,5 +137,108 @@ export async function uploadAndProcess(videoUrl, videoType = 2, subtitleLang = '
   } catch (error) {
     console.error('Processing error:', error);
     throw new Error(error.message || 'Processing failed. Please try again.');
+  }
+}
+
+
+// utils/upload.js (add this new function, keep existing uploadAndProcess)
+
+export async function uploadVideoFile(file, subtitleLang = 'auto', onProgress) {
+  try {
+    console.log('Uploading video file:', file.name, file.size);
+    onProgress({ stage: "auth", percent: 10, message: "Preparing upload..." });
+
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      throw new Error('No authentication token found. Please login again.');
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    onProgress({ stage: "uploading", percent: 30, message: "Uploading video to server..." });
+
+    const uploadResponse = await fetch(`${API_BASE_URL}/upload-video`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    if (!uploadResponse.ok) {
+      const errorData = await uploadResponse.json();
+      throw new Error(errorData.detail || 'File upload failed');
+    }
+
+    const processData = await uploadResponse.json();
+    console.log('Processing started:', processData);
+
+    if (processData.is_duplicate) {
+      onProgress({ stage: "complete", percent: 100, message: "Video already processed!" });
+      const clipsResponse = await fetch(`${API_BASE_URL}/video-clips/${processData.video_id}`, {
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+      if (!clipsResponse.ok) throw new Error('Failed to fetch existing clips');
+      const clipsData = await clipsResponse.json();
+      return clipsData.clips.map((clip, index) => ({
+        videoUrl: clip.clip_url,
+        videoId: clip.id,
+        duration: clip.clip_duration,
+        transcript: clip.transcript,
+        viralScore: clip.viral_score ? parseFloat(clip.viral_score) * 10 : Math.floor(Math.random() * 30 + 70),
+        title: clip.title || `Clip ${index + 1}`,
+        clipEditorUrl: clip.clip_editor_url,
+      }));
+    }
+
+    // Poll for status (same as in uploadAndProcess)
+    onProgress({ stage: "polling", percent: 60, message: "AI is generating clips..." });
+    let attempts = 0;
+    const maxAttempts = 200;
+    let completed = false;
+    let clipsData = null;
+
+    while (attempts < maxAttempts && !completed) {
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      try {
+        const statusResponse = await fetch(`${API_BASE_URL}/project-status/${processData.project_id}`, {
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+        if (statusResponse.ok) {
+          const status = await statusResponse.json();
+          if (status.code === 2000 && status.videos && status.videos.length > 0) {
+            completed = true;
+            clipsData = status;
+            break;
+          }
+        }
+      } catch (err) {
+        console.warn('Status check failed:', err);
+      }
+      attempts++;
+      onProgress({ stage: "polling", percent: 60 + (attempts / maxAttempts) * 35, message: `Generating clips... (${attempts}/${maxAttempts})` });
+    }
+
+    onProgress({ stage: "complete", percent: 100, message: "Complete!" });
+
+    if (!clipsData || !clipsData.videos || clipsData.videos.length === 0) {
+      throw new Error('No clips were generated. The video might be too short or unsupported.');
+    }
+
+    return clipsData.videos.map((clip, index) => ({
+      videoUrl: clip.videoUrl,
+      videoId: clip.videoId,
+      duration: clip.videoMsDuration,
+      transcript: clip.transcript,
+      viralScore: clip.viralScore ? parseFloat(clip.viralScore) * 10 : Math.floor(Math.random() * 30 + 70),
+      title: clip.title || `Clip ${index + 1}`,
+      clipEditorUrl: clip.clipEditorUrl,
+      viralReason: clip.viralReason,
+    }));
+
+  } catch (error) {
+    console.error('File upload error:', error);
+    throw new Error(error.message || 'Upload failed. Please try again.');
   }
 }
