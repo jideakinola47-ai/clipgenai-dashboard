@@ -100,15 +100,14 @@ export default function Dashboard() {
 
   return (
     <div style={{ 
-      padding: "16px", 
-      maxWidth: "1200px", 
-      margin: "0 auto", 
-      background: theme.bg, 
-      minHeight: '100vh',
-      '@media (min-width: 768px)': {
-        padding: "32px",
-      }
-    }}>
+  padding: "16px", 
+  width: "100%", 
+  background: theme.bg, 
+  minHeight: '100vh',
+  '@media (min-width: 768px)': {
+    padding: "32px",
+  }
+}}>
       {/* Header with Language Selector */}
       <div style={{ 
         display: 'flex', 
@@ -226,32 +225,50 @@ export default function Dashboard() {
   marginBottom: 24 
 }}>
   <label style={{ fontSize: 12, fontWeight: 600, color: theme.textMuted, display: 'block', marginBottom: 8, letterSpacing: '0.5px' }}>
-    OR UPLOAD VIDEO FILE
+    {t('uploadFileLabel') || 'OR UPLOAD VIDEO FILE'}
   </label>
+  
+  {/* Custom file input */}
   <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+    <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+      <button
+        onClick={() => fileInputRef.current?.click()}
+        disabled={!!progress}
+        style={{
+          background: theme.inputBg,
+          border: `1px solid ${theme.border}`,
+          borderRadius: 8,
+          padding: '10px 16px',
+          fontSize: 14,
+          fontWeight: 500,
+          color: theme.text,
+          cursor: !!progress ? 'not-allowed' : 'pointer',
+          opacity: !!progress ? 0.6 : 1,
+        }}
+      >
+        {t('chooseFile') || 'Choose File'}
+      </button>
+      <span style={{ fontSize: 13, color: theme.textMuted }}>
+        {selectedFile ? selectedFile.name : t('noFileChosen') || 'No file chosen'}
+      </span>
+    </div>
+    
+    {/* Hidden native file input */}
     <input
       type="file"
       accept="video/*"
       ref={fileInputRef}
       onChange={(e) => setSelectedFile(e.target.files[0])}
       disabled={!!progress}
-      style={{
-        padding: "10px",
-        borderRadius: 8,
-        border: `1px solid ${theme.border}`,
-        background: !!progress ? theme.textMuted + '30' : theme.inputBg,
-        color: theme.text,
-        fontSize: 14,
-        opacity: !!progress ? 0.6 : 1,
-        cursor: !!progress ? 'not-allowed' : 'pointer',
-      }}
+      style={{ display: 'none' }}
     />
+    
     {selectedFile && (
       <button
         onClick={async () => {
           if (!selectedFile || progress) return;
           setError("");
-          setProgress({ stage: "uploading", percent: 0, message: "Starting upload..." });
+          setProgress({ stage: "uploading", percent: 0, message: t('startingUpload') || "Starting upload..." });
           try {
             const clips = await uploadVideoFile(selectedFile, subtitleLang, (p) => setProgress(p));
             if (clips && clips.length > 0) {
@@ -279,29 +296,16 @@ export default function Dashboard() {
           opacity: !!progress ? 0.6 : 1,
         }}
       >
-        Upload & Generate Clips
+        {t('uploadGenerate') || 'Upload & Generate Clips'}
       </button>
     )}
   </div>
   <p style={{ fontSize: 12, color: theme.textMuted, marginTop: 8 }}>
-    Supports MP4, MOV, AVI, MKV (max 100MB recommended)
+    {t('supportedFormats') || 'Supports MP4, MOV, AVI, MKV (max 100MB recommended)'}
   </p>
   
-  {/* Show progress inside this card if upload is active */}
-  {progress && progress.stage === 'uploading' && (
-    <div style={{ marginTop: 12 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-        <span style={{ fontSize: 12, color: theme.textMuted }}>{progress.message}</span>
-        <span style={{ fontSize: 12, fontWeight: 600, color: theme.accent }}>{Math.round(progress.percent)}%</span>
-      </div>
-      <div style={{ background: theme.border, borderRadius: 4, height: 6 }}>
-        <div style={{ width: `${progress.percent}%`, height: '100%', background: `linear-gradient(90deg, ${theme.accent}, #a855f7)`, borderRadius: 4, transition: 'width 0.3s' }} />
-      </div>
-    </div>
-  )}
-  
-  {/* Also show polling progress if needed */}
-  {progress && progress.stage === 'polling' && (
+  {/* Progress inside card (same as before) */}
+  {progress && (progress.stage === 'uploading' || progress.stage === 'polling') && (
     <div style={{ marginTop: 12 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
         <span style={{ fontSize: 12, color: theme.textMuted }}>{progress.message}</span>
