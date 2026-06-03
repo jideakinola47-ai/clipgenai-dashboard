@@ -22,6 +22,17 @@ const FONT_DISPLAY = "'Orbitron','Exo 2',monospace"
 const FONT_BODY    = "'Rajdhani','Share Tech Mono',sans-serif"
 const FONT_MONO    = "'Share Tech Mono','Courier New',monospace"
 
+/* ── IMAGERY (free Unsplash CDN — cyberpunk / tech) ── */
+const IMG = {
+  cityBackdrop: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1600&q=80',   // circuit / neural
+  neonCity:     'https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?auto=format&fit=crop&w=1600&q=80',   // neon skyline
+  creator:      'https://images.unsplash.com/photo-1492619375914-88005aa9e8fb?auto=format&fit=crop&w=900&q=80',    // creator filming
+  dataCore:     'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80',   // glowing data sphere
+  clip1: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=400&q=80',           // podcast
+  clip2: 'https://images.unsplash.com/photo-1598550476439-6847785fcea6?auto=format&fit=crop&w=400&q=80',           // vlogger
+  clip3: 'https://images.unsplash.com/photo-1626379953822-baec19c3accd?auto=format&fit=crop&w=400&q=80',           // streamer setup
+}
+
 /* ── LOADING SEQUENCE ───────────────────────────── */
 const BOOT_LINES = [
   { t: 0,    text: 'CLIPGEN.AI OS v2077.06.03' },
@@ -607,6 +618,20 @@ export default function Landing() {
       <GridOverlay />
       {!isMobile && <HoloCursor />}
 
+      {/* Cyberpunk city backdrop — fixed, dimmed */}
+      <div style={{
+        position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none',
+        backgroundImage: `url(${IMG.neonCity})`,
+        backgroundSize: 'cover', backgroundPosition: 'center',
+        opacity: 0.12,
+        maskImage: 'radial-gradient(ellipse at center, black 30%, transparent 80%)',
+        WebkitMaskImage: 'radial-gradient(ellipse at center, black 30%, transparent 80%)',
+      }} />
+      <div style={{
+        position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none',
+        background: `linear-gradient(180deg, ${C.bg}dd, ${C.bg}99, ${C.bg}ee)`,
+      }} />
+
       {/* Scanline effect */}
       <div style={{
         position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1,
@@ -700,6 +725,43 @@ export default function Landing() {
         <div style={{ marginBottom: 48, animation: 'floatY 4s ease-in-out infinite' }}>
           <HoloOrb />
         </div>
+
+        {/* Floating clip previews with real imagery */}
+        {!isMobile && (
+          <div style={{
+            position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0,
+          }}>
+            {[
+              { img: IMG.clip1, score: '9.8', top: '22%', left: '8%',  rot: -8, delay: '0s',   col: C.cyan },
+              { img: IMG.clip2, score: '9.4', top: '30%', right: '7%', rot: 7,  delay: '1.2s', col: C.purple },
+              { img: IMG.clip3, score: '9.1', bottom: '20%', left: '11%', rot: 6, delay: '0.6s', col: C.gold },
+            ].map((c, i) => (
+              <div key={i} style={{
+                position: 'absolute', top: c.top, bottom: c.bottom, left: c.left, right: c.right,
+                width: 120, height: 200,
+                transform: `rotate(${c.rot}deg)`,
+                animation: `floatY ${5 + i}s ease-in-out ${c.delay} infinite`,
+                borderRadius: 8, overflow: 'hidden',
+                border: `1px solid ${c.col}55`,
+                boxShadow: `0 12px 40px rgba(0,0,0,0.6), 0 0 24px ${c.col}33`,
+              }}>
+                <img src={c.img} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.85 }} />
+                <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(180deg, transparent 40%, ${C.bg}dd)` }} />
+                {/* Viral score badge */}
+                <div style={{
+                  position: 'absolute', top: 8, right: 8,
+                  fontFamily: FONT_MONO, fontSize: 11, fontWeight: 700,
+                  color: '#000', background: c.col, padding: '2px 8px', borderRadius: 2,
+                  boxShadow: `0 0 12px ${c.col}`,
+                }}>{c.score}</div>
+                {/* Mini progress bar */}
+                <div style={{ position: 'absolute', bottom: 10, left: 10, right: 10, height: 3, background: 'rgba(255,255,255,0.15)', borderRadius: 2 }}>
+                  <div style={{ width: `${parseFloat(c.score) * 10}%`, height: '100%', background: c.col, borderRadius: 2, boxShadow: `0 0 8px ${c.col}` }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Headline with glitch */}
         <div style={{ marginBottom: 16 }}>
@@ -806,6 +868,43 @@ export default function Landing() {
                 </div>
               </GlassCard>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════ VISUAL SHOWCASE BAND ═══════════ */}
+      <section style={{ padding: isMobile ? '40px 24px' : '60px 60px', position: 'relative', zIndex: 1 }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 16 }}>
+          {/* Creator panel */}
+          <div style={{ position: 'relative', minHeight: 280, borderRadius: 6, overflow: 'hidden', border: `1px solid ${C.cyan}22` }}>
+            <img src={IMG.creator} alt="Creator filming content" style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0, opacity: 0.55 }} />
+            <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(135deg, ${C.bg}cc, ${C.navy}88, ${C.cyan}11)` }} />
+            <HudCorner pos="tl" /><HudCorner pos="tr" /><HudCorner pos="bl" /><HudCorner pos="br" />
+            <div style={{ position: 'relative', zIndex: 1, padding: 32, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+              <div style={{ fontFamily: FONT_MONO, fontSize: 10, color: C.cyan, letterSpacing: 3, marginBottom: 8 }}>INPUT // RAW FOOTAGE</div>
+              <div style={{ fontFamily: FONT_DISPLAY, fontWeight: 700, fontSize: isMobile ? 22 : 28, color: C.text, lineHeight: 1.1 }}>
+                You film.<br />The AI watches.
+              </div>
+              <div style={{ fontFamily: FONT_BODY, fontSize: 14, color: C.muted, marginTop: 10 }}>
+                Podcasts, vlogs, interviews, streams — any long-form video becomes raw material.
+              </div>
+            </div>
+          </div>
+
+          {/* Data core panel */}
+          <div style={{ position: 'relative', minHeight: 280, borderRadius: 6, overflow: 'hidden', border: `1px solid ${C.purple}22` }}>
+            <img src={IMG.dataCore} alt="Neural data core" style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', inset: 0, opacity: 0.5 }} />
+            <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(135deg, ${C.purple}22, ${C.bg}cc, ${C.bg}ee)` }} />
+            <HudCorner pos="tl" /><HudCorner pos="tr" /><HudCorner pos="bl" /><HudCorner pos="br" />
+            <div style={{ position: 'relative', zIndex: 1, padding: 32, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
+              <div style={{ fontFamily: FONT_MONO, fontSize: 10, color: C.purple, letterSpacing: 3, marginBottom: 8 }}>OUTPUT // VIRAL CLIPS</div>
+              <div style={{ fontFamily: FONT_DISPLAY, fontWeight: 700, fontSize: isMobile ? 22 : 28, color: C.text, lineHeight: 1.1 }}>
+                AI cuts.<br />You go viral.
+              </div>
+              <div style={{ fontFamily: FONT_BODY, fontSize: 14, color: C.muted, marginTop: 10 }}>
+                5–8 scored, subtitled, 9:16 clips ready to post in minutes — fully automatic.
+              </div>
+            </div>
           </div>
         </div>
       </section>
