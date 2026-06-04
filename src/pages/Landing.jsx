@@ -114,6 +114,35 @@ const EN = {
   finalTitle1:'GO VIRAL.', finalTitle2:'GO NOW.',
   finalSub:'Join 152,000 creators. The AI does the work. You collect the views.',
   finalCta:'ACTIVATE FREE TRIAL', recommended:'RECOMMENDED', deploy:'DEPLOY NOW', initialize:'INITIALIZE',
+  // district labels
+  distNexus:'NEXUS HUB / COMMAND CENTER', distIntel:'INTELLIGENCE DISTRICT', distFlow:'DATAFLOW ARCHITECTURE', distZone:'LAUNCH PAD / DEPLOYMENT ZONE',
+  // stats
+  stClips:'CLIPS GENERATED', stScore:'AVG VIRAL SCORE', stTime:'TIME SAVED', stCreators:'CREATORS',
+  // features
+  f1l:'VIRAL SCORING', f1d:'Neural analysis scores every clip 0–100 on hook strength, emotion peaks, and shareability vectors.',
+  f2l:'WHISPER AI', f2d:'OpenAI Whisper transcribes speech in 50+ languages with millisecond-accurate timestamps.',
+  f3l:'AUTO 9:16', f3d:'FFmpeg pipeline reformats to TikTok, Reels and Shorts with intelligent crop and padding.',
+  f4l:'GPT-4 ANALYSIS', f4d:'GPT-4o-mini finds the 5–8 highest-potential moments from any long-form content.',
+  f5l:'1-CLICK PUBLISH', f5d:'Push clips directly to TikTok, Instagram Reels, and YouTube Shorts simultaneously.',
+  f6l:'INSTANT CLIPS', f6d:'Full pipeline runs in 3–8 minutes. Upload → viral clips, no editing skills required.',
+  // steps
+  s1l:'UPLOAD', s1d:'Drop any MP4/MOV/AVI up to 500MB or paste a URL. Secure Cloudinary storage.',
+  s2l:'TRANSCRIBE', s2d:'OpenAI Whisper extracts speech with segment-level timestamps in 50+ languages.',
+  s3l:'ANALYZE', s3d:'GPT-4o-mini identifies viral moments — hooks, emotion peaks, quotable facts.',
+  s4l:'CUT & PUBLISH', s4d:'FFmpeg cuts clips, reformats to 9:16. Push to all platforms in one click.',
+  // process card
+  procSim:'PROCESSING SIMULATION', procAvg:'Avg Processing:', procClips:'45-min podcast → 7 viral clips',
+  peExtract:'EXTRACT', peTranscribe:'TRANSCRIBE', peAnalyze:'ANALYZE', peCut:'CUT',
+  // pricing
+  tierWord:'TIER', perMo:'/mo',
+  pStarter1:'10 videos/month', pStarter2:'Auto Whisper subtitles', pStarter3:'9:16 reformat', pStarter4:'5 clips per video', pStarter5:'Email support',
+  pPro1:'50 videos/month', pPro2:'50+ languages', pPro3:'Direct publishing', pPro4:'10 clips per video', pPro5:'Priority queue', pPro6:'API access',
+  pAgency1:'Unlimited videos', pAgency2:'White-label dashboard', pAgency3:'Team workspace', pAgency4:'Custom branding', pAgency5:'Dedicated support', pAgency6:'Webhook integrations',
+  // NOVA assistant
+  nova1:'Welcome to ClipGen.AI. I am NOVA — your AI content strategist. Upload any long video and I extract the viral moments automatically.',
+  nova2:'Powered by OpenAI Whisper and GPT-4o. Our neural engine analyzes every second of your content for maximum viral potential.',
+  nova3:'The full pipeline takes 3–8 minutes. No editing skills required — just upload and let the AI work.',
+  nova4:'Start free. The Pro plan gives you 50 videos per month with direct publishing to all major platforms.',
 }
 
 /* ── Translations (merged with EN fallback for any missing key) ── */
@@ -572,34 +601,225 @@ const RAW = {
   zu:{ hero1:'GUQULA NOMA IYIPHI IVIDIYO', hero2:'IBE AMAKILIPHU AVIRAL', ctaPrimary:'QALA MAHHALA', navLaunch:'QALA', finalCta:'VULA ISIVIVINYO SAMAHHALA', finalTitle1:'YIBA VIRAL.', finalTitle2:'MANJE.' },
 }
 
-/* merge each language with EN fallback */
+/* ── Full body-content translations (complete languages) ──
+   These cover the feature cards, steps, pricing bullets, stat labels,
+   process card, district labels and NOVA assistant. Languages not listed
+   here fall back to English for body text while keeping translated
+   headlines/nav/CTA. ── */
+const BODY = {
+  lt:{ distNexus:'CENTRINIS MAZGAS / VALDYMO CENTRAS', distIntel:'INTELEKTO RAJONAS', distFlow:'DUOMENŲ SRAUTO ARCHITEKTŪRA', distZone:'PALEIDIMO AIKŠTELĖ / DIEGIMO ZONA',
+    stClips:'SUKURTŲ KLIPŲ', stScore:'VID. VIRUSINIS BALAS', stTime:'SUTAUPYTA LAIKO', stCreators:'KŪRĖJŲ',
+    f1l:'VIRUSINIS VERTINIMAS', f1d:'Neuroninė analizė kiekvieną klipą įvertina 0–100 pagal kabliuko stiprumą, emocijų pikus ir dalijimosi potencialą.',
+    f2l:'WHISPER DI', f2d:'OpenAI Whisper transkribuoja kalbą 50+ kalbų su milisekundžių tikslumo laiko žymomis.',
+    f3l:'AUTO 9:16', f3d:'FFmpeg konvertuoja į TikTok, Reels ir Shorts su išmaniu kadravimu ir užpildymu.',
+    f4l:'GPT-4 ANALIZĖ', f4d:'GPT-4o-mini suranda 5–8 didžiausio potencialo momentus bet kokiame ilgame turinyje.',
+    f5l:'PASKELBIMAS VIENU PASPAUDIMU', f5d:'Siųskite klipus tiesiai į TikTok, Instagram Reels ir YouTube Shorts vienu metu.',
+    f6l:'AKIMIRKSNIO KLIPAI', f6d:'Visas procesas trunka 3–8 minutes. Įkėlimas → virusiniai klipai, montavimo įgūdžių nereikia.',
+    s1l:'ĮKELTI', s1d:'Įkelkite bet kokį MP4/MOV/AVI iki 500MB arba įklijuokite nuorodą. Saugi Cloudinary saugykla.',
+    s2l:'TRANSKRIBUOTI', s2d:'OpenAI Whisper išgauna kalbą su segmentų laiko žymomis 50+ kalbų.',
+    s3l:'ANALIZUOTI', s3d:'GPT-4o-mini atpažįsta virusinius momentus — kabliukus, emocijų pikus, cituotinus faktus.',
+    s4l:'KARPYTI IR SKELBTI', s4d:'FFmpeg iškerpa klipus, konvertuoja į 9:16. Paskelbkite visur vienu paspaudimu.',
+    procSim:'APDOROJIMO SIMULIACIJA', procAvg:'Vid. apdorojimas:', procClips:'45 min podkastas → 7 virusiniai klipai',
+    peExtract:'IŠGAVIMAS', peTranscribe:'TRANSKRIPCIJA', peAnalyze:'ANALIZĖ', peCut:'KARPYMAS',
+    tierWord:'PLANAS', perMo:'/mėn',
+    pStarter1:'10 vaizdo įrašų/mėn', pStarter2:'Automatiniai Whisper subtitrai', pStarter3:'9:16 formatas', pStarter4:'5 klipai per įrašą', pStarter5:'El. pašto pagalba',
+    pPro1:'50 vaizdo įrašų/mėn', pPro2:'50+ kalbų', pPro3:'Tiesioginis skelbimas', pPro4:'10 klipų per įrašą', pPro5:'Pirmenybinė eilė', pPro6:'API prieiga',
+    pAgency1:'Neriboti vaizdo įrašai', pAgency2:'White-label skydelis', pAgency3:'Komandos erdvė', pAgency4:'Individualus prekės ženklas', pAgency5:'Skirta pagalba', pAgency6:'Webhook integracijos',
+    nova1:'Sveiki atvykę į ClipGen.AI. Aš NOVA — jūsų DI turinio strategas. Įkelkite ilgą vaizdo įrašą, o aš automatiškai išgausiu virusinius momentus.',
+    nova2:'Varoma OpenAI Whisper ir GPT-4o. Mūsų neuroninis variklis analizuoja kiekvieną turinio sekundę dėl maksimalaus virusinio potencialo.',
+    nova3:'Visas procesas trunka 3–8 minutes. Montavimo įgūdžių nereikia — tiesiog įkelkite ir leiskite DI dirbti.',
+    nova4:'Pradėkite nemokamai. Pro planas suteikia 50 vaizdo įrašų per mėnesį su tiesioginiu skelbimu visose platformose.' },
+
+  es:{ distNexus:'CENTRO NEXUS / CENTRO DE MANDO', distIntel:'DISTRITO DE INTELIGENCIA', distFlow:'ARQUITECTURA DE DATOS', distZone:'PLATAFORMA DE LANZAMIENTO / ZONA DE DESPLIEGUE',
+    stClips:'CLIPS GENERADOS', stScore:'PUNTUACIÓN VIRAL MEDIA', stTime:'TIEMPO AHORRADO', stCreators:'CREADORES',
+    f1l:'PUNTUACIÓN VIRAL', f1d:'El análisis neuronal puntúa cada clip de 0 a 100 según el gancho, los picos de emoción y el potencial de difusión.',
+    f2l:'WHISPER IA', f2d:'OpenAI Whisper transcribe el habla en más de 50 idiomas con marcas de tiempo de precisión milimétrica.',
+    f3l:'AUTO 9:16', f3d:'El pipeline de FFmpeg reformatea a TikTok, Reels y Shorts con recorte y relleno inteligentes.',
+    f4l:'ANÁLISIS GPT-4', f4d:'GPT-4o-mini encuentra los 5–8 momentos de mayor potencial de cualquier contenido largo.',
+    f5l:'PUBLICAR EN 1 CLIC', f5d:'Envía clips directamente a TikTok, Instagram Reels y YouTube Shorts a la vez.',
+    f6l:'CLIPS INSTANTÁNEOS', f6d:'Todo el proceso tarda 3–8 minutos. Sube y obtén clips virales, sin saber editar.',
+    s1l:'SUBIR', s1d:'Suelta cualquier MP4/MOV/AVI hasta 500MB o pega una URL. Almacenamiento seguro en Cloudinary.',
+    s2l:'TRANSCRIBIR', s2d:'OpenAI Whisper extrae el habla con marcas de tiempo por segmento en más de 50 idiomas.',
+    s3l:'ANALIZAR', s3d:'GPT-4o-mini identifica momentos virales: ganchos, picos de emoción, frases citables.',
+    s4l:'CORTAR Y PUBLICAR', s4d:'FFmpeg corta los clips y los reformatea a 9:16. Publica en todas las plataformas con un clic.',
+    procSim:'SIMULACIÓN DE PROCESO', procAvg:'Proceso medio:', procClips:'Podcast de 45 min → 7 clips virales',
+    peExtract:'EXTRAER', peTranscribe:'TRANSCRIBIR', peAnalyze:'ANALIZAR', peCut:'CORTAR',
+    tierWord:'PLAN', perMo:'/mes',
+    pStarter1:'10 vídeos/mes', pStarter2:'Subtítulos Whisper automáticos', pStarter3:'Reformato 9:16', pStarter4:'5 clips por vídeo', pStarter5:'Soporte por email',
+    pPro1:'50 vídeos/mes', pPro2:'Más de 50 idiomas', pPro3:'Publicación directa', pPro4:'10 clips por vídeo', pPro5:'Cola prioritaria', pPro6:'Acceso API',
+    pAgency1:'Vídeos ilimitados', pAgency2:'Panel de marca blanca', pAgency3:'Espacio de equipo', pAgency4:'Marca personalizada', pAgency5:'Soporte dedicado', pAgency6:'Integraciones webhook',
+    nova1:'Bienvenido a ClipGen.AI. Soy NOVA, tu estratega de contenido con IA. Sube un vídeo largo y extraigo los momentos virales automáticamente.',
+    nova2:'Con tecnología de OpenAI Whisper y GPT-4o. Nuestro motor neuronal analiza cada segundo de tu contenido para un máximo potencial viral.',
+    nova3:'Todo el proceso tarda 3–8 minutos. No necesitas saber editar: solo sube y deja trabajar a la IA.',
+    nova4:'Empieza gratis. El plan Pro te da 50 vídeos al mes con publicación directa en todas las plataformas.' },
+
+  fr:{ distNexus:'NEXUS / CENTRE DE COMMANDE', distIntel:'DISTRICT INTELLIGENCE', distFlow:'ARCHITECTURE DES DONNÉES', distZone:'RAMPE DE LANCEMENT / ZONE DE DÉPLOIEMENT',
+    stClips:'CLIPS GÉNÉRÉS', stScore:'SCORE VIRAL MOYEN', stTime:'TEMPS GAGNÉ', stCreators:'CRÉATEURS',
+    f1l:'SCORE VIRAL', f1d:'L\u2019analyse neuronale note chaque clip de 0 à 100 selon l\u2019accroche, les pics d\u2019émotion et le potentiel de partage.',
+    f2l:'WHISPER IA', f2d:'OpenAI Whisper transcrit la parole en plus de 50 langues avec un horodatage à la milliseconde.',
+    f3l:'AUTO 9:16', f3d:'Le pipeline FFmpeg reformate pour TikTok, Reels et Shorts avec recadrage et marges intelligents.',
+    f4l:'ANALYSE GPT-4', f4d:'GPT-4o-mini trouve les 5 à 8 moments à plus fort potentiel de tout contenu long.',
+    f5l:'PUBLICATION EN 1 CLIC', f5d:'Envoyez vos clips directement sur TikTok, Instagram Reels et YouTube Shorts en même temps.',
+    f6l:'CLIPS INSTANTANÉS', f6d:'Tout le processus prend 3 à 8 minutes. Importez, obtenez des clips viraux, sans savoir monter.',
+    s1l:'IMPORTER', s1d:'Déposez un MP4/MOV/AVI jusqu\u2019à 500 Mo ou collez une URL. Stockage Cloudinary sécurisé.',
+    s2l:'TRANSCRIRE', s2d:'OpenAI Whisper extrait la parole avec horodatage par segment en plus de 50 langues.',
+    s3l:'ANALYSER', s3d:'GPT-4o-mini repère les moments viraux : accroches, pics d\u2019émotion, phrases citables.',
+    s4l:'COUPER ET PUBLIER', s4d:'FFmpeg découpe les clips et reformate en 9:16. Publiez partout en un clic.',
+    procSim:'SIMULATION DE TRAITEMENT', procAvg:'Traitement moyen :', procClips:'Podcast de 45 min → 7 clips viraux',
+    peExtract:'EXTRAIRE', peTranscribe:'TRANSCRIRE', peAnalyze:'ANALYSER', peCut:'COUPER',
+    tierWord:'OFFRE', perMo:'/mois',
+    pStarter1:'10 vidéos/mois', pStarter2:'Sous-titres Whisper automatiques', pStarter3:'Reformatage 9:16', pStarter4:'5 clips par vidéo', pStarter5:'Support par e-mail',
+    pPro1:'50 vidéos/mois', pPro2:'Plus de 50 langues', pPro3:'Publication directe', pPro4:'10 clips par vidéo', pPro5:'File prioritaire', pPro6:'Accès API',
+    pAgency1:'Vidéos illimitées', pAgency2:'Tableau de bord marque blanche', pAgency3:'Espace d\u2019équipe', pAgency4:'Image de marque personnalisée', pAgency5:'Support dédié', pAgency6:'Intégrations webhook',
+    nova1:'Bienvenue sur ClipGen.AI. Je suis NOVA, votre stratège de contenu IA. Importez une longue vidéo et j\u2019extrais automatiquement les moments viraux.',
+    nova2:'Propulsé par OpenAI Whisper et GPT-4o. Notre moteur neuronal analyse chaque seconde de votre contenu pour un potentiel viral maximal.',
+    nova3:'Tout le processus prend 3 à 8 minutes. Aucun montage requis : importez et laissez l\u2019IA travailler.',
+    nova4:'Commencez gratuitement. L\u2019offre Pro vous donne 50 vidéos par mois avec publication directe sur toutes les plateformes.' },
+
+  de:{ distNexus:'NEXUS / KOMMANDOZENTRALE', distIntel:'INTELLIGENZ-BEZIRK', distFlow:'DATENFLUSS-ARCHITEKTUR', distZone:'STARTRAMPE / DEPLOYMENT-ZONE',
+    stClips:'ERSTELLTE CLIPS', stScore:'DURCHSCHN. VIRAL-SCORE', stTime:'GESPARTE ZEIT', stCreators:'CREATOR',
+    f1l:'VIRAL-SCORING', f1d:'Die neuronale Analyse bewertet jeden Clip von 0–100 nach Hook-Stärke, Emotionsspitzen und Teilbarkeit.',
+    f2l:'WHISPER KI', f2d:'OpenAI Whisper transkribiert Sprache in 50+ Sprachen mit millisekundengenauen Zeitstempeln.',
+    f3l:'AUTO 9:16', f3d:'Die FFmpeg-Pipeline formatiert für TikTok, Reels und Shorts mit intelligentem Zuschnitt und Rand.',
+    f4l:'GPT-4 ANALYSE', f4d:'GPT-4o-mini findet die 5–8 stärksten Momente aus jedem langen Inhalt.',
+    f5l:'1-KLICK-VERÖFFENTLICHUNG', f5d:'Sende Clips direkt gleichzeitig an TikTok, Instagram Reels und YouTube Shorts.',
+    f6l:'SOFORT-CLIPS', f6d:'Der gesamte Ablauf dauert 3–8 Minuten. Hochladen → virale Clips, ganz ohne Schnittkenntnisse.',
+    s1l:'HOCHLADEN', s1d:'Lade ein beliebiges MP4/MOV/AVI bis 500 MB hoch oder füge eine URL ein. Sicherer Cloudinary-Speicher.',
+    s2l:'TRANSKRIBIEREN', s2d:'OpenAI Whisper extrahiert Sprache mit Zeitstempeln pro Segment in 50+ Sprachen.',
+    s3l:'ANALYSIEREN', s3d:'GPT-4o-mini erkennt virale Momente — Hooks, Emotionsspitzen, zitierfähige Fakten.',
+    s4l:'SCHNEIDEN & POSTEN', s4d:'FFmpeg schneidet Clips, formatiert auf 9:16. Mit einem Klick auf alle Plattformen.',
+    procSim:'VERARBEITUNGS-SIMULATION', procAvg:'Ø Verarbeitung:', procClips:'45-Min-Podcast → 7 virale Clips',
+    peExtract:'EXTRAHIEREN', peTranscribe:'TRANSKRIBIEREN', peAnalyze:'ANALYSIEREN', peCut:'SCHNEIDEN',
+    tierWord:'TARIF', perMo:'/Mon.',
+    pStarter1:'10 Videos/Monat', pStarter2:'Automatische Whisper-Untertitel', pStarter3:'9:16-Format', pStarter4:'5 Clips pro Video', pStarter5:'E-Mail-Support',
+    pPro1:'50 Videos/Monat', pPro2:'50+ Sprachen', pPro3:'Direktes Posten', pPro4:'10 Clips pro Video', pPro5:'Prioritäts-Warteschlange', pPro6:'API-Zugang',
+    pAgency1:'Unbegrenzte Videos', pAgency2:'White-Label-Dashboard', pAgency3:'Team-Arbeitsbereich', pAgency4:'Eigenes Branding', pAgency5:'Dedizierter Support', pAgency6:'Webhook-Integrationen',
+    nova1:'Willkommen bei ClipGen.AI. Ich bin NOVA — dein KI-Content-Stratege. Lade ein langes Video hoch, und ich extrahiere automatisch die viralen Momente.',
+    nova2:'Angetrieben von OpenAI Whisper und GPT-4o. Unsere neuronale Engine analysiert jede Sekunde deines Inhalts für maximales virales Potenzial.',
+    nova3:'Der gesamte Ablauf dauert 3–8 Minuten. Keine Schnittkenntnisse nötig — einfach hochladen und die KI arbeiten lassen.',
+    nova4:'Starte kostenlos. Der Pro-Tarif bietet 50 Videos pro Monat mit direktem Posten auf allen großen Plattformen.' },
+
+  pt:{ distNexus:'NEXUS / CENTRO DE COMANDO', distIntel:'DISTRITO DE INTELIGÊNCIA', distFlow:'ARQUITETURA DE DADOS', distZone:'PLATAFORMA DE LANÇAMENTO / ZONA DE IMPLANTAÇÃO',
+    stClips:'CLIPES GERADOS', stScore:'PONTUAÇÃO VIRAL MÉDIA', stTime:'TEMPO ECONOMIZADO', stCreators:'CRIADORES',
+    f1l:'PONTUAÇÃO VIRAL', f1d:'A análise neural pontua cada clipe de 0 a 100 pela força do gancho, picos de emoção e potencial de compartilhamento.',
+    f2l:'WHISPER IA', f2d:'O OpenAI Whisper transcreve fala em mais de 50 idiomas com marcas de tempo precisas ao milissegundo.',
+    f3l:'AUTO 9:16', f3d:'O pipeline FFmpeg reformata para TikTok, Reels e Shorts com corte e preenchimento inteligentes.',
+    f4l:'ANÁLISE GPT-4', f4d:'O GPT-4o-mini encontra os 5–8 momentos de maior potencial de qualquer conteúdo longo.',
+    f5l:'PUBLICAR EM 1 CLIQUE', f5d:'Envie clipes direto para TikTok, Instagram Reels e YouTube Shorts ao mesmo tempo.',
+    f6l:'CLIPES INSTANTÂNEOS', f6d:'Todo o processo leva 3–8 minutos. Envie e receba clipes virais, sem precisar editar.',
+    s1l:'ENVIAR', s1d:'Solte qualquer MP4/MOV/AVI até 500MB ou cole uma URL. Armazenamento seguro na Cloudinary.',
+    s2l:'TRANSCREVER', s2d:'O OpenAI Whisper extrai a fala com marcas de tempo por segmento em mais de 50 idiomas.',
+    s3l:'ANALISAR', s3d:'O GPT-4o-mini identifica momentos virais — ganchos, picos de emoção, frases citáveis.',
+    s4l:'CORTAR E PUBLICAR', s4d:'O FFmpeg corta os clipes e reformata para 9:16. Publique em todas as plataformas com um clique.',
+    procSim:'SIMULAÇÃO DE PROCESSAMENTO', procAvg:'Processamento médio:', procClips:'Podcast de 45 min → 7 clipes virais',
+    peExtract:'EXTRAIR', peTranscribe:'TRANSCREVER', peAnalyze:'ANALISAR', peCut:'CORTAR',
+    tierWord:'PLANO', perMo:'/mês',
+    pStarter1:'10 vídeos/mês', pStarter2:'Legendas Whisper automáticas', pStarter3:'Reformato 9:16', pStarter4:'5 clipes por vídeo', pStarter5:'Suporte por e-mail',
+    pPro1:'50 vídeos/mês', pPro2:'Mais de 50 idiomas', pPro3:'Publicação direta', pPro4:'10 clipes por vídeo', pPro5:'Fila prioritária', pPro6:'Acesso à API',
+    pAgency1:'Vídeos ilimitados', pAgency2:'Painel white-label', pAgency3:'Espaço de equipe', pAgency4:'Marca personalizada', pAgency5:'Suporte dedicado', pAgency6:'Integrações webhook',
+    nova1:'Bem-vindo à ClipGen.AI. Sou a NOVA — sua estrategista de conteúdo com IA. Envie um vídeo longo e eu extraio os momentos virais automaticamente.',
+    nova2:'Com tecnologia OpenAI Whisper e GPT-4o. Nosso motor neural analisa cada segundo do seu conteúdo para o máximo potencial viral.',
+    nova3:'Todo o processo leva 3–8 minutos. Não precisa saber editar — é só enviar e deixar a IA trabalhar.',
+    nova4:'Comece grátis. O plano Pro dá 50 vídeos por mês com publicação direta em todas as grandes plataformas.' },
+
+  it:{ distNexus:'NEXUS / CENTRO DI COMANDO', distIntel:'DISTRETTO INTELLIGENZA', distFlow:'ARCHITETTURA DEI DATI', distZone:'RAMPA DI LANCIO / ZONA DI RILASCIO',
+    stClips:'CLIP GENERATE', stScore:'PUNTEGGIO VIRALE MEDIO', stTime:'TEMPO RISPARMIATO', stCreators:'CREATOR',
+    f1l:'PUNTEGGIO VIRALE', f1d:'L\u2019analisi neurale valuta ogni clip da 0 a 100 in base ad aggancio, picchi emotivi e condivisibilità.',
+    f2l:'WHISPER IA', f2d:'OpenAI Whisper trascrive il parlato in oltre 50 lingue con timestamp precisi al millisecondo.',
+    f3l:'AUTO 9:16', f3d:'La pipeline FFmpeg riformatta per TikTok, Reels e Shorts con ritaglio e riempimento intelligenti.',
+    f4l:'ANALISI GPT-4', f4d:'GPT-4o-mini trova i 5–8 momenti dal potenziale più alto in qualsiasi contenuto lungo.',
+    f5l:'PUBBLICA IN 1 CLIC', f5d:'Invia le clip direttamente su TikTok, Instagram Reels e YouTube Shorts contemporaneamente.',
+    f6l:'CLIP ISTANTANEE', f6d:'L\u2019intero processo dura 3–8 minuti. Carica e ottieni clip virali, senza saper montare.',
+    s1l:'CARICA', s1d:'Trascina qualsiasi MP4/MOV/AVI fino a 500MB o incolla un URL. Archiviazione sicura su Cloudinary.',
+    s2l:'TRASCRIVI', s2d:'OpenAI Whisper estrae il parlato con timestamp per segmento in oltre 50 lingue.',
+    s3l:'ANALIZZA', s3d:'GPT-4o-mini individua i momenti virali: agganci, picchi emotivi, frasi citabili.',
+    s4l:'TAGLIA E PUBBLICA', s4d:'FFmpeg taglia le clip e riformatta in 9:16. Pubblica ovunque con un clic.',
+    procSim:'SIMULAZIONE DI ELABORAZIONE', procAvg:'Elaborazione media:', procClips:'Podcast di 45 min → 7 clip virali',
+    peExtract:'ESTRAI', peTranscribe:'TRASCRIVI', peAnalyze:'ANALIZZA', peCut:'TAGLIA',
+    tierWord:'PIANO', perMo:'/mese',
+    pStarter1:'10 video/mese', pStarter2:'Sottotitoli Whisper automatici', pStarter3:'Riformato 9:16', pStarter4:'5 clip per video', pStarter5:'Supporto via email',
+    pPro1:'50 video/mese', pPro2:'Oltre 50 lingue', pPro3:'Pubblicazione diretta', pPro4:'10 clip per video', pPro5:'Coda prioritaria', pPro6:'Accesso API',
+    pAgency1:'Video illimitati', pAgency2:'Dashboard white-label', pAgency3:'Spazio per il team', pAgency4:'Branding personalizzato', pAgency5:'Supporto dedicato', pAgency6:'Integrazioni webhook',
+    nova1:'Benvenuto su ClipGen.AI. Sono NOVA, la tua stratega di contenuti con IA. Carica un video lungo ed estraggo automaticamente i momenti virali.',
+    nova2:'Basato su OpenAI Whisper e GPT-4o. Il nostro motore neurale analizza ogni secondo del tuo contenuto per il massimo potenziale virale.',
+    nova3:'L\u2019intero processo dura 3–8 minuti. Nessuna competenza di montaggio: carica e lascia lavorare l\u2019IA.',
+    nova4:'Inizia gratis. Il piano Pro ti dà 50 video al mese con pubblicazione diretta su tutte le principali piattaforme.' },
+
+  ru:{ distNexus:'НЕКСУС / КОМАНДНЫЙ ЦЕНТР', distIntel:'РАЙОН ИНТЕЛЛЕКТА', distFlow:'АРХИТЕКТУРА ДАННЫХ', distZone:'СТАРТОВАЯ ПЛОЩАДКА / ЗОНА РАЗВЁРТЫВАНИЯ',
+    stClips:'СОЗДАНО КЛИПОВ', stScore:'СРЕДНИЙ ВИРУСНЫЙ БАЛЛ', stTime:'СЭКОНОМЛЕНО ВРЕМЕНИ', stCreators:'АВТОРОВ',
+    f1l:'ВИРУСНАЯ ОЦЕНКА', f1d:'Нейросеть оценивает каждый клип от 0 до 100 по силе зацепки, пикам эмоций и потенциалу репостов.',
+    f2l:'WHISPER ИИ', f2d:'OpenAI Whisper расшифровывает речь на 50+ языках с точностью до миллисекунды.',
+    f3l:'АВТО 9:16', f3d:'Конвейер FFmpeg переформатирует под TikTok, Reels и Shorts с умной обрезкой и полями.',
+    f4l:'АНАЛИЗ GPT-4', f4d:'GPT-4o-mini находит 5–8 самых перспективных моментов в любом длинном видео.',
+    f5l:'ПУБЛИКАЦИЯ В 1 КЛИК', f5d:'Отправляйте клипы сразу в TikTok, Instagram Reels и YouTube Shorts одновременно.',
+    f6l:'МГНОВЕННЫЕ КЛИПЫ', f6d:'Весь процесс занимает 3–8 минут. Загрузка → вирусные клипы, навыки монтажа не нужны.',
+    s1l:'ЗАГРУЗКА', s1d:'Перетащите любой MP4/MOV/AVI до 500 МБ или вставьте ссылку. Безопасное хранилище Cloudinary.',
+    s2l:'РАСШИФРОВКА', s2d:'OpenAI Whisper извлекает речь с посегментными метками времени на 50+ языках.',
+    s3l:'АНАЛИЗ', s3d:'GPT-4o-mini находит вирусные моменты — зацепки, пики эмоций, цитируемые факты.',
+    s4l:'НАРЕЗКА И ПУБЛИКАЦИЯ', s4d:'FFmpeg нарезает клипы и переформатирует в 9:16. Публикуйте везде в один клик.',
+    procSim:'СИМУЛЯЦИЯ ОБРАБОТКИ', procAvg:'Ср. обработка:', procClips:'Подкаст 45 мин → 7 вирусных клипов',
+    peExtract:'ИЗВЛЕЧЕНИЕ', peTranscribe:'РАСШИФРОВКА', peAnalyze:'АНАЛИЗ', peCut:'НАРЕЗКА',
+    tierWord:'ТАРИФ', perMo:'/мес',
+    pStarter1:'10 видео/мес', pStarter2:'Авто-субтитры Whisper', pStarter3:'Формат 9:16', pStarter4:'5 клипов на видео', pStarter5:'Поддержка по email',
+    pPro1:'50 видео/мес', pPro2:'50+ языков', pPro3:'Прямая публикация', pPro4:'10 клипов на видео', pPro5:'Приоритетная очередь', pPro6:'Доступ к API',
+    pAgency1:'Безлимит видео', pAgency2:'White-label панель', pAgency3:'Рабочее пространство команды', pAgency4:'Свой брендинг', pAgency5:'Выделенная поддержка', pAgency6:'Webhook-интеграции',
+    nova1:'Добро пожаловать в ClipGen.AI. Я NOVA — ваш ИИ-стратег контента. Загрузите длинное видео, и я автоматически извлеку вирусные моменты.',
+    nova2:'На базе OpenAI Whisper и GPT-4o. Наш нейродвижок анализирует каждую секунду вашего контента ради максимального вирусного потенциала.',
+    nova3:'Весь процесс занимает 3–8 минут. Навыки монтажа не нужны — просто загрузите и доверьте работу ИИ.',
+    nova4:'Начните бесплатно. Тариф Pro даёт 50 видео в месяц с прямой публикацией на всех крупных платформах.' },
+
+  zh:{ distNexus:'枢纽 / 指挥中心', distIntel:'智能区', distFlow:'数据流架构', distZone:'发射台 / 部署区',
+    stClips:'已生成片段', stScore:'平均爆款评分', stTime:'节省时间', stCreators:'创作者',
+    f1l:'爆款评分', f1d:'神经分析按钩子强度、情绪高峰和传播潜力为每个片段打 0–100 分。',
+    f2l:'WHISPER AI', f2d:'OpenAI Whisper 以毫秒级时间戳转写 50 多种语言的语音。',
+    f3l:'自动 9:16', f3d:'FFmpeg 流程智能裁剪与填充，重新适配 TikTok、Reels 和 Shorts。',
+    f4l:'GPT-4 分析', f4d:'GPT-4o-mini 从任意长视频中找出 5–8 个最具潜力的时刻。',
+    f5l:'一键发布', f5d:'将片段同时直接推送到 TikTok、Instagram Reels 和 YouTube Shorts。',
+    f6l:'即时片段', f6d:'整个流程 3–8 分钟。上传即得爆款片段，无需剪辑技能。',
+    s1l:'上传', s1d:'拖入任意不超过 500MB 的 MP4/MOV/AVI 或粘贴网址。安全的 Cloudinary 存储。',
+    s2l:'转写', s2d:'OpenAI Whisper 以 50 多种语言提取语音并标注分段时间戳。',
+    s3l:'分析', s3d:'GPT-4o-mini 识别爆款时刻——钩子、情绪高峰、可引用的金句。',
+    s4l:'裁剪并发布', s4d:'FFmpeg 裁剪片段并重排为 9:16。一键发布到所有平台。',
+    procSim:'处理模拟', procAvg:'平均处理：', procClips:'45 分钟播客 → 7 个爆款片段',
+    peExtract:'提取', peTranscribe:'转写', peAnalyze:'分析', peCut:'裁剪',
+    tierWord:'套餐', perMo:'/月',
+    pStarter1:'每月 10 个视频', pStarter2:'自动 Whisper 字幕', pStarter3:'9:16 重排', pStarter4:'每视频 5 个片段', pStarter5:'邮件支持',
+    pPro1:'每月 50 个视频', pPro2:'50 多种语言', pPro3:'直接发布', pPro4:'每视频 10 个片段', pPro5:'优先队列', pPro6:'API 访问',
+    pAgency1:'无限视频', pAgency2:'白标仪表板', pAgency3:'团队工作区', pAgency4:'自定义品牌', pAgency5:'专属支持', pAgency6:'Webhook 集成',
+    nova1:'欢迎来到 ClipGen.AI。我是 NOVA——你的 AI 内容策略师。上传长视频，我会自动提取爆款时刻。',
+    nova2:'由 OpenAI Whisper 与 GPT-4o 驱动。我们的神经引擎分析你内容的每一秒，挖掘最大爆款潜力。',
+    nova3:'整个流程仅需 3–8 分钟。无需剪辑技能——上传即可，交给 AI。',
+    nova4:'免费开始。Pro 套餐每月 50 个视频，并可直接发布到所有主流平台。' },
+}
+
+/* merge each language with EN fallback + full body translations */
 const I18N = Object.fromEntries(
-  LANGS.map(l => [l.code, { ...EN, ...(RAW[l.code] || {}) }])
+  LANGS.map(l => [l.code, { ...EN, ...(RAW[l.code] || {}), ...(BODY[l.code] || {}) }])
 )
 
 /* ════════════════════════════════════════════════════════════════
    STATIC DATA  (color stored as palette key, resolved at render)
    ════════════════════════════════════════════════════════════════ */
 const FEATURES = [
-  { icon:'◉',  key:'cyan',   stat:'9.8 avg',     l:'VIRAL SCORING', d:'Neural analysis scores every clip 0–100 on hook strength, emotion peaks, and shareability vectors.' },
-  { icon:'⟨⟩', key:'blue',   stat:'50+ langs',   l:'WHISPER AI',    d:'OpenAI Whisper transcribes speech in 50+ languages with millisecond-accurate timestamps.' },
-  { icon:'◑',  key:'purple', stat:'1080×1920',   l:'AUTO 9:16',     d:'FFmpeg pipeline reformats to TikTok, Reels and Shorts with intelligent crop and padding.' },
-  { icon:'⬡',  key:'pink',   stat:'GPT-4o',      l:'GPT-4 ANALYSIS',d:'GPT-4o-mini finds the 5–8 highest-potential moments from any long-form content.' },
-  { icon:'◈',  key:'gold',   stat:'3 platforms', l:'1-CLICK PUBLISH',d:'Push clips directly to TikTok, Instagram Reels, and YouTube Shorts simultaneously.' },
-  { icon:'▲',  key:'cyan',   stat:'<8 min',      l:'INSTANT CLIPS', d:'Full pipeline runs in 3–8 minutes. Upload → viral clips, no editing skills required.' },
+  { icon:'◉',  key:'cyan',   stat:'9.8 avg',     lk:'f1l', dk:'f1d' },
+  { icon:'⟨⟩', key:'blue',   stat:'50+ langs',   lk:'f2l', dk:'f2d' },
+  { icon:'◑',  key:'purple', stat:'1080×1920',   lk:'f3l', dk:'f3d' },
+  { icon:'⬡',  key:'pink',   stat:'GPT-4o',      lk:'f4l', dk:'f4d' },
+  { icon:'◈',  key:'gold',   stat:'3 platforms', lk:'f5l', dk:'f5d' },
+  { icon:'▲',  key:'cyan',   stat:'<8 min',      lk:'f6l', dk:'f6d' },
 ]
 
 const STEPS = [
-  { n:'01', l:'UPLOAD',     d:'Drop any MP4/MOV/AVI up to 500MB or paste a URL. Secure Cloudinary storage.' },
-  { n:'02', l:'TRANSCRIBE', d:'OpenAI Whisper extracts speech with segment-level timestamps in 50+ languages.' },
-  { n:'03', l:'ANALYZE',    d:'GPT-4o-mini identifies viral moments — hooks, emotion peaks, quotable facts.' },
-  { n:'04', l:'CUT & PUBLISH', d:'FFmpeg cuts clips, reformats to 9:16. Push to all platforms in one click.' },
+  { n:'01', lk:'s1l', dk:'s1d' },
+  { n:'02', lk:'s2l', dk:'s2d' },
+  { n:'03', lk:'s3l', dk:'s3d' },
+  { n:'04', lk:'s4l', dk:'s4d' },
 ]
 
 const PLANS = [
-  { name:'STARTER', price:'€29', key:'blue',   hot:false, features:['10 videos/month','Auto Whisper subtitles','9:16 reformat','5 clips per video','Email support'] },
-  { name:'PRO',     price:'€59', key:'cyan',   hot:true,  features:['50 videos/month','50+ languages','Direct publishing','10 clips per video','Priority queue','API access'] },
-  { name:'AGENCY',  price:'€99', key:'purple', hot:false, features:['Unlimited videos','White-label dashboard','Team workspace','Custom branding','Dedicated support','Webhook integrations'] },
+  { name:'STARTER', price:'€29', key:'blue',   hot:false, fk:['pStarter1','pStarter2','pStarter3','pStarter4','pStarter5'] },
+  { name:'PRO',     price:'€59', key:'cyan',   hot:true,  fk:['pPro1','pPro2','pPro3','pPro4','pPro5','pPro6'] },
+  { name:'AGENCY',  price:'€99', key:'purple', hot:false, fk:['pAgency1','pAgency2','pAgency3','pAgency4','pAgency5','pAgency6'] },
 ]
 
 const BOOT_LINES = [
@@ -808,13 +1028,8 @@ export default function Landing() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
 
-  const NOVA_MSG = {
-    hero:     'Welcome to ClipGen.AI. I am NOVA — your AI content strategist. Upload any long video and I extract the viral moments automatically.',
-    features: 'Powered by OpenAI Whisper and GPT-4o. Our neural engine analyzes every second of your content for maximum viral potential.',
-    how:      'The full pipeline takes 3–8 minutes. No editing skills required — just upload and let the AI work.',
-    pricing:  'Start free. The Pro plan gives you 50 videos per month with direct publishing to all major platforms.',
-  }
-  const [novaMsg, setNovaMsg] = useState(NOVA_MSG.hero)
+  const NOVA_KEY = { hero:'nova1', features:'nova2', how:'nova3', pricing:'nova4' }
+  const [novaSec, setNovaSec] = useState('hero')
 
   /* boot */
   useEffect(() => {
@@ -836,7 +1051,7 @@ export default function Landing() {
       setScrolled(window.scrollY > 60)
       for (const id of ['pricing','how','features','hero']) {
         const el = document.getElementById(id)
-        if (el && window.scrollY >= el.offsetTop - 220) { setActive(id); setNovaMsg(NOVA_MSG[id]); break }
+        if (el && window.scrollY >= el.offsetTop - 220) { setActive(id); setNovaSec(id); break }
       }
     }
     window.addEventListener('resize', onResize); window.addEventListener('scroll', onScroll)
@@ -924,7 +1139,7 @@ export default function Landing() {
       </div>
 
       {/* NOVA */}
-      <div className="nova-panel"><NovaPanel message={novaMsg} visible={novaVisible} P={P} /></div>
+      <div className="nova-panel"><NovaPanel message={t(NOVA_KEY[novaSec])} visible={novaVisible} P={P} /></div>
 
       {/* ─── NAV ─── */}
       <nav style={{ position:'fixed', top:0, left:0, right:0, zIndex:300, height:64, display:'flex', alignItems:'center', justifyContent:'space-between', padding:isMobile?'0 18px':'0 60px', background:scrolled?(P.dark?'rgba(2,3,8,0.92)':'rgba(238,242,248,0.92)'):'transparent', backdropFilter:scrolled?'blur(20px)':'none', borderBottom:`1px solid ${scrolled?P.cyan+'22':'transparent'}`, transition:'all .4s' }}>
@@ -972,7 +1187,7 @@ export default function Landing() {
       <section id="hero" style={{ minHeight:'100vh', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', textAlign:'center', padding:isMobile?'100px 24px 60px':'100px 60px 80px', position:'relative', zIndex:1 }}>
         <div style={{ fontFamily:FONT_MONO, fontSize:10, color:P.cyan, letterSpacing:4, marginBottom:32, display:'flex', alignItems:'center', gap:12, flexWrap:'wrap', justifyContent:'center' }}>
           <div className="hide-mob" style={{ width:30, height:1, background:P.cyan }} />
-          DST-01 / NEXUS HUB / COMMAND CENTER
+          DST-01 / {t('distNexus')}
           <div className="hide-mob" style={{ width:30, height:1, background:P.cyan }} />
         </div>
 
@@ -1000,7 +1215,7 @@ export default function Landing() {
 
         <div style={{ marginBottom:16, position:'relative', zIndex:1 }}>
           <div style={{ fontFamily:FONT_DISPLAY, fontWeight:900, fontSize:isMobile?'clamp(30px,8vw,46px)':'clamp(46px,6vw,84px)', lineHeight:1.05, letterSpacing:'-2px', color:P.text, animation:'glitch 6s ease-in-out infinite' }}>{t('hero1')}</div>
-          <div style={{ fontFamily:FONT_DISPLAY, fontWeight:900, fontSize:isMobile?'clamp(30px,8vw,46px)':'clamp(46px,6vw,84px)', lineHeight:1.05, letterSpacing:'-2px', background:`linear-gradient(90deg, ${P.cyan}, ${P.blue}, ${P.purple}, ${P.cyan})`, backgroundSize:'300% auto', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', backgroundClip:'text', animation:'gradShift 4s linear infinite' }}>{t('hero2')}</div>
+          <div style={{ display:'inline-block', fontFamily:FONT_DISPLAY, fontWeight:900, fontSize:isMobile?'clamp(30px,8vw,46px)':'clamp(46px,6vw,84px)', lineHeight:1.05, letterSpacing:'-2px', backgroundImage:`linear-gradient(90deg, ${P.cyan}, ${P.blue}, ${P.purple}, ${P.cyan})`, backgroundSize:'300% auto', WebkitBackgroundClip:'text', backgroundClip:'text', WebkitTextFillColor:'transparent', color:'transparent', animation:'gradShift 4s linear infinite' }}>{t('hero2')}</div>
         </div>
 
         <p style={{ fontFamily:FONT_BODY, fontSize:isMobile?15:18, color:P.muted, lineHeight:1.8, maxWidth:560, marginBottom:40, marginTop:16, position:'relative', zIndex:1 }}>{t('heroSub')}</p>
@@ -1012,7 +1227,7 @@ export default function Landing() {
         <div style={{ fontFamily:FONT_MONO, fontSize:10, color:P.muted, letterSpacing:2, position:'relative', zIndex:1 }}>{t('trust')}</div>
 
         <div style={{ marginTop:80, display:'grid', gridTemplateColumns:isMobile?'repeat(2,1fr)':'repeat(4,1fr)', gap:1, maxWidth:800, width:'100%', border:`1px solid ${P.cyan}22`, background:`${P.cyan}08`, position:'relative', zIndex:1 }}>
-          {[['2.4M+','CLIPS GENERATED',P.cyan],['96','AVG VIRAL SCORE',P.blue],['10×','TIME SAVED',P.purple],['152K','CREATORS',P.gold]].map(([v,l,col],i)=>(
+          {[['2.4M+',t('stClips'),P.cyan],['96',t('stScore'),P.blue],['10×',t('stTime'),P.purple],['152K',t('stCreators'),P.gold]].map(([v,l,col],i)=>(
             <div key={i} style={{ padding:isMobile?'20px 12px':'28px 16px', borderRight:i<3?`1px solid ${P.cyan}22`:'none', borderBottom:isMobile&&i<2?`1px solid ${P.cyan}22`:'none', textAlign:'center' }}>
               <StatTicker value={v} label={l} color={col} P={P} />
             </div>
@@ -1031,7 +1246,7 @@ export default function Landing() {
           <div style={{ marginBottom:64, display:'flex', alignItems:'center', gap:20 }}>
             <div className="hide-mob" style={{ flex:1, height:1, background:`linear-gradient(90deg, transparent, ${P.blue}44)` }} />
             <div style={{ textAlign:'center', flex:isMobile?1:'none' }}>
-              <div style={{ fontFamily:FONT_MONO, fontSize:10, color:P.blue, letterSpacing:4, marginBottom:8 }}>DST-02 / INTELLIGENCE DISTRICT</div>
+              <div style={{ fontFamily:FONT_MONO, fontSize:10, color:P.blue, letterSpacing:4, marginBottom:8 }}>DST-02 / {t('distIntel')}</div>
               <div style={{ fontFamily:FONT_DISPLAY, fontWeight:900, fontSize:isMobile?26:48, letterSpacing:'-1px', color:P.text }}>{t('featTitle')}</div>
             </div>
             <div className="hide-mob" style={{ flex:1, height:1, background:`linear-gradient(90deg, ${P.blue}44, transparent)` }} />
@@ -1043,8 +1258,8 @@ export default function Landing() {
                   <div style={{ width:52, height:52, borderRadius:4, border:`1px solid ${col}44`, background:`${col}12`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:24, color:col, boxShadow:`0 0 16px ${col}33` }}>{f.icon}</div>
                   <div style={{ fontFamily:FONT_MONO, fontSize:11, color:col, fontWeight:700, letterSpacing:1 }}>{f.stat}</div>
                 </div>
-                <div style={{ fontFamily:FONT_DISPLAY, fontWeight:700, fontSize:13, letterSpacing:2, color:P.text, marginBottom:10 }}>{f.l}</div>
-                <div style={{ fontFamily:FONT_BODY, fontSize:14, color:P.muted, lineHeight:1.7 }}>{f.d}</div>
+                <div style={{ fontFamily:FONT_DISPLAY, fontWeight:700, fontSize:13, letterSpacing:2, color:P.text, marginBottom:10 }}>{t(f.lk)}</div>
+                <div style={{ fontFamily:FONT_BODY, fontSize:14, color:P.muted, lineHeight:1.7 }}>{t(f.dk)}</div>
               </GlassCard>
             )})}
           </div>
@@ -1081,7 +1296,7 @@ export default function Landing() {
       <section id="how" style={{ padding:isMobile?'80px 24px':'120px 60px', position:'relative', zIndex:1, background:`linear-gradient(180deg, transparent, ${P.navy}88, transparent)` }}>
         <div style={{ maxWidth:1000, margin:'0 auto' }}>
           <div style={{ marginBottom:64, textAlign:'center' }}>
-            <div style={{ fontFamily:FONT_MONO, fontSize:10, color:P.purple, letterSpacing:4, marginBottom:8 }}>DST-03 / DATAFLOW ARCHITECTURE</div>
+            <div style={{ fontFamily:FONT_MONO, fontSize:10, color:P.purple, letterSpacing:4, marginBottom:8 }}>DST-03 / {t('distFlow')}</div>
             <div style={{ fontFamily:FONT_DISPLAY, fontWeight:900, fontSize:isMobile?26:48, letterSpacing:'-1px', color:P.text }}>{t('procTitle')}</div>
           </div>
           <div style={{ display:'grid', gridTemplateColumns:isMobile?'1fr':'repeat(4,1fr)', gap:0, position:'relative' }}>
@@ -1092,8 +1307,8 @@ export default function Landing() {
                   <div style={{ fontFamily:FONT_DISPLAY, fontWeight:900, fontSize:20, color:col }}>{s.n}</div>
                   <div style={{ position:'absolute', inset:-8, borderRadius:'50%', border:`1px solid ${col}`, animation:`borderPulse 2s ease-in-out ${i*0.5}s infinite` }} />
                 </div>
-                <div style={{ fontFamily:FONT_DISPLAY, fontWeight:700, fontSize:12, letterSpacing:3, color:P.text, marginBottom:10 }}>{s.l}</div>
-                <div style={{ fontFamily:FONT_BODY, fontSize:13, color:P.muted, lineHeight:1.7 }}>{s.d}</div>
+                <div style={{ fontFamily:FONT_DISPLAY, fontWeight:700, fontSize:12, letterSpacing:3, color:P.text, marginBottom:10 }}>{t(s.lk)}</div>
+                <div style={{ fontFamily:FONT_BODY, fontSize:13, color:P.muted, lineHeight:1.7 }}>{t(s.dk)}</div>
               </div>
             )})}
           </div>
@@ -1101,12 +1316,12 @@ export default function Landing() {
             <GlassCard accent={P.cyan} P={P}>
               <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:20 }}>
                 <div>
-                  <div style={{ fontFamily:FONT_MONO, fontSize:9, color:P.cyan, letterSpacing:3, marginBottom:6 }}>PROCESSING SIMULATION</div>
-                  <div style={{ fontFamily:FONT_DISPLAY, fontSize:16, color:P.text, fontWeight:700 }}>Avg Processing: <span style={{ color:P.cyan }}>4 min 32 sec</span></div>
-                  <div style={{ fontFamily:FONT_BODY, fontSize:13, color:P.muted, marginTop:4 }}>45-min podcast → 7 viral clips</div>
+                  <div style={{ fontFamily:FONT_MONO, fontSize:9, color:P.cyan, letterSpacing:3, marginBottom:6 }}>{t('procSim')}</div>
+                  <div style={{ fontFamily:FONT_DISPLAY, fontSize:16, color:P.text, fontWeight:700 }}>{t('procAvg')} <span style={{ color:P.cyan }}>4 min 32 sec</span></div>
+                  <div style={{ fontFamily:FONT_BODY, fontSize:13, color:P.muted, marginTop:4 }}>{t('procClips')}</div>
                 </div>
                 <div style={{ display:'flex', gap:16, flexWrap:'wrap' }}>
-                  {[['EXTRACT',P.purple,'20s'],['TRANSCRIBE',P.blue,'90s'],['ANALYZE',P.cyan,'45s'],['CUT',P.gold,'135s']].map(([label,col,time])=>(
+                  {[[t('peExtract'),P.purple,'20s'],[t('peTranscribe'),P.blue,'90s'],[t('peAnalyze'),P.cyan,'45s'],[t('peCut'),P.gold,'135s']].map(([label,col,time])=>(
                     <div key={label} style={{ textAlign:'center' }}>
                       <div style={{ fontFamily:FONT_MONO, fontSize:18, fontWeight:700, color:col }}>{time}</div>
                       <div style={{ fontFamily:FONT_MONO, fontSize:9, color:P.muted, letterSpacing:1 }}>{label}</div>
@@ -1123,7 +1338,7 @@ export default function Landing() {
       <section id="pricing" style={{ padding:isMobile?'80px 24px 120px':'120px 60px 160px', position:'relative', zIndex:1 }}>
         <div style={{ maxWidth:1000, margin:'0 auto' }}>
           <div style={{ marginBottom:64, textAlign:'center' }}>
-            <div style={{ fontFamily:FONT_MONO, fontSize:10, color:P.gold, letterSpacing:4, marginBottom:8 }}>DST-04 / LAUNCH PAD / DEPLOYMENT ZONE</div>
+            <div style={{ fontFamily:FONT_MONO, fontSize:10, color:P.gold, letterSpacing:4, marginBottom:8 }}>DST-04 / {t('distZone')}</div>
             <div style={{ fontFamily:FONT_DISPLAY, fontWeight:900, fontSize:isMobile?26:48, letterSpacing:'-1px', color:P.text }}>{t('priceTitle')}</div>
             <div style={{ fontFamily:FONT_BODY, fontSize:16, color:P.muted, marginTop:12 }}>{t('priceSub')}</div>
           </div>
@@ -1132,19 +1347,19 @@ export default function Landing() {
               <div key={i} style={{ position:'relative' }}>
                 {p.hot && <div style={{ position:'absolute', top:-16, left:'50%', transform:'translateX(-50%)', fontFamily:FONT_MONO, fontSize:9, letterSpacing:3, background:`linear-gradient(90deg, ${P.cyan}, ${P.blue})`, color:'#000', padding:'4px 16px', borderRadius:2, whiteSpace:'nowrap', fontWeight:700, boxShadow:`0 0 16px ${P.cyan}66`, zIndex:2 }}>◈ {t('recommended')}</div>}
                 <GlassCard accent={col} P={P} style={{ boxShadow:p.hot?`0 0 60px ${col}22`:'none', transform:p.hot&&!isMobile?'scale(1.03)':'none' }}>
-                  <div style={{ fontFamily:FONT_MONO, fontSize:9, color:col, letterSpacing:3, marginBottom:12 }}>TIER — {p.name}</div>
+                  <div style={{ fontFamily:FONT_MONO, fontSize:9, color:col, letterSpacing:3, marginBottom:12 }}>{t('tierWord')} — {p.name}</div>
                   <div style={{ display:'flex', alignItems:'baseline', gap:4, marginBottom:6 }}>
                     <span style={{ fontFamily:FONT_DISPLAY, fontSize:52, fontWeight:900, color:P.text, letterSpacing:'-2px', textShadow:p.hot?`0 0 30px ${col}66`:'none' }}>{p.price}</span>
-                    <span style={{ fontFamily:FONT_MONO, fontSize:12, color:P.muted }}>/mo</span>
+                    <span style={{ fontFamily:FONT_MONO, fontSize:12, color:P.muted }}>{t('perMo')}</span>
                   </div>
                   <div style={{ marginBottom:24 }}>
                     <HudButton onClick={go} accent={col} big={p.hot} P={P}>{p.hot?`⚡ ${t('deploy')}`:t('initialize')}</HudButton>
                   </div>
                   <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
-                    {p.features.map((f,j)=>(
+                    {p.fk.map((fkey,j)=>(
                       <div key={j} style={{ display:'flex', alignItems:'center', gap:10 }}>
                         <div style={{ width:16, height:16, borderRadius:2, background:`${col}22`, border:`1px solid ${col}44`, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}><span style={{ color:col, fontSize:10 }}>✓</span></div>
-                        <span style={{ fontFamily:FONT_BODY, fontSize:13, color:P.muted }}>{f}</span>
+                        <span style={{ fontFamily:FONT_BODY, fontSize:13, color:P.muted }}>{t(fkey)}</span>
                       </div>
                     ))}
                   </div>
