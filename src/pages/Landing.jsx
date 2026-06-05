@@ -1143,12 +1143,14 @@ export default function Landing() {
   const navigate = useNavigate()
   const [isDark, setIsDark] = useState(() => localStorage.getItem('clipgen_theme') !== 'light')
   const toggleTheme = () => setIsDark(d => { localStorage.setItem('clipgen_theme', d ? 'light' : 'dark'); return !d })
-  const P = { ...makePalette(isDark), fontD: fd(lang) }
 
   const [lang, setLang] = useState(() => localStorage.getItem('clipgen_lang') || 'en')
   const t = (k) => (I18N[lang] || EN)[k] || EN[k] || k
   const isRTL = LANGS.find(l => l.code === lang)?.rtl
   const setLanguage = (code) => { setLang(code); localStorage.setItem('clipgen_lang', code) }
+
+  const P = { ...makePalette(isDark), fontD: fd(lang) }
+
 
   const [booting, setBooting] = useState(true)
   const [bootLines, setBootLines] = useState([])
