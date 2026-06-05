@@ -3,10 +3,18 @@ import { useNavigate } from 'react-router-dom'
 
 /* ════════════════════════════════════════════════════════════════
    FONTS
+   Orbitron = cyberpunk display — ASCII/basic-Latin only.
+   Exo 2 latin-ext = same aesthetic + full Lithuanian/Polish/Czech
+   diacritics (Č Š Ž Ū Ę etc). We swap to Exo 2 for any language
+   that uses extended Latin characters.
    ════════════════════════════════════════════════════════════════ */
-const FONT_DISPLAY = "'Orbitron','Exo 2',monospace"
-const FONT_BODY    = "'Rajdhani','Share Tech Mono',sans-serif"
-const FONT_MONO    = "'Share Tech Mono','Courier New',monospace"
+const FONT_DISPLAY  = "'Orbitron','Exo 2',monospace"   // ASCII headlines
+const FONT_DISPLAY2 = "'Exo 2','Rajdhani',monospace"   // extended-Latin headlines (lt, pl, cs…)
+const FONT_BODY     = "'Rajdhani','Share Tech Mono',sans-serif"
+const FONT_MONO     = "'Share Tech Mono','Courier New',monospace"
+// Languages that need extended Latin fallback (Orbitron lacks diacritics)
+const EXTENDED_LATIN = new Set(['lt','pl','cs','sk','hu','ro','tr','et','lv','hr','sr','sl','ca','is','fi','da','no','sv'])
+const fd = (lang) => EXTENDED_LATIN.has(lang) ? FONT_DISPLAY2 : FONT_DISPLAY
 
 /* ════════════════════════════════════════════════════════════════
    THEME-AWARE PALETTE  (accents adjust for contrast in each mode)
@@ -941,13 +949,136 @@ function HudButton({ children, onClick, accent, big, outline, P }) {
   const fg = P.dark ? '#000' : '#fff'
   return (
     <button onClick={onClick} onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)} style={{
-      position:'relative', overflow:'hidden', fontFamily:FONT_DISPLAY, fontWeight:700,
+      position:'relative', overflow:'hidden', fontFamily:fd(lang), fontWeight:700,
       fontSize: big?14:12, letterSpacing:3, padding: big?'18px 48px':'12px 24px', borderRadius:2,
       background: outline ? 'transparent' : (h ? col : `${col}22`),
       color: outline ? col : (h ? fg : col),
       border:`1px solid ${col}${h?'ff':'66'}`, cursor:'pointer', transition:'all .25s',
       boxShadow: h ? `0 0 30px ${col}66, inset 0 0 30px ${col}22` : 'none',
     }}>{children}</button>
+  )
+}
+
+/* ════ VIDEO TIMELINE — makes the product feel like a video tool ════ */
+function VideoTimeline({ P }) {
+  const [phase, setPhase] = useState(0) // 0=idle 1=scanning 2=found 3=clips
+  const [scanPct, setScanPct] = useState(0)
+  const [markers, setMarkers] = useState([])
+  const [clips, setClips] = useState([])
+
+  const VIRAL_HITS = [
+    { pct:18, score:'9.8', col:'#00d4ff', time:'2:14' },
+    { pct:38, score:'9.2', col:'#ffd60a', time:'8:33' },
+    { pct:61, score:'9.6', col:'#9d5bff', time:'16:45' },
+    { pct:79, score:'9.4', col:'#00d4ff', time:'22:07' },
+  ]
+
+  useEffect(() => {
+    let pct = 0, raf
+    const tick = () => {
+      pct += 0.35
+      setScanPct(pct)
+      VIRAL_HITS.forEach(h => {
+        if (pct >= h.pct && pct < h.pct + 1) {
+          setMarkers(prev => prev.find(m=>m.pct===h.pct) ? prev : [...prev, h])
+        }
+      })
+      if (pct < 100) { raf = requestAnimationFrame(tick) }
+      else {
+        setTimeout(()=>{ setClips([...VIRAL_HITS]); setPhase(3) }, 300)
+        setTimeout(()=>{ setMarkers([]); setClips([]); setScanPct(0); setPhase(0); pct=0; }, 5000)
+        setTimeout(()=>{ raf = requestAnimationFrame(tick) }, 5400)
+      }
+    }
+    const start = setTimeout(()=>{ setPhase(1); raf = requestAnimationFrame(tick) }, 800)
+    return () => { clearTimeout(start); cancelAnimationFrame(raf) }
+  }, [])
+
+  // Waveform bars (deterministic heights)
+  const BARS = Array.from({length:80}, (_,i) => {
+    const v = Math.abs(Math.sin(i*0.4)*Math.cos(i*0.15)*0.8 + Math.sin(i*0.07)*0.2)
+    return Math.max(0.08, v)
+  })
+
+  return (
+    <div style={{ width:'100%', maxWidth:780, margin:'0 auto', fontFamily:FONT_MONO }}>
+      {/* Header bar */}
+      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:8, padding:'0 4px' }}>
+        <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+          <div style={{ width:8, height:8, borderRadius:'50%', background: phase>=1 ? '#00ff88' : P.muted, boxShadow: phase>=1 ? '0 0 8px #00ff88' : 'none', transition:'all .4s' }} />
+          <span style={{ fontSize:10, color:P.muted, letterSpacing:2 }}>interview_keynote_final.mp4</span>
+        </div>
+        <div style={{ display:'flex', gap:16, alignItems:'center' }}>
+          <span style={{ fontSize:10, color:P.muted }}>45:32</span>
+          <span style={{ fontSize:9, color: phase>=1 ? P.cyan : P.muted, letterSpacing:2, border:`1px solid ${phase>=1?P.cyan:P.muted}33`, padding:'2px 8px', borderRadius:2 }}>
+            {phase===0?'READY':phase===1?'SCANNING...':phase===2?'DETECTING...':'CLIPS READY'}
+          </span>
+        </div>
+      </div>
+
+      {/* Main timeline track */}
+      <div style={{ position:'relative', height:64, background: P.dark ? 'rgba(6,13,24,0.9)' : 'rgba(219,229,243,0.9)', borderRadius:4, border:`1px solid ${P.cyan}22`, overflow:'hidden' }}>
+        {/* Waveform */}
+        <div style={{ position:'absolute', inset:0, display:'flex', alignItems:'center', gap:1, padding:'0 4px' }}>
+          {BARS.map((h,i) => {
+            const pct = (i / BARS.length) * 100
+            const isScanned = pct <= scanPct
+            const nearMarker = markers.some(m => Math.abs(pct - m.pct) < 3)
+            return (
+              <div key={i} style={{
+                flex:1, height:`${h*100}%`, minHeight:2, borderRadius:1,
+                background: nearMarker ? P.gold : isScanned ? P.cyan : P.muted,
+                opacity: isScanned ? (nearMarker ? 1 : 0.7) : 0.25,
+                transition: 'background .2s, opacity .2s',
+                boxShadow: nearMarker ? `0 0 4px ${P.gold}` : 'none',
+              }} />
+            )
+          })}
+        </div>
+
+        {/* Viral markers */}
+        {markers.map((m,i) => (
+          <div key={i} style={{ position:'absolute', top:0, bottom:0, left:`${m.pct}%`, width:2, background:m.col, boxShadow:`0 0 8px ${m.col}`, zIndex:3, animation:'dataStream .3s ease-out' }}>
+            <div style={{ position:'absolute', top:-22, left:'50%', transform:'translateX(-50%)', background:m.col, color:'#000', fontSize:9, fontWeight:700, padding:'2px 5px', borderRadius:2, whiteSpace:'nowrap', boxShadow:`0 0 8px ${m.col}` }}>{m.score}</div>
+            <div style={{ position:'absolute', bottom:-18, left:'50%', transform:'translateX(-50%)', color:m.col, fontSize:8, whiteSpace:'nowrap' }}>{m.time}</div>
+          </div>
+        ))}
+
+        {/* Scan line */}
+        {phase >= 1 && scanPct < 100 && (
+          <div style={{ position:'absolute', top:0, bottom:0, left:`${scanPct}%`, width:2, background:`linear-gradient(${P.cyan}00, ${P.cyan}, ${P.cyan}00)`, boxShadow:`0 0 12px ${P.cyan}`, zIndex:4, pointerEvents:'none' }}>
+            <div style={{ position:'absolute', top:0, left:4, fontSize:8, color:P.cyan, whiteSpace:'nowrap', letterSpacing:1 }}>AI</div>
+          </div>
+        )}
+      </div>
+
+      {/* Output clips */}
+      <div style={{ marginTop:12, display:'flex', gap:8, justifyContent:'center', minHeight:72 }}>
+        {clips.map((c,i) => (
+          <div key={i} style={{ width:40, borderRadius:4, overflow:'hidden', border:`1px solid ${c.col}66`, boxShadow:`0 0 16px ${c.col}33`, animation:`dataStream .4s ease-out ${i*0.12}s both`, position:'relative', aspectRatio:'9/16', background: P.dark ? '#0a1424' : '#dbe5f3' }}>
+            {/* mini waveform inside clip */}
+            <div style={{ position:'absolute', inset:'30% 2px 30%', display:'flex', alignItems:'center', gap:0.5 }}>
+              {Array.from({length:12}, (_,j) => (
+                <div key={j} style={{ flex:1, height:`${40+Math.abs(Math.sin(j*0.8))*50}%`, background:c.col, opacity:0.7, borderRadius:1 }} />
+              ))}
+            </div>
+            <div style={{ position:'absolute', bottom:3, left:0, right:0, textAlign:'center', fontSize:7, color:c.col, fontWeight:700 }}>{c.score}</div>
+          </div>
+        ))}
+        {clips.length === 0 && phase < 3 && (
+          <div style={{ fontSize:9, color:P.muted, letterSpacing:2, display:'flex', alignItems:'center', gap:8 }}>
+            <div style={{ display:'flex', gap:6 }}>
+              {[0,1,2,3].map(i=>(
+                <div key={i} style={{ width:40, borderRadius:4, border:`1px dashed ${P.muted}44`, aspectRatio:'9/16', opacity:0.3, background:'transparent' }} />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+      <div style={{ textAlign:'center', marginTop:6, fontSize:8, color:P.muted, letterSpacing:2 }}>
+        {clips.length > 0 ? `${clips.length} VIRAL CLIPS EXTRACTED · READY TO POST` : 'AI ANALYZING CONTENT FOR VIRAL MOMENTS'}
+      </div>
+    </div>
   )
 }
 
@@ -978,7 +1109,7 @@ function StatTicker({ value, label, color, P }) {
   const suffix = value.replace(/[0-9.]/g,'')
   return (
     <div style={{ textAlign:'center' }}>
-      <div style={{ fontFamily:FONT_DISPLAY, fontSize:34, fontWeight:900, color, textShadow:`0 0 20px ${color}66`, letterSpacing:'-1px' }}>{cur}{suffix}</div>
+      <div style={{ fontFamily:fd(lang), fontSize:34, fontWeight:900, color, textShadow:`0 0 20px ${color}66`, letterSpacing:'-1px' }}>{cur}{suffix}</div>
       <div style={{ fontFamily:FONT_MONO, fontSize:10, color:P.muted, letterSpacing:2, marginTop:4 }}>{label}</div>
     </div>
   )
@@ -1097,7 +1228,7 @@ export default function Landing() {
   return (
     <div dir={isRTL ? 'rtl' : 'ltr'} style={{ fontFamily:FONT_BODY, background:P.bg, color:P.text, overflowX:'hidden', cursor: isMobile?'auto':'none', minHeight:'100vh', transition:'background .4s, color .4s' }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap&subset=latin,latin-ext');
         *{box-sizing:border-box;margin:0;padding:0;}
         html{scroll-behavior:smooth;}
         ::selection{background:${P.cyan}44;color:${P.dark?'#fff':'#000'};}
@@ -1144,16 +1275,16 @@ export default function Landing() {
       {/* ─── NAV ─── */}
       <nav style={{ position:'fixed', top:0, left:0, right:0, zIndex:300, height:64, display:'flex', alignItems:'center', justifyContent:'space-between', padding:isMobile?'0 18px':'0 60px', background:scrolled?(P.dark?'rgba(2,3,8,0.92)':'rgba(238,242,248,0.92)'):'transparent', backdropFilter:scrolled?'blur(20px)':'none', borderBottom:`1px solid ${scrolled?P.cyan+'22':'transparent'}`, transition:'all .4s' }}>
         <div style={{ display:'flex', alignItems:'center', gap:10, cursor:'pointer' }} onClick={()=>window.scrollTo({ top:0, behavior:'smooth' })}>
-          <div style={{ width:36, height:36, borderRadius:4, background:`linear-gradient(135deg, ${P.cyan}, ${P.blue}, ${P.purple})`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:18, boxShadow:`0 0 16px ${P.cyan}66`, fontFamily:FONT_DISPLAY, color:'#fff', fontWeight:900 }}>C</div>
+          <div style={{ width:36, height:36, borderRadius:4, background:`linear-gradient(135deg, ${P.cyan}, ${P.blue}, ${P.purple})`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:18, boxShadow:`0 0 16px ${P.cyan}66`, fontFamily:fd(lang), color:'#fff', fontWeight:900 }}>C</div>
           <div>
-            <div style={{ fontFamily:FONT_DISPLAY, fontWeight:900, fontSize:14, letterSpacing:3, color:P.text }}>CLIPGEN<span style={{ color:P.cyan }}>.AI</span></div>
+            <div style={{ fontFamily:fd(lang), fontWeight:900, fontSize:14, letterSpacing:3, color:P.text }}>CLIPGEN<span style={{ color:P.cyan }}>.AI</span></div>
             <div style={{ fontFamily:FONT_MONO, fontSize:8, color:P.muted, letterSpacing:2 }}>{t('sys')}</div>
           </div>
         </div>
 
         <div className="hide-mob" style={{ display:'flex', gap:34, alignItems:'center' }}>
           {navLinks.map(([label,id])=>(
-            <button key={id} onClick={()=>scrollTo(id)} style={{ background:'none', border:'none', cursor:'pointer', fontFamily:FONT_DISPLAY, fontSize:10, letterSpacing:3, color:P.muted, transition:'color .2s' }} onMouseEnter={e=>e.target.style.color=P.cyan} onMouseLeave={e=>e.target.style.color=P.muted}>{label}</button>
+            <button key={id} onClick={()=>scrollTo(id)} style={{ background:'none', border:'none', cursor:'pointer', fontFamily:fd(lang), fontSize:10, letterSpacing:3, color:P.muted, transition:'color .2s' }} onMouseEnter={e=>e.target.style.color=P.cyan} onMouseLeave={e=>e.target.style.color=P.muted}>{label}</button>
           ))}
         </div>
 
@@ -1173,9 +1304,9 @@ export default function Landing() {
       {menuOpen && (
         <div className="show-mob" style={{ position:'fixed', top:64, left:0, right:0, zIndex:299, background:P.dark?'rgba(2,3,8,0.98)':'rgba(238,242,248,0.98)', backdropFilter:'blur(20px)', borderBottom:`1px solid ${P.cyan}22`, padding:24, display:'flex', flexDirection:'column', gap:18 }}>
           {navLinks.map(([label,id])=>(
-            <button key={id} onClick={()=>scrollTo(id)} style={{ background:'none', border:'none', color:P.text, fontFamily:FONT_DISPLAY, fontSize:16, letterSpacing:3, textAlign:'left', cursor:'pointer', fontWeight:700 }}>{label}</button>
+            <button key={id} onClick={()=>scrollTo(id)} style={{ background:'none', border:'none', color:P.text, fontFamily:fd(lang), fontSize:16, letterSpacing:3, textAlign:'left', cursor:'pointer', fontWeight:700 }}>{label}</button>
           ))}
-          <button onClick={()=>{ navigate('/signin'); setMenuOpen(false) }} style={{ background:'none', border:'none', color:P.muted, fontFamily:FONT_DISPLAY, fontSize:14, letterSpacing:3, textAlign:'left', cursor:'pointer' }}>{t('navLogin')}</button>
+          <button onClick={()=>{ navigate('/signin'); setMenuOpen(false) }} style={{ background:'none', border:'none', color:P.muted, fontFamily:fd(lang), fontSize:14, letterSpacing:3, textAlign:'left', cursor:'pointer' }}>{t('navLogin')}</button>
           <select value={lang} onChange={e=>setLanguage(e.target.value)} style={{ padding:'12px', borderRadius:3, border:`1px solid ${P.cyan}33`, background:P.dark?'rgba(10,20,36,0.85)':'rgba(255,255,255,0.85)', color:P.text, fontSize:14, fontFamily:FONT_MONO, cursor:'pointer', outline:'none' }}>
             {LANGS.map(l => <option key={l.code} value={l.code} style={{ background:P.bg, color:P.text }}>{l.flag} {l.label}</option>)}
           </select>
@@ -1191,7 +1322,8 @@ export default function Landing() {
           <div className="hide-mob" style={{ width:30, height:1, background:P.cyan }} />
         </div>
 
-        <div style={{ marginBottom:48, animation:'floatY 4s ease-in-out infinite' }}><HoloOrb P={P} /></div>
+        {/* Compact orb */}
+        <div style={{ marginBottom:24, transform:'scale(0.6)', transformOrigin:'center bottom', opacity:0.8, animation:'floatY 4s ease-in-out infinite' }}><HoloOrb P={P} /></div>
 
         {/* floating clip previews (desktop) */}
         {!isMobile && (
@@ -1205,6 +1337,7 @@ export default function Landing() {
                 <img src={c.img} alt="" style={{ width:'100%', height:'100%', objectFit:'cover', opacity:0.85 }} />
                 <div style={{ position:'absolute', inset:0, background:`linear-gradient(180deg, transparent 40%, ${P.bg}dd)` }} />
                 <div style={{ position:'absolute', top:8, right:8, fontFamily:FONT_MONO, fontSize:11, fontWeight:700, color:'#000', background:c.col, padding:'2px 8px', borderRadius:2, boxShadow:`0 0 12px ${c.col}` }}>{c.score}</div>
+                <div style={{ position:'absolute', top:8, left:8, fontFamily:FONT_MONO, fontSize:8, color:'#fff', background:'rgba(0,0,0,0.6)', padding:'2px 5px', borderRadius:2 }}>▶ 0:{28+i*14}</div>
                 <div style={{ position:'absolute', bottom:10, left:10, right:10, height:3, background:'rgba(255,255,255,0.15)', borderRadius:2 }}>
                   <div style={{ width:`${parseFloat(c.score)*10}%`, height:'100%', background:c.col, borderRadius:2, boxShadow:`0 0 8px ${c.col}` }} />
                 </div>
@@ -1214,8 +1347,8 @@ export default function Landing() {
         )}
 
         <div style={{ marginBottom:16, position:'relative', zIndex:1 }}>
-          <div style={{ fontFamily:FONT_DISPLAY, fontWeight:900, fontSize:isMobile?'clamp(30px,8vw,46px)':'clamp(46px,6vw,84px)', lineHeight:1.05, letterSpacing:'-2px', color:P.text, animation:'glitch 6s ease-in-out infinite' }}>{t('hero1')}</div>
-          <div style={{ display:'inline-block', fontFamily:FONT_DISPLAY, fontWeight:900, fontSize:isMobile?'clamp(30px,8vw,46px)':'clamp(46px,6vw,84px)', lineHeight:1.05, letterSpacing:'-2px', backgroundImage:`linear-gradient(90deg, ${P.cyan}, ${P.blue}, ${P.purple}, ${P.cyan})`, backgroundSize:'300% auto', WebkitBackgroundClip:'text', backgroundClip:'text', WebkitTextFillColor:'transparent', color:'transparent', animation:'gradShift 4s linear infinite' }}>{t('hero2')}</div>
+          <div style={{ fontFamily:fd(lang), fontWeight:900, fontSize:isMobile?'clamp(30px,8vw,46px)':'clamp(46px,6vw,84px)', lineHeight:1.05, letterSpacing:'-2px', color:P.text, animation:'glitch 6s ease-in-out infinite' }}>{t('hero1')}</div>
+          <div style={{ display:'inline-block', fontFamily:fd(lang), fontWeight:900, fontSize:isMobile?'clamp(30px,8vw,46px)':'clamp(46px,6vw,84px)', lineHeight:1.05, letterSpacing:'-2px', backgroundImage:`linear-gradient(90deg, ${P.cyan}, ${P.blue}, ${P.purple}, ${P.cyan})`, backgroundSize:'300% auto', WebkitBackgroundClip:'text', backgroundClip:'text', WebkitTextFillColor:'transparent', color:'transparent', animation:'gradShift 4s linear infinite' }}>{t('hero2')}</div>
         </div>
 
         <p style={{ fontFamily:FONT_BODY, fontSize:isMobile?15:18, color:P.muted, lineHeight:1.8, maxWidth:560, marginBottom:40, marginTop:16, position:'relative', zIndex:1 }}>{t('heroSub')}</p>
@@ -1225,6 +1358,14 @@ export default function Landing() {
           <HudButton onClick={()=>scrollTo('how')} accent={P.muted} outline P={P}>▶ {t('ctaSecondary')}</HudButton>
         </div>
         <div style={{ fontFamily:FONT_MONO, fontSize:10, color:P.muted, letterSpacing:2, position:'relative', zIndex:1 }}>{t('trust')}</div>
+
+        {/* === AI VIDEO PROCESSOR DEMO — communicates the product clearly === */}
+        <div style={{ width:'100%', maxWidth:760, margin:'40px auto 0', position:'relative', zIndex:1, background: P.dark?'rgba(6,13,24,0.75)':'rgba(219,229,243,0.8)', backdropFilter:'blur(16px)', border:`1px solid ${P.cyan}22`, borderRadius:6, padding:isMobile?'16px 12px':'20px 24px' }}>
+          <HudCorner pos="tl" color={P.cyan} /><HudCorner pos="tr" color={P.cyan} />
+          <HudCorner pos="bl" color={P.cyan} /><HudCorner pos="br" color={P.cyan} />
+          <div style={{ fontFamily:FONT_MONO, fontSize:9, color:P.cyan, letterSpacing:3, marginBottom:12, textAlign:'center' }}>◈ LIVE AI PROCESSING DEMO</div>
+          <VideoTimeline P={P} />
+        </div>
 
         <div style={{ marginTop:80, display:'grid', gridTemplateColumns:isMobile?'repeat(2,1fr)':'repeat(4,1fr)', gap:1, maxWidth:800, width:'100%', border:`1px solid ${P.cyan}22`, background:`${P.cyan}08`, position:'relative', zIndex:1 }}>
           {[['2.4M+',t('stClips'),P.cyan],['96',t('stScore'),P.blue],['10×',t('stTime'),P.purple],['152K',t('stCreators'),P.gold]].map(([v,l,col],i)=>(
@@ -1247,7 +1388,7 @@ export default function Landing() {
             <div className="hide-mob" style={{ flex:1, height:1, background:`linear-gradient(90deg, transparent, ${P.blue}44)` }} />
             <div style={{ textAlign:'center', flex:isMobile?1:'none' }}>
               <div style={{ fontFamily:FONT_MONO, fontSize:10, color:P.blue, letterSpacing:4, marginBottom:8 }}>DST-02 / {t('distIntel')}</div>
-              <div style={{ fontFamily:FONT_DISPLAY, fontWeight:900, fontSize:isMobile?26:48, letterSpacing:'-1px', color:P.text }}>{t('featTitle')}</div>
+              <div style={{ fontFamily:fd(lang), fontWeight:900, fontSize:isMobile?26:48, letterSpacing:'-1px', color:P.text }}>{t('featTitle')}</div>
             </div>
             <div className="hide-mob" style={{ flex:1, height:1, background:`linear-gradient(90deg, ${P.blue}44, transparent)` }} />
           </div>
@@ -1258,7 +1399,7 @@ export default function Landing() {
                   <div style={{ width:52, height:52, borderRadius:4, border:`1px solid ${col}44`, background:`${col}12`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:24, color:col, boxShadow:`0 0 16px ${col}33` }}>{f.icon}</div>
                   <div style={{ fontFamily:FONT_MONO, fontSize:11, color:col, fontWeight:700, letterSpacing:1 }}>{f.stat}</div>
                 </div>
-                <div style={{ fontFamily:FONT_DISPLAY, fontWeight:700, fontSize:13, letterSpacing:2, color:P.text, marginBottom:10 }}>{t(f.lk)}</div>
+                <div style={{ fontFamily:fd(lang), fontWeight:700, fontSize:13, letterSpacing:2, color:P.text, marginBottom:10 }}>{t(f.lk)}</div>
                 <div style={{ fontFamily:FONT_BODY, fontSize:14, color:P.muted, lineHeight:1.7 }}>{t(f.dk)}</div>
               </GlassCard>
             )})}
@@ -1275,7 +1416,7 @@ export default function Landing() {
             <HudCorner pos="tl" color={P.cyan} /><HudCorner pos="tr" color={P.cyan} /><HudCorner pos="bl" color={P.cyan} /><HudCorner pos="br" color={P.cyan} />
             <div style={{ position:'relative', zIndex:1, padding:32, height:'100%', display:'flex', flexDirection:'column', justifyContent:'flex-end' }}>
               <div style={{ fontFamily:FONT_MONO, fontSize:10, color:P.cyan, letterSpacing:3, marginBottom:8 }}>{t('inputLabel')}</div>
-              <div style={{ fontFamily:FONT_DISPLAY, fontWeight:700, fontSize:isMobile?22:28, color:P.text, lineHeight:1.15 }}>{t('inputTitle')}</div>
+              <div style={{ fontFamily:fd(lang), fontWeight:700, fontSize:isMobile?22:28, color:P.text, lineHeight:1.15 }}>{t('inputTitle')}</div>
               <div style={{ fontFamily:FONT_BODY, fontSize:14, color:P.muted, marginTop:10 }}>{t('inputDesc')}</div>
             </div>
           </div>
@@ -1285,7 +1426,7 @@ export default function Landing() {
             <HudCorner pos="tl" color={P.purple} /><HudCorner pos="tr" color={P.purple} /><HudCorner pos="bl" color={P.purple} /><HudCorner pos="br" color={P.purple} />
             <div style={{ position:'relative', zIndex:1, padding:32, height:'100%', display:'flex', flexDirection:'column', justifyContent:'flex-end' }}>
               <div style={{ fontFamily:FONT_MONO, fontSize:10, color:P.purple, letterSpacing:3, marginBottom:8 }}>{t('outputLabel')}</div>
-              <div style={{ fontFamily:FONT_DISPLAY, fontWeight:700, fontSize:isMobile?22:28, color:P.text, lineHeight:1.15 }}>{t('outputTitle')}</div>
+              <div style={{ fontFamily:fd(lang), fontWeight:700, fontSize:isMobile?22:28, color:P.text, lineHeight:1.15 }}>{t('outputTitle')}</div>
               <div style={{ fontFamily:FONT_BODY, fontSize:14, color:P.muted, marginTop:10 }}>{t('outputDesc')}</div>
             </div>
           </div>
@@ -1297,17 +1438,17 @@ export default function Landing() {
         <div style={{ maxWidth:1000, margin:'0 auto' }}>
           <div style={{ marginBottom:64, textAlign:'center' }}>
             <div style={{ fontFamily:FONT_MONO, fontSize:10, color:P.purple, letterSpacing:4, marginBottom:8 }}>DST-03 / {t('distFlow')}</div>
-            <div style={{ fontFamily:FONT_DISPLAY, fontWeight:900, fontSize:isMobile?26:48, letterSpacing:'-1px', color:P.text }}>{t('procTitle')}</div>
+            <div style={{ fontFamily:fd(lang), fontWeight:900, fontSize:isMobile?26:48, letterSpacing:'-1px', color:P.text }}>{t('procTitle')}</div>
           </div>
           <div style={{ display:'grid', gridTemplateColumns:isMobile?'1fr':'repeat(4,1fr)', gap:0, position:'relative' }}>
             {!isMobile && <div style={{ position:'absolute', top:40, left:'12.5%', right:'12.5%', height:1, background:`linear-gradient(90deg, ${P.purple}00, ${P.purple}66, ${P.cyan}66, ${P.cyan}00)`, zIndex:0 }} />}
             {STEPS.map((s,i)=>{ const col=i<2?P.purple:P.cyan; return (
               <div key={i} style={{ position:'relative', zIndex:1, padding:isMobile?'24px 0':'0 20px', textAlign:'center' }}>
                 <div style={{ width:80, height:80, borderRadius:'50%', border:`2px solid ${col}66`, background:`${col}12`, display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 20px', boxShadow:`0 0 24px ${col}33`, position:'relative' }}>
-                  <div style={{ fontFamily:FONT_DISPLAY, fontWeight:900, fontSize:20, color:col }}>{s.n}</div>
+                  <div style={{ fontFamily:fd(lang), fontWeight:900, fontSize:20, color:col }}>{s.n}</div>
                   <div style={{ position:'absolute', inset:-8, borderRadius:'50%', border:`1px solid ${col}`, animation:`borderPulse 2s ease-in-out ${i*0.5}s infinite` }} />
                 </div>
-                <div style={{ fontFamily:FONT_DISPLAY, fontWeight:700, fontSize:12, letterSpacing:3, color:P.text, marginBottom:10 }}>{t(s.lk)}</div>
+                <div style={{ fontFamily:fd(lang), fontWeight:700, fontSize:12, letterSpacing:3, color:P.text, marginBottom:10 }}>{t(s.lk)}</div>
                 <div style={{ fontFamily:FONT_BODY, fontSize:13, color:P.muted, lineHeight:1.7 }}>{t(s.dk)}</div>
               </div>
             )})}
@@ -1317,7 +1458,7 @@ export default function Landing() {
               <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:20 }}>
                 <div>
                   <div style={{ fontFamily:FONT_MONO, fontSize:9, color:P.cyan, letterSpacing:3, marginBottom:6 }}>{t('procSim')}</div>
-                  <div style={{ fontFamily:FONT_DISPLAY, fontSize:16, color:P.text, fontWeight:700 }}>{t('procAvg')} <span style={{ color:P.cyan }}>4 min 32 sec</span></div>
+                  <div style={{ fontFamily:fd(lang), fontSize:16, color:P.text, fontWeight:700 }}>{t('procAvg')} <span style={{ color:P.cyan }}>4 min 32 sec</span></div>
                   <div style={{ fontFamily:FONT_BODY, fontSize:13, color:P.muted, marginTop:4 }}>{t('procClips')}</div>
                 </div>
                 <div style={{ display:'flex', gap:16, flexWrap:'wrap' }}>
@@ -1339,7 +1480,7 @@ export default function Landing() {
         <div style={{ maxWidth:1000, margin:'0 auto' }}>
           <div style={{ marginBottom:64, textAlign:'center' }}>
             <div style={{ fontFamily:FONT_MONO, fontSize:10, color:P.gold, letterSpacing:4, marginBottom:8 }}>DST-04 / {t('distZone')}</div>
-            <div style={{ fontFamily:FONT_DISPLAY, fontWeight:900, fontSize:isMobile?26:48, letterSpacing:'-1px', color:P.text }}>{t('priceTitle')}</div>
+            <div style={{ fontFamily:fd(lang), fontWeight:900, fontSize:isMobile?26:48, letterSpacing:'-1px', color:P.text }}>{t('priceTitle')}</div>
             <div style={{ fontFamily:FONT_BODY, fontSize:16, color:P.muted, marginTop:12 }}>{t('priceSub')}</div>
           </div>
           <div style={{ display:'grid', gridTemplateColumns:isMobile?'1fr':'repeat(3,1fr)', gap:16, alignItems:'start' }}>
@@ -1349,7 +1490,7 @@ export default function Landing() {
                 <GlassCard accent={col} P={P} style={{ boxShadow:p.hot?`0 0 60px ${col}22`:'none', transform:p.hot&&!isMobile?'scale(1.03)':'none' }}>
                   <div style={{ fontFamily:FONT_MONO, fontSize:9, color:col, letterSpacing:3, marginBottom:12 }}>{t('tierWord')} — {p.name}</div>
                   <div style={{ display:'flex', alignItems:'baseline', gap:4, marginBottom:6 }}>
-                    <span style={{ fontFamily:FONT_DISPLAY, fontSize:52, fontWeight:900, color:P.text, letterSpacing:'-2px', textShadow:p.hot?`0 0 30px ${col}66`:'none' }}>{p.price}</span>
+                    <span style={{ fontFamily:fd(lang), fontSize:52, fontWeight:900, color:P.text, letterSpacing:'-2px', textShadow:p.hot?`0 0 30px ${col}66`:'none' }}>{p.price}</span>
                     <span style={{ fontFamily:FONT_MONO, fontSize:12, color:P.muted }}>{t('perMo')}</span>
                   </div>
                   <div style={{ marginBottom:24 }}>
@@ -1375,7 +1516,7 @@ export default function Landing() {
         <div style={{ position:'absolute', inset:0, background:`radial-gradient(ellipse at center, ${P.cyan}12, transparent 60%)`, pointerEvents:'none' }} />
         <div style={{ position:'relative', maxWidth:700, margin:'0 auto' }}>
           <div style={{ fontFamily:FONT_MONO, fontSize:10, color:P.cyan, letterSpacing:4, marginBottom:16 }}>SYSTEM READY — AWAITING AUTHORIZATION</div>
-          <div style={{ fontFamily:FONT_DISPLAY, fontWeight:900, fontSize:isMobile?36:64, letterSpacing:'-2px', color:P.text, marginBottom:12, textShadow:`0 0 60px ${P.cyan}44` }}>{t('finalTitle1')}<br /><span style={{ color:P.cyan }}>{t('finalTitle2')}</span></div>
+          <div style={{ fontFamily:fd(lang), fontWeight:900, fontSize:isMobile?36:64, letterSpacing:'-2px', color:P.text, marginBottom:12, textShadow:`0 0 60px ${P.cyan}44` }}>{t('finalTitle1')}<br /><span style={{ color:P.cyan }}>{t('finalTitle2')}</span></div>
           <p style={{ fontFamily:FONT_BODY, fontSize:17, color:P.muted, marginBottom:40, lineHeight:1.7 }}>{t('finalSub')}</p>
           <HudButton onClick={go} accent={P.cyan} big P={P}>⚡ {t('finalCta')}</HudButton>
           <div style={{ marginTop:16, fontFamily:FONT_MONO, fontSize:10, color:P.muted, letterSpacing:2 }}>{t('trust')}</div>
@@ -1384,7 +1525,7 @@ export default function Landing() {
 
       {/* FOOTER */}
       <footer style={{ padding:isMobile?'24px 20px':'32px 60px', borderTop:`1px solid ${P.cyan}15`, background:P.dark?'rgba(2,3,8,0.95)':'rgba(238,242,248,0.95)', display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:16, position:'relative', zIndex:1 }}>
-        <div style={{ fontFamily:FONT_DISPLAY, fontWeight:900, fontSize:13, letterSpacing:4, color:P.muted }}>CLIPGEN<span style={{ color:P.cyan }}>.AI</span></div>
+        <div style={{ fontFamily:fd(lang), fontWeight:900, fontSize:13, letterSpacing:4, color:P.muted }}>CLIPGEN<span style={{ color:P.cyan }}>.AI</span></div>
         <div style={{ fontFamily:FONT_MONO, fontSize:10, color:P.muted, letterSpacing:2 }}>© 2077 CLIPGEN.AI — ALL RIGHTS RESERVED</div>
         <div style={{ display:'flex', gap:24 }}>
           {navLinks.map(([label,id])=>(
