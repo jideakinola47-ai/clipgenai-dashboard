@@ -21,18 +21,20 @@ const fd = (lang) => EXTENDED_LATIN.has(lang) ? FONT_DISPLAY2 : FONT_DISPLAY
    ════════════════════════════════════════════════════════════════ */
 function makePalette(d) {
   return {
-    dark:   d,
-    bg:     d ? '#020308'              : '#eef2f8',
-    bgAlt:  d ? '#060d18'              : '#e3eaf4',
-    navy:   d ? '#0a1424'              : '#dbe5f3',
-    text:   d ? '#e8f4ff'              : '#0a1626',
-    muted:  d ? '#6a82a6'              : '#5a6f8c',
-    glass:  d ? 'rgba(12,28,52,0.55)'  : 'rgba(255,255,255,0.70)',
-    cyan:   d ? '#00d4ff'              : '#0094c7',
-    blue:   d ? '#2b8bff'              : '#0a5fd0',
-    purple: d ? '#9d5bff'              : '#7028c8',
-    pink:   d ? '#ff2d78'              : '#d61f63',
-    gold:   d ? '#ffd60a'              : '#b88600',
+    dark:    d,
+    bg:      d ? '#0d1117'              : '#f4f6fb',
+    bgAlt:   d ? '#11161f'              : '#e9edf5',
+    navy:    d ? '#161c27'              : '#dfe6f1',
+    surface: d ? '#1a2130'              : '#ffffff',
+    line:    d ? 'rgba(255,255,255,0.08)' : 'rgba(15,30,55,0.10)',
+    text:    d ? '#eef3fb'              : '#0d1626',
+    muted:   d ? '#8a99b0'              : '#5d6b82',
+    glass:   d ? 'rgba(26,33,48,0.7)'   : 'rgba(255,255,255,0.85)',
+    cyan:    d ? '#22d3ee'              : '#0891b2',
+    blue:    d ? '#3b82f6'              : '#2563eb',
+    purple:  d ? '#a78bfa'              : '#7c3aed',
+    pink:    d ? '#fb7185'              : '#e11d63',
+    gold:    d ? '#fbbf24'              : '#d97706',
   }
 }
 
@@ -809,19 +811,19 @@ const I18N = Object.fromEntries(
    STATIC DATA  (color stored as palette key, resolved at render)
    ════════════════════════════════════════════════════════════════ */
 const FEATURES = [
-  { icon:'◉',  key:'cyan',   stat:'9.8 avg',     lk:'f1l', dk:'f1d' },
-  { icon:'⟨⟩', key:'blue',   stat:'50+ langs',   lk:'f2l', dk:'f2d' },
-  { icon:'◑',  key:'purple', stat:'1080×1920',   lk:'f3l', dk:'f3d' },
-  { icon:'⬡',  key:'pink',   stat:'GPT-4o',      lk:'f4l', dk:'f4d' },
-  { icon:'◈',  key:'gold',   stat:'3 platforms', lk:'f5l', dk:'f5d' },
-  { icon:'▲',  key:'cyan',   stat:'<8 min',      lk:'f6l', dk:'f6d' },
+  { icon:'gauge',    key:'cyan',   stat:'9.8 avg',     lk:'f1l', dk:'f1d' },
+  { icon:'captions', key:'blue',   stat:'50+ langs',   lk:'f2l', dk:'f2d' },
+  { icon:'portrait', key:'purple', stat:'1080×1920',   lk:'f3l', dk:'f3d' },
+  { icon:'sparkles', key:'pink',   stat:'GPT-4o',      lk:'f4l', dk:'f4d' },
+  { icon:'share',    key:'gold',   stat:'3 platforms', lk:'f5l', dk:'f5d' },
+  { icon:'zap',      key:'cyan',   stat:'<8 min',      lk:'f6l', dk:'f6d' },
 ]
 
 const STEPS = [
-  { n:'01', lk:'s1l', dk:'s1d' },
-  { n:'02', lk:'s2l', dk:'s2d' },
-  { n:'03', lk:'s3l', dk:'s3d' },
-  { n:'04', lk:'s4l', dk:'s4d' },
+  { n:'01', icon:'upload',   lk:'s1l', dk:'s1d' },
+  { n:'02', icon:'captions', lk:'s2l', dk:'s2d' },
+  { n:'03', icon:'sparkles', lk:'s3l', dk:'s3d' },
+  { n:'04', icon:'scissors', lk:'s4l', dk:'s4d' },
 ]
 
 const PLANS = [
@@ -830,308 +832,194 @@ const PLANS = [
   { name:'AGENCY',  price:'€99', key:'purple', hot:false, fk:['pAgency1','pAgency2','pAgency3','pAgency4','pAgency5','pAgency6'] },
 ]
 
-const BOOT_LINES = [
-  'CLIPGEN.AI OS v2077.06.03',
-  'INITIALIZING NEURAL CORE...',
-  'CONNECTING TO GLOBAL NETWORK...',
-  'LOADING VIRAL DETECTION ENGINE...',
-  'AUTHENTICATING USER CREDENTIALS...',
-  'CALIBRATING AI ASSISTANT NOVA...',
-  '████████████████████ 100%',
-  '✓ ACCESS GRANTED — WELCOME TO CLIPGEN.AI',
-]
+/* ════════════════════════════════════════════════════════════════
+   ICONS  (clean stroke SVGs — video-tool vocabulary, no sci-fi)
+   ════════════════════════════════════════════════════════════════ */
+const ICON_PATHS = {
+  gauge:    '<path d="M12 14l4-4"/><path d="M3.5 18a9 9 0 1 1 17 0"/><circle cx="12" cy="14" r="1.5"/>',
+  captions: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 11h3M7 14h6M14 11h3"/>',
+  portrait: '<rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 18h2"/>',
+  sparkles: '<path d="M12 3l1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6z"/><path d="M18 14l.7 1.8L20.5 16.5 18.7 17.2 18 19l-.7-1.8L15.5 16.5l1.8-.7z"/>',
+  share:    '<circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4"/>',
+  zap:      '<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
+  upload:   '<path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 17v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2"/>',
+  scissors: '<circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><path d="M8 8l12 8M8 16l12-8"/>',
+  play:     '<path d="M7 4l13 8-13 8z"/>',
+  film:     '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 4v16M17 4v16M3 9h4M3 15h4M17 9h4M17 15h4"/>',
+  globe:    '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/>',
+  check:    '<path d="M20 6L9 17l-5-5"/>',
+}
+function Icon({ name, size=20, color='currentColor', stroke=2, fill='none' }) {
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke={color} strokeWidth={stroke}
+    strokeLinecap="round" strokeLinejoin="round" dangerouslySetInnerHTML={{ __html: ICON_PATHS[name] || '' }} />
+}
 
 /* ════════════════════════════════════════════════════════════════
-   PRESENTATIONAL COMPONENTS
+   UI PRIMITIVES
    ════════════════════════════════════════════════════════════════ */
-function HoloCursor({ color }) {
-  const outerRef = useRef(null), innerRef = useRef(null)
-  const pos = useRef({ x:0, y:0 }), outer = useRef({ x:0, y:0 })
-  useEffect(() => {
-    const move = (e) => {
-      pos.current = { x:e.clientX, y:e.clientY }
-      if (innerRef.current) innerRef.current.style.transform = `translate(${e.clientX-4}px,${e.clientY-4}px)`
-    }
-    window.addEventListener('mousemove', move)
-    let raf
-    const lerp = (a,b,t)=>a+(b-a)*t
-    const tick = () => {
-      outer.current.x = lerp(outer.current.x, pos.current.x, 0.12)
-      outer.current.y = lerp(outer.current.y, pos.current.y, 0.12)
-      if (outerRef.current) outerRef.current.style.transform = `translate(${outer.current.x-20}px,${outer.current.y-20}px)`
-      raf = requestAnimationFrame(tick)
-    }
-    tick()
-    return () => { window.removeEventListener('mousemove', move); cancelAnimationFrame(raf) }
-  }, [])
-  return (
-    <>
-      <div ref={outerRef} style={{ position:'fixed', top:0, left:0, zIndex:9999, pointerEvents:'none', width:40, height:40, borderRadius:'50%', border:`1px solid ${color}88`, boxShadow:`0 0 12px ${color}44`, willChange:'transform' }} />
-      <div ref={innerRef} style={{ position:'fixed', top:0, left:0, zIndex:9999, pointerEvents:'none', width:8, height:8, borderRadius:'50%', background:color, boxShadow:`0 0 8px ${color}`, willChange:'transform' }} />
-    </>
-  )
-}
-
-function NeuralCanvas({ P }) {
-  useEffect(() => {
-    const c = document.getElementById('neural-cv'); if (!c) return
-    const ctx = c.getContext('2d')
-    const resize = () => { c.width = window.innerWidth; c.height = window.innerHeight }
-    resize(); window.addEventListener('resize', resize)
-    const N = 110
-    const pts = Array.from({ length:N }, () => ({
-      x:Math.random()*window.innerWidth, y:Math.random()*window.innerHeight,
-      vx:(Math.random()-.5)*.3, vy:(Math.random()-.5)*.3,
-      r:Math.random()*1.5+.5, ph:Math.random()*Math.PI*2,
-      color: Math.random()>.5 ? P.cyan : P.blue,
-    }))
-    let raf
-    const draw = () => {
-      ctx.clearRect(0,0,c.width,c.height)
-      pts.forEach(p => {
-        p.x+=p.vx; p.y+=p.vy; p.ph+=.012
-        if(p.x<0)p.x=c.width; if(p.x>c.width)p.x=0
-        if(p.y<0)p.y=c.height; if(p.y>c.height)p.y=0
-        ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2)
-        const a = .3+.25*Math.sin(p.ph)
-        ctx.fillStyle = p.color + Math.round(a*255).toString(16).padStart(2,'0'); ctx.fill()
-      })
-      for(let i=0;i<N;i++) for(let j=i+1;j<N;j++){
-        const d=Math.hypot(pts[i].x-pts[j].x,pts[i].y-pts[j].y)
-        if(d<100){ ctx.beginPath(); ctx.moveTo(pts[i].x,pts[i].y); ctx.lineTo(pts[j].x,pts[j].y)
-          ctx.strokeStyle = P.cyan + Math.round(.08*(1-d/100)*255).toString(16).padStart(2,'0'); ctx.lineWidth=.4; ctx.stroke() }
-      }
-      raf = requestAnimationFrame(draw)
-    }
-    draw()
-    return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', resize) }
-  }, [P.cyan, P.blue])
-  return <canvas id="neural-cv" style={{ position:'fixed', inset:0, pointerEvents:'none', zIndex:0 }} />
-}
-
-function GridOverlay({ P }) {
-  const c = P.cyan + (P.dark ? '08' : '0f')
-  return <div style={{ position:'fixed', inset:0, zIndex:0, pointerEvents:'none', backgroundImage:`linear-gradient(${c} 1px,transparent 1px),linear-gradient(90deg,${c} 1px,transparent 1px)`, backgroundSize:'60px 60px' }} />
-}
-
-function HudCorner({ pos, color }) {
-  const sz = 20
-  const map = {
-    tl:[{top:0,left:0},{borderTop:`2px solid ${color}`,borderLeft:`2px solid ${color}`}],
-    tr:[{top:0,right:0},{borderTop:`2px solid ${color}`,borderRight:`2px solid ${color}`}],
-    bl:[{bottom:0,left:0},{borderBottom:`2px solid ${color}`,borderLeft:`2px solid ${color}`}],
-    br:[{bottom:0,right:0},{borderBottom:`2px solid ${color}`,borderRight:`2px solid ${color}`}],
-  }
-  const [s, b] = map[pos]
-  return <div style={{ position:'absolute', width:sz, height:sz, ...s, ...b }} />
-}
-
-function GlassCard({ children, accent, P, style:s={} }) {
-  const [h, setH] = useState(false)
+function Btn({ children, onClick, accent, big, ghost, P, full }) {
+  const [h,setH]=useState(false)
   const col = accent || P.cyan
-  return (
-    <div onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)} style={{
-      position:'relative', background:P.glass, backdropFilter:'blur(20px)',
-      border:`1px solid ${col}${h?'55':'22'}`, borderRadius:4, padding:2,
-      transition:'border-color .3s, box-shadow .3s',
-      boxShadow: h ? `0 0 32px ${col}22, inset 0 0 32px ${col}08` : 'none', ...s,
-    }}>
-      <HudCorner pos="tl" color={col} /><HudCorner pos="tr" color={col} />
-      <HudCorner pos="bl" color={col} /><HudCorner pos="br" color={col} />
-      <div style={{ padding:24 }}>{children}</div>
-    </div>
-  )
-}
-
-function HudButton({ children, onClick, accent, big, outline, P }) {
-  const [h, setH] = useState(false)
-  const col = accent || P.cyan
-  const fg = P.dark ? '#000' : '#fff'
   return (
     <button onClick={onClick} onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)} style={{
-      position:'relative', overflow:'hidden', fontFamily: P?.fontD || FONT_DISPLAY, fontWeight:700,
-      fontSize: big?14:12, letterSpacing:3, padding: big?'18px 48px':'12px 24px', borderRadius:2,
-      background: outline ? 'transparent' : (h ? col : `${col}22`),
-      color: outline ? col : (h ? fg : col),
-      border:`1px solid ${col}${h?'ff':'66'}`, cursor:'pointer', transition:'all .25s',
-      boxShadow: h ? `0 0 30px ${col}66, inset 0 0 30px ${col}22` : 'none',
+      fontFamily:P.fontD, fontWeight:700, fontSize:big?15:13, letterSpacing:0.3,
+      padding:big?'14px 28px':'10px 18px', borderRadius:10, cursor:'pointer',
+      border: ghost?`1px solid ${P.line}`:'none', width: full?'100%':'auto',
+      background: ghost?'transparent':col, color: ghost?P.text:'#fff',
+      boxShadow: ghost?'none':(h?`0 10px 28px ${col}55`:`0 4px 14px ${col}33`),
+      transform: h?'translateY(-1px)':'none', transition:'all .2s',
+      display:'inline-flex', alignItems:'center', justifyContent:'center', gap:8, whiteSpace:'nowrap',
     }}>{children}</button>
   )
 }
 
-/* ════ VIDEO TIMELINE — makes the product feel like a video tool ════ */
-function VideoTimeline({ P }) {
-  const [phase, setPhase] = useState(0) // 0=idle 1=scanning 2=found 3=clips
-  const [scanPct, setScanPct] = useState(0)
-  const [markers, setMarkers] = useState([])
-  const [clips, setClips] = useState([])
+function Card({ children, P, style:s={}, hover=true }) {
+  const [h,setH]=useState(false)
+  return (
+    <div onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)} style={{
+      background:P.surface, border:`1px solid ${h&&hover?P.cyan+'55':P.line}`, borderRadius:16,
+      boxShadow: h&&hover ? (P.dark?'0 16px 40px rgba(0,0,0,0.4)':'0 16px 40px rgba(15,30,55,0.12)') : (P.dark?'0 2px 8px rgba(0,0,0,0.2)':'0 2px 8px rgba(15,30,55,0.05)'),
+      transform: h&&hover?'translateY(-3px)':'none', transition:'all .25s', ...s,
+    }}>{children}</div>
+  )
+}
 
-  const VIRAL_HITS = [
-    { pct:18, score:'9.8', col:'#00d4ff', time:'2:14' },
-    { pct:38, score:'9.2', col:'#ffd60a', time:'8:33' },
-    { pct:61, score:'9.6', col:'#9d5bff', time:'16:45' },
-    { pct:79, score:'9.4', col:'#00d4ff', time:'22:07' },
-  ]
+/* ════════════════════════════════════════════════════════════════
+   EDITOR MOCKUP  — the centerpiece: a believable AI clipping app
+   ════════════════════════════════════════════════════════════════ */
+const MOCK_CLIPS = [
+  { img:IMG.clip1, score:9.8, dur:'0:42', at:18, col:'cyan'   },
+  { img:IMG.clip2, score:9.2, dur:'0:31', at:42, col:'gold'   },
+  { img:IMG.clip3, score:9.6, dur:'0:55', at:64, col:'purple' },
+  { img:IMG.clip1, score:9.4, dur:'0:38', at:83, col:'blue'   },
+]
+
+function EditorMockup({ P, t, isMobile }) {
+  const [head, setHead] = useState(0)        // playhead %
+  const [done, setDone] = useState([])       // indices of clips found
+  const [progress, setProgress] = useState(0)
 
   useEffect(() => {
     let pct = 0, raf
-    const tick = () => {
-      pct += 0.35
-      setScanPct(pct)
-      VIRAL_HITS.forEach(h => {
-        if (pct >= h.pct && pct < h.pct + 1) {
-          setMarkers(prev => prev.find(m=>m.pct===h.pct) ? prev : [...prev, h])
-        }
-      })
-      if (pct < 100) { raf = requestAnimationFrame(tick) }
-      else {
-        setTimeout(()=>{ setClips([...VIRAL_HITS]); setPhase(3) }, 300)
-        setTimeout(()=>{ setMarkers([]); setClips([]); setScanPct(0); setPhase(0); pct=0; }, 5000)
-        setTimeout(()=>{ raf = requestAnimationFrame(tick) }, 5400)
-      }
+    const loop = () => {
+      pct += 0.4
+      setHead(pct); setProgress(Math.min(100, pct))
+      MOCK_CLIPS.forEach((c,i) => { if (pct >= c.at) setDone(prev => prev.includes(i)?prev:[...prev,i]) })
+      if (pct < 100) raf = requestAnimationFrame(loop)
+      else setTimeout(() => { pct = 0; setHead(0); setDone([]); setProgress(0); raf = requestAnimationFrame(loop) }, 3200)
     }
-    const start = setTimeout(()=>{ setPhase(1); raf = requestAnimationFrame(tick) }, 800)
+    const start = setTimeout(()=>{ raf = requestAnimationFrame(loop) }, 600)
     return () => { clearTimeout(start); cancelAnimationFrame(raf) }
   }, [])
 
-  // Waveform bars (deterministic heights)
-  const BARS = Array.from({length:80}, (_,i) => {
-    const v = Math.abs(Math.sin(i*0.4)*Math.cos(i*0.15)*0.8 + Math.sin(i*0.07)*0.2)
-    return Math.max(0.08, v)
-  })
+  // waveform bars
+  const BARS = Array.from({length:120},(_,i)=>Math.max(0.12, Math.abs(Math.sin(i*0.5)*Math.cos(i*0.17)*0.7 + Math.sin(i*0.09)*0.3)))
+  const scanning = progress < 100
+
+  const win = {
+    background:P.surface, border:`1px solid ${P.line}`, borderRadius:16, overflow:'hidden',
+    boxShadow: P.dark?'0 30px 80px rgba(0,0,0,0.55)':'0 30px 80px rgba(15,30,55,0.18)',
+    width:'100%', maxWidth:1000, margin:'0 auto', textAlign:'left',
+  }
 
   return (
-    <div style={{ width:'100%', maxWidth:780, margin:'0 auto', fontFamily:FONT_MONO }}>
-      {/* Header bar */}
-      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:8, padding:'0 4px' }}>
-        <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-          <div style={{ width:8, height:8, borderRadius:'50%', background: phase>=1 ? '#00ff88' : P.muted, boxShadow: phase>=1 ? '0 0 8px #00ff88' : 'none', transition:'all .4s' }} />
-          <span style={{ fontSize:10, color:P.muted, letterSpacing:2 }}>interview_keynote_final.mp4</span>
+    <div style={win}>
+      {/* Title bar */}
+      <div style={{ display:'flex', alignItems:'center', gap:12, padding:'12px 16px', borderBottom:`1px solid ${P.line}`, background:P.bgAlt }}>
+        <div style={{ display:'flex', gap:7 }}>
+          {['#ff5f57','#febc2e','#28c840'].map(c=> <div key={c} style={{ width:12, height:12, borderRadius:'50%', background:c }} />)}
         </div>
-        <div style={{ display:'flex', gap:16, alignItems:'center' }}>
-          <span style={{ fontSize:10, color:P.muted }}>45:32</span>
-          <span style={{ fontSize:9, color: phase>=1 ? P.cyan : P.muted, letterSpacing:2, border:`1px solid ${phase>=1?P.cyan:P.muted}33`, padding:'2px 8px', borderRadius:2 }}>
-            {phase===0?'READY':phase===1?'SCANNING...':phase===2?'DETECTING...':'CLIPS READY'}
+        <div style={{ display:'flex', alignItems:'center', gap:8, marginLeft:6 }}>
+          <Icon name="film" size={15} color={P.cyan} />
+          <span style={{ fontFamily:P.fontD, fontWeight:700, fontSize:12, color:P.text }}>ClipGen Studio</span>
+        </div>
+        <span style={{ fontFamily:FONT_MONO, fontSize:11, color:P.muted, marginLeft:4 }}>— interview_keynote.mp4</span>
+        <div style={{ marginLeft:'auto', display:'flex', alignItems:'center', gap:8 }}>
+          <span style={{ fontFamily:FONT_MONO, fontSize:10, color: scanning?P.cyan:'#28c840', letterSpacing:1 }}>
+            {scanning ? `ANALYZING ${Math.round(progress)}%` : '✓ DONE'}
           </span>
         </div>
       </div>
 
-      {/* Main timeline track */}
-      <div style={{ position:'relative', height:64, background: P.dark ? 'rgba(6,13,24,0.9)' : 'rgba(219,229,243,0.9)', borderRadius:4, border:`1px solid ${P.cyan}22`, overflow:'hidden' }}>
-        {/* Waveform */}
-        <div style={{ position:'absolute', inset:0, display:'flex', alignItems:'center', gap:1, padding:'0 4px' }}>
-          {BARS.map((h,i) => {
-            const pct = (i / BARS.length) * 100
-            const isScanned = pct <= scanPct
-            const nearMarker = markers.some(m => Math.abs(pct - m.pct) < 3)
-            return (
-              <div key={i} style={{
-                flex:1, height:`${h*100}%`, minHeight:2, borderRadius:1,
-                background: nearMarker ? P.gold : isScanned ? P.cyan : P.muted,
-                opacity: isScanned ? (nearMarker ? 1 : 0.7) : 0.25,
-                transition: 'background .2s, opacity .2s',
-                boxShadow: nearMarker ? `0 0 4px ${P.gold}` : 'none',
-              }} />
-            )
-          })}
-        </div>
-
-        {/* Viral markers */}
-        {markers.map((m,i) => (
-          <div key={i} style={{ position:'absolute', top:0, bottom:0, left:`${m.pct}%`, width:2, background:m.col, boxShadow:`0 0 8px ${m.col}`, zIndex:3, animation:'dataStream .3s ease-out' }}>
-            <div style={{ position:'absolute', top:-22, left:'50%', transform:'translateX(-50%)', background:m.col, color:'#000', fontSize:9, fontWeight:700, padding:'2px 5px', borderRadius:2, whiteSpace:'nowrap', boxShadow:`0 0 8px ${m.col}` }}>{m.score}</div>
-            <div style={{ position:'absolute', bottom:-18, left:'50%', transform:'translateX(-50%)', color:m.col, fontSize:8, whiteSpace:'nowrap' }}>{m.time}</div>
-          </div>
-        ))}
-
-        {/* Scan line */}
-        {phase >= 1 && scanPct < 100 && (
-          <div style={{ position:'absolute', top:0, bottom:0, left:`${scanPct}%`, width:2, background:`linear-gradient(${P.cyan}00, ${P.cyan}, ${P.cyan}00)`, boxShadow:`0 0 12px ${P.cyan}`, zIndex:4, pointerEvents:'none' }}>
-            <div style={{ position:'absolute', top:0, left:4, fontSize:8, color:P.cyan, whiteSpace:'nowrap', letterSpacing:1 }}>AI</div>
-          </div>
-        )}
-      </div>
-
-      {/* Output clips */}
-      <div style={{ marginTop:12, display:'flex', gap:8, justifyContent:'center', minHeight:72 }}>
-        {clips.map((c,i) => (
-          <div key={i} style={{ width:40, borderRadius:4, overflow:'hidden', border:`1px solid ${c.col}66`, boxShadow:`0 0 16px ${c.col}33`, animation:`dataStream .4s ease-out ${i*0.12}s both`, position:'relative', aspectRatio:'9/16', background: P.dark ? '#0a1424' : '#dbe5f3' }}>
-            {/* mini waveform inside clip */}
-            <div style={{ position:'absolute', inset:'30% 2px 30%', display:'flex', alignItems:'center', gap:0.5 }}>
-              {Array.from({length:12}, (_,j) => (
-                <div key={j} style={{ flex:1, height:`${40+Math.abs(Math.sin(j*0.8))*50}%`, background:c.col, opacity:0.7, borderRadius:1 }} />
-              ))}
+      {/* Body: player + clips */}
+      <div style={{ display:'grid', gridTemplateColumns: isMobile?'1fr':'1fr 230px' }}>
+        {/* Player + timeline */}
+        <div style={{ padding:14, borderRight: isMobile?'none':`1px solid ${P.line}` }}>
+          {/* video frame */}
+          <div style={{ position:'relative', borderRadius:10, overflow:'hidden', aspectRatio:'16/9', background:'#000' }}>
+            <img src={IMG.creator} alt="" style={{ width:'100%', height:'100%', objectFit:'cover', opacity:0.92 }} />
+            <div style={{ position:'absolute', inset:0, background:'linear-gradient(180deg, transparent 60%, rgba(0,0,0,0.6))' }} />
+            <div style={{ position:'absolute', top:'50%', left:'50%', transform:'translate(-50%,-50%)', width:54, height:54, borderRadius:'50%', background:'rgba(255,255,255,0.16)', backdropFilter:'blur(6px)', display:'flex', alignItems:'center', justifyContent:'center', border:'1px solid rgba(255,255,255,0.4)' }}>
+              <Icon name="play" size={22} color="#fff" fill="#fff" stroke={0} />
             </div>
-            <div style={{ position:'absolute', bottom:3, left:0, right:0, textAlign:'center', fontSize:7, color:c.col, fontWeight:700 }}>{c.score}</div>
-          </div>
-        ))}
-        {clips.length === 0 && phase < 3 && (
-          <div style={{ fontSize:9, color:P.muted, letterSpacing:2, display:'flex', alignItems:'center', gap:8 }}>
-            <div style={{ display:'flex', gap:6 }}>
-              {[0,1,2,3].map(i=>(
-                <div key={i} style={{ width:40, borderRadius:4, border:`1px dashed ${P.muted}44`, aspectRatio:'9/16', opacity:0.3, background:'transparent' }} />
-              ))}
+            <div style={{ position:'absolute', left:10, right:10, bottom:10, display:'flex', alignItems:'center', gap:8 }}>
+              <Icon name="play" size={12} color="#fff" fill="#fff" stroke={0} />
+              <div style={{ flex:1, height:3, background:'rgba(255,255,255,0.25)', borderRadius:2 }}>
+                <div style={{ width:`${head}%`, height:'100%', background:P.cyan, borderRadius:2 }} />
+              </div>
+              <span style={{ fontFamily:FONT_MONO, fontSize:10, color:'#fff' }}>{String(Math.floor(head*0.45)).padStart(2,'0')}:32 / 45:32</span>
             </div>
           </div>
-        )}
-      </div>
-      <div style={{ textAlign:'center', marginTop:6, fontSize:8, color:P.muted, letterSpacing:2 }}>
-        {clips.length > 0 ? `${clips.length} VIRAL CLIPS EXTRACTED · READY TO POST` : 'AI ANALYZING CONTENT FOR VIRAL MOMENTS'}
-      </div>
-    </div>
-  )
-}
 
-function HoloOrb({ P }) {
-  const [t, setT] = useState(0)
-  useEffect(() => { let raf; const a=()=>{ setT(p=>p+0.01); raf=requestAnimationFrame(a) }; a(); return ()=>cancelAnimationFrame(raf) }, [])
-  const cols = [P.cyan, P.blue, P.purple]
-  return (
-    <div style={{ position:'relative', width:300, height:300, margin:'0 auto' }}>
-      {[300,220,140].map((size,i)=>(
-        <div key={i} style={{ position:'absolute', top:'50%', left:'50%', width:size, height:size, marginLeft:-size/2, marginTop:-size/2, borderRadius:'50%', border:`1px solid ${cols[i]}44`, transform:`rotateX(75deg) rotate(${t*(i%2===0?1:-1)*30}deg)`, boxShadow:`0 0 ${20-i*4}px ${cols[i]}22`, transition:'transform .016s linear' }}>
-          <div style={{ position:'absolute', top:-4, left:'50%', marginLeft:-4, width:8, height:8, borderRadius:'50%', background:cols[i], boxShadow:`0 0 12px ${cols[i]}` }} />
-        </div>
-      ))}
-      <div style={{ position:'absolute', top:'50%', left:'50%', transform:'translate(-50%,-50%)', width:80, height:80, borderRadius:'50%', background:`radial-gradient(circle at 35% 35%, ${P.cyan}cc, ${P.blue}99, ${P.purple}66, transparent)`, boxShadow:`0 0 60px ${P.cyan}66, 0 0 120px ${P.blue}33`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:32, color:'#fff' }}>◈</div>
-    </div>
-  )
-}
-
-function StatTicker({ value, label, color, P }) {
-  const [cur, setCur] = useState(0)
-  useEffect(() => {
-    const num = parseFloat(value), suffix = value.replace(/[0-9.]/g,'')
-    let f=0; const total=60
-    const tick=()=>{ f++; setCur(num<10 ? Math.round(num*(f/total)*10)/10 : Math.round(num*(f/total))); if(f<total) requestAnimationFrame(tick); else setCur(num) }
-    requestAnimationFrame(tick)
-  }, [value])
-  const suffix = value.replace(/[0-9.]/g,'')
-  return (
-    <div style={{ textAlign:'center' }}>
-      <div style={{ fontFamily:FONT_DISPLAY, fontSize:34, fontWeight:900, color, textShadow:`0 0 20px ${color}66`, letterSpacing:'-1px' }}>{cur}{suffix}</div>
-      <div style={{ fontFamily:FONT_MONO, fontSize:10, color:P.muted, letterSpacing:2, marginTop:4 }}>{label}</div>
-    </div>
-  )
-}
-
-function NovaPanel({ message, visible, P }) {
-  const [disp, setDisp] = useState(''); const [idx, setIdx] = useState(0)
-  useEffect(() => { setDisp(''); setIdx(0) }, [message])
-  useEffect(() => {
-    if (idx < message.length) { const t=setTimeout(()=>{ setDisp(p=>p+message[idx]); setIdx(i=>i+1) },18); return ()=>clearTimeout(t) }
-  }, [idx, message])
-  return (
-    <div style={{ position:'fixed', bottom:32, right:32, zIndex:200, width:320, transform:`translateY(${visible?0:120}px)`, opacity:visible?1:0, transition:'transform .5s cubic-bezier(.22,1,.36,1), opacity .5s' }}>
-      <GlassCard accent={P.cyan} P={P}>
-        <div style={{ display:'flex', gap:12, alignItems:'flex-start' }}>
-          <div style={{ flexShrink:0, width:40, height:40, borderRadius:'50%', background:`radial-gradient(circle at 35% 35%, ${P.cyan}, ${P.blue}, ${P.purple})`, boxShadow:`0 0 20px ${P.cyan}66`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:16, color:'#fff', animation:'novaPulse 2s ease-in-out infinite' }}>◈</div>
-          <div>
-            <div style={{ fontFamily:FONT_MONO, fontSize:9, color:P.cyan, letterSpacing:2, marginBottom:6 }}>NOVA — AI ASSISTANT</div>
-            <div style={{ fontFamily:FONT_BODY, fontSize:13, color:P.text, lineHeight:1.6 }}>{disp}<span style={{ animation:'blink 1s step-end infinite', color:P.cyan }}>▋</span></div>
+          {/* Timeline */}
+          <div style={{ marginTop:12 }}>
+            <div style={{ display:'flex', justifyContent:'space-between', marginBottom:6 }}>
+              <span style={{ fontFamily:FONT_MONO, fontSize:10, color:P.muted, letterSpacing:1 }}>TIMELINE — AI VIRAL DETECTION</span>
+              <span style={{ fontFamily:FONT_MONO, fontSize:10, color:P.muted }}>{done.length}/4 {t('stClips')}</span>
+            </div>
+            <div style={{ position:'relative', height:54, background:P.bgAlt, borderRadius:8, border:`1px solid ${P.line}`, overflow:'hidden', display:'flex', alignItems:'center', gap:1, padding:'0 4px' }}>
+              {BARS.map((bh,i)=>{
+                const pct=(i/BARS.length)*100
+                const scanned = pct<=head
+                const hit = MOCK_CLIPS.some(c=>Math.abs(pct-c.at)<4)
+                return <div key={i} style={{ flex:1, height:`${bh*70}%`, borderRadius:1,
+                  background: hit ? P.gold : scanned ? P.cyan : P.muted,
+                  opacity: scanned?(hit?1:0.65):0.28, transition:'all .15s' }} />
+              })}
+              {/* clip segment markers */}
+              {MOCK_CLIPS.map((c,i)=> done.includes(i) && (
+                <div key={i} style={{ position:'absolute', top:0, bottom:0, left:`${c.at}%`, width:2, background:P[c.col], boxShadow:`0 0 8px ${P[c.col]}` }}>
+                  <div style={{ position:'absolute', top:2, left:'50%', transform:'translateX(-50%)', background:P[c.col], color:'#fff', fontSize:8, fontWeight:700, padding:'1px 4px', borderRadius:3, fontFamily:FONT_MONO, whiteSpace:'nowrap' }}>{c.score}</div>
+                </div>
+              ))}
+              {/* playhead */}
+              {scanning && (
+                <div style={{ position:'absolute', top:0, bottom:0, left:`${head}%`, width:2, background:'#fff', boxShadow:`0 0 10px ${P.cyan}` }} />
+              )}
+            </div>
           </div>
         </div>
-      </GlassCard>
+
+        {/* Clips sidebar */}
+        <div style={{ padding:14, background:P.bgAlt }}>
+          <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:12 }}>
+            <Icon name="sparkles" size={15} color={P.purple} />
+            <span style={{ fontFamily:P.fontD, fontWeight:700, fontSize:12, color:P.text }}>AI Clips</span>
+            <span style={{ fontFamily:FONT_MONO, fontSize:10, color:'#fff', background:P.purple, borderRadius:10, padding:'1px 7px', marginLeft:'auto' }}>{done.length}</span>
+          </div>
+          <div style={{ display:'grid', gridTemplateColumns: isMobile?'repeat(4,1fr)':'1fr 1fr', gap:8 }}>
+            {MOCK_CLIPS.map((c,i)=> done.includes(i) && (
+              <div key={i} style={{ position:'relative', borderRadius:8, overflow:'hidden', aspectRatio:'9/16', border:`1px solid ${P[c.col]}55`, animation:'popIn .35s ease-out' }}>
+                <img src={c.img} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+                <div style={{ position:'absolute', inset:0, background:'linear-gradient(180deg, transparent 45%, rgba(0,0,0,0.78))' }} />
+                <div style={{ position:'absolute', top:4, right:4, background:P[c.col], color:'#fff', fontSize:9, fontWeight:700, padding:'1px 5px', borderRadius:4, fontFamily:FONT_MONO }}>{c.score}</div>
+                <div style={{ position:'absolute', bottom:4, left:4, right:4, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+                  <span style={{ fontFamily:FONT_MONO, fontSize:8, color:'#fff' }}>{c.dur}</span>
+                  <Icon name="portrait" size={10} color="#fff" stroke={2} />
+                </div>
+              </div>
+            ))}
+            {done.length===0 && Array.from({length:isMobile?4:2}).map((_,i)=>(
+              <div key={i} style={{ borderRadius:8, aspectRatio:'9/16', border:`1px dashed ${P.line}`, display:'flex', alignItems:'center', justifyContent:'center' }}>
+                <Icon name="film" size={16} color={P.muted} />
+              </div>
+            ))}
+          </div>
+          {!isMobile && done.length>0 && (
+            <div style={{ marginTop:12 }}><Btn P={P} accent={P.cyan} full><Icon name="share" size={13} color="#fff" stroke={2.2}/> Export all</Btn></div>
+          )}
+        </div>
+      </div>
     </div>
   )
 }
@@ -1150,388 +1038,257 @@ export default function Landing() {
   const setLanguage = (code) => { setLang(code); localStorage.setItem('clipgen_lang', code) }
 
   const P = { ...makePalette(isDark), fontD: fd(lang) }
+  const accentFor = (k) => P[k] || P.cyan
 
-
-  const [booting, setBooting] = useState(true)
-  const [bootLines, setBootLines] = useState([])
-  const [bootDone, setBootDone] = useState(false)
-  const [active, setActive] = useState('hero')
-  const [novaVisible, setNovaVisible] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
 
-  const NOVA_KEY = { hero:'nova1', features:'nova2', how:'nova3', pricing:'nova4' }
-  const [novaSec, setNovaSec] = useState('hero')
-
-  /* boot */
   useEffect(() => {
-    const timers = []
-    BOOT_LINES.forEach((line, i) => {
-      timers.push(setTimeout(() => {
-        setBootLines(prev => [...prev, line])
-        if (line.includes('ACCESS GRANTED')) {
-          timers.push(setTimeout(() => { setBootDone(true); timers.push(setTimeout(()=>{ setBooting(false); setNovaVisible(true) }, 600)) }, 500))
-        }
-      }, i < 6 ? i * 480 + 300 : i * 480 + 300))
-    })
-    return () => timers.forEach(clearTimeout)
-  }, [])
-
-  useEffect(() => {
-    const onResize = () => setIsMobile(window.innerWidth < 768)
-    const onScroll = () => {
-      setScrolled(window.scrollY > 60)
-      for (const id of ['pricing','how','features','hero']) {
-        const el = document.getElementById(id)
-        if (el && window.scrollY >= el.offsetTop - 220) { setActive(id); setNovaSec(id); break }
-      }
-    }
-    window.addEventListener('resize', onResize); window.addEventListener('scroll', onScroll)
-    onResize()
+    const onResize = () => setIsMobile(window.innerWidth < 860)
+    const onScroll = () => setScrolled(window.scrollY > 40)
+    window.addEventListener('resize', onResize); window.addEventListener('scroll', onScroll); onResize()
     return () => { window.removeEventListener('resize', onResize); window.removeEventListener('scroll', onScroll) }
   }, [])
 
   const scrollTo = (id) => { document.getElementById(id)?.scrollIntoView({ behavior:'smooth' }); setMenuOpen(false) }
   const go = () => navigate('/signup')
-
-  /* ── BOOT SCREEN (always dark — system boot) ── */
-  if (booting) {
-    const BC = { cyan:'#00d4ff', blue:'#2b8bff', muted:'#4a6080', gold:'#ffd60a' }
-    return (
-      <div style={{ position:'fixed', inset:0, background:'#020308', zIndex:9999, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', fontFamily:FONT_MONO, padding:32, opacity:bootDone?0:1, transition:'opacity .6s' }}>
-        <div style={{ maxWidth:640, width:'100%' }}>
-          <div style={{ textAlign:'center', marginBottom:48 }}>
-            <div style={{ fontFamily:FONT_DISPLAY, fontSize:isMobile?26:42, fontWeight:900, color:BC.cyan, letterSpacing:8, textShadow:`0 0 40px ${BC.cyan}` }}>CLIPGEN.AI</div>
-            <div style={{ fontSize:10, color:BC.muted, letterSpacing:4, marginTop:4 }}>VIRAL CONTENT INTELLIGENCE SYSTEM</div>
-          </div>
-          <div style={{ border:`1px solid ${BC.cyan}33`, background:'rgba(0,212,255,0.04)', padding:24, borderRadius:4, minHeight:200 }}>
-            <div style={{ fontSize:10, color:BC.cyan, letterSpacing:2, marginBottom:16 }}>SYSTEM TERMINAL — {new Date().toISOString().slice(0,19)}Z</div>
-            {bootLines.map((line,i)=>(
-              <div key={i} style={{ fontSize:12, lineHeight:2, color: line.includes('✓')?'#00ff88': line.includes('100%')?BC.gold:BC.muted, fontWeight: line.includes('✓')?700:400 }}>
-                {line.includes('✓')?'':'> '}{line}
-              </div>
-            ))}
-            {bootLines.length < BOOT_LINES.length && <span style={{ color:BC.cyan, animation:'blink 1s step-end infinite' }}>_</span>}
-          </div>
-          <div style={{ marginTop:24, height:2, background:`${BC.cyan}22`, borderRadius:1 }}>
-            <div style={{ height:'100%', background:`linear-gradient(90deg,${BC.cyan},${BC.blue})`, borderRadius:1, width:`${(bootLines.length/BOOT_LINES.length)*100}%`, transition:'width .4s ease', boxShadow:`0 0 8px ${BC.cyan}` }} />
-          </div>
-        </div>
-        <style>{`@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}`}</style>
-      </div>
-    )
-  }
-
-  /* ── SITE ── */
-  const accentFor = (k) => P[k] || P.cyan
   const navLinks = [[t('navFeatures'),'features'],[t('navProcess'),'how'],[t('navPricing'),'pricing']]
+  const PAD = isMobile ? '0 20px' : '0 48px'
 
   return (
-    <div dir={isRTL ? 'rtl' : 'ltr'} style={{ fontFamily:FONT_BODY, background:P.bg, color:P.text, overflowX:'hidden', cursor: isMobile?'auto':'none', minHeight:'100vh', transition:'background .4s, color .4s' }}>
+    <div dir={isRTL?'rtl':'ltr'} style={{ fontFamily:FONT_BODY, background:P.bg, color:P.text, minHeight:'100vh', overflowX:'hidden', transition:'background .3s, color .3s' }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap&subset=latin,latin-ext');
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@400;600;700;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap&subset=latin,latin-ext');
         *{box-sizing:border-box;margin:0;padding:0;}
         html{scroll-behavior:smooth;}
-        ::selection{background:${P.cyan}44;color:${P.dark?'#fff':'#000'};}
-        ::-webkit-scrollbar{width:2px;}
-        ::-webkit-scrollbar-thumb{background:${P.cyan}44;}
-        @keyframes novaPulse{0%,100%{box-shadow:0 0 20px ${P.cyan}66}50%{box-shadow:0 0 40px ${P.cyan}99}}
-        @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-        @keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-        @keyframes glitch{0%,90%,100%{transform:none}91%{transform:translate(-2px,1px)}93%{transform:translate(2px,-1px)}95%{transform:none}}
-        @keyframes scanH{0%{transform:translateY(-100%)}100%{transform:translateY(100vh)}}
-        @keyframes dataStream{0%{opacity:0;transform:translateY(-16px)}100%{opacity:1;transform:translateY(0)}}
-        @keyframes borderPulse{0%,100%{opacity:.3}50%{opacity:.8}}
-        @keyframes gradShift{0%{background-position:0}100%{background-position:300%}}
-        @keyframes shimmer{0%{background-position:-250% 0}100%{background-position:250% 0}}
-        .floating-clip{animation:floatY 6s ease-in-out infinite;}
-        @media(max-width:767px){.hide-mob{display:none!important;}.dist-nav{display:none!important;}.nova-panel{display:none!important;}}
-        @media(min-width:768px){.show-mob{display:none!important;}}
+        ::selection{background:${P.cyan}33;}
+        ::-webkit-scrollbar{width:8px;}::-webkit-scrollbar-thumb{background:${P.line};border-radius:4px;}
+        @keyframes popIn{0%{opacity:0;transform:scale(.85)}100%{opacity:1;transform:scale(1)}}
+        @keyframes fadeUp{0%{opacity:0;transform:translateY(16px)}100%{opacity:1;transform:translateY(0)}}
+        @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+        @media(max-width:859px){.hide-mob{display:none!important;}}
+        @media(min-width:860px){.show-mob{display:none!important;}}
       `}</style>
 
-      <NeuralCanvas P={P} />
-      <GridOverlay P={P} />
-      {!isMobile && <HoloCursor color={P.cyan} />}
+      {/* soft background accent */}
+      <div style={{ position:'fixed', inset:0, zIndex:0, pointerEvents:'none', background:`radial-gradient(900px 500px at 70% -5%, ${P.cyan}14, transparent 60%), radial-gradient(700px 500px at 0% 10%, ${P.purple}12, transparent 55%)` }} />
 
-      {/* city backdrop */}
-      <div style={{ position:'fixed', inset:0, zIndex:0, pointerEvents:'none', backgroundImage:`url(${IMG.neonCity})`, backgroundSize:'cover', backgroundPosition:'center', opacity: P.dark?0.12:0.05, maskImage:'radial-gradient(ellipse at center, black 30%, transparent 80%)', WebkitMaskImage:'radial-gradient(ellipse at center, black 30%, transparent 80%)' }} />
-      <div style={{ position:'fixed', inset:0, zIndex:0, pointerEvents:'none', background:`linear-gradient(180deg, ${P.bg}dd, ${P.bg}99, ${P.bg}ee)` }} />
-
-      {/* scanline */}
-      <div style={{ position:'fixed', top:0, left:0, right:0, zIndex:1, height:2, background:`linear-gradient(90deg, transparent, ${P.cyan}22, transparent)`, animation:'scanH 8s linear infinite', pointerEvents:'none' }} />
-
-      {/* district rail */}
-      <div className="dist-nav" style={{ position:'fixed', left:24, top:'50%', transform:'translateY(-50%)', zIndex:150, display:'flex', flexDirection:'column', gap:8 }}>
-        {[['hero','DST-01',P.cyan],['features','DST-02',P.blue],['how','DST-03',P.purple],['pricing','DST-04',P.gold]].map(([id,code,col])=>(
-          <div key={id} onClick={()=>scrollTo(id)} style={{ display:'flex', alignItems:'center', gap:8, cursor:'pointer', opacity:active===id?1:0.3, transition:'opacity .3s' }}>
-            <div style={{ width:active===id?24:6, height:2, background:col, transition:'width .3s', boxShadow:active===id?`0 0 8px ${col}`:'none' }} />
-            {active===id && <span style={{ fontFamily:FONT_MONO, fontSize:9, color:col, letterSpacing:1, whiteSpace:'nowrap' }}>{code}</span>}
+      {/* NAV */}
+      <nav style={{ position:'fixed', top:0, left:0, right:0, zIndex:100, height:64, display:'flex', alignItems:'center', justifyContent:'space-between', padding:PAD,
+        background: scrolled?P.glass:'transparent', backdropFilter:scrolled?'blur(14px)':'none', borderBottom:`1px solid ${scrolled?P.line:'transparent'}`, transition:'all .3s' }}>
+        <div style={{ display:'flex', alignItems:'center', gap:10, cursor:'pointer' }} onClick={()=>window.scrollTo({top:0,behavior:'smooth'})}>
+          <div style={{ width:36, height:36, borderRadius:9, background:`linear-gradient(135deg, ${P.cyan}, ${P.blue})`, display:'flex', alignItems:'center', justifyContent:'center', boxShadow:`0 4px 14px ${P.cyan}44` }}>
+            <Icon name="film" size={18} color="#fff" stroke={2.2} />
           </div>
-        ))}
-      </div>
-
-      {/* NOVA */}
-      <div className="nova-panel"><NovaPanel message={t(NOVA_KEY[novaSec])} visible={novaVisible} P={P} /></div>
-
-      {/* ─── NAV ─── */}
-      <nav style={{ position:'fixed', top:0, left:0, right:0, zIndex:300, height:64, display:'flex', alignItems:'center', justifyContent:'space-between', padding:isMobile?'0 18px':'0 60px', background:scrolled?(P.dark?'rgba(2,3,8,0.92)':'rgba(238,242,248,0.92)'):'transparent', backdropFilter:scrolled?'blur(20px)':'none', borderBottom:`1px solid ${scrolled?P.cyan+'22':'transparent'}`, transition:'all .4s' }}>
-        <div style={{ display:'flex', alignItems:'center', gap:10, cursor:'pointer' }} onClick={()=>window.scrollTo({ top:0, behavior:'smooth' })}>
-          <div style={{ width:36, height:36, borderRadius:4, background:`linear-gradient(135deg, ${P.cyan}, ${P.blue}, ${P.purple})`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:18, boxShadow:`0 0 16px ${P.cyan}66`, fontFamily:fd(lang), color:'#fff', fontWeight:900 }}>C</div>
           <div>
-            <div style={{ fontFamily:fd(lang), fontWeight:900, fontSize:14, letterSpacing:3, color:P.text }}>CLIPGEN<span style={{ color:P.cyan }}>.AI</span></div>
-            <div style={{ fontFamily:FONT_MONO, fontSize:8, color:P.muted, letterSpacing:2 }}>{t('sys')}</div>
+            <div style={{ fontFamily:fd(lang), fontWeight:900, fontSize:16, letterSpacing:0.5, color:P.text }}>ClipGen<span style={{ color:P.cyan }}>.AI</span></div>
+            <div style={{ fontFamily:FONT_MONO, fontSize:8, color:P.muted, letterSpacing:1.5 }}>{t('sys')}</div>
           </div>
         </div>
 
-        <div className="hide-mob" style={{ display:'flex', gap:34, alignItems:'center' }}>
+        <div className="hide-mob" style={{ display:'flex', gap:30, alignItems:'center' }}>
           {navLinks.map(([label,id])=>(
-            <button key={id} onClick={()=>scrollTo(id)} style={{ background:'none', border:'none', cursor:'pointer', fontFamily:fd(lang), fontSize:10, letterSpacing:3, color:P.muted, transition:'color .2s' }} onMouseEnter={e=>e.target.style.color=P.cyan} onMouseLeave={e=>e.target.style.color=P.muted}>{label}</button>
+            <button key={id} onClick={()=>scrollTo(id)} style={{ background:'none', border:'none', cursor:'pointer', fontFamily:fd(lang), fontSize:13, fontWeight:600, letterSpacing:0.5, color:P.muted, transition:'color .2s' }}
+              onMouseEnter={e=>e.target.style.color=P.text} onMouseLeave={e=>e.target.style.color=P.muted}>{label}</button>
           ))}
         </div>
 
         <div style={{ display:'flex', gap:10, alignItems:'center' }}>
-          {/* language */}
-          <select value={lang} onChange={e=>setLanguage(e.target.value)} className="hide-mob" style={{ padding:'7px 8px', borderRadius:3, border:`1px solid ${P.cyan}33`, background:P.dark?'rgba(10,20,36,0.85)':'rgba(255,255,255,0.85)', color:P.text, fontSize:11, fontFamily:FONT_MONO, cursor:'pointer', outline:'none', maxWidth:130 }}>
-            {LANGS.map(l => <option key={l.code} value={l.code} style={{ background:P.bg, color:P.text }}>{l.flag} {l.label}</option>)}
+          <select value={lang} onChange={e=>setLanguage(e.target.value)} className="hide-mob" style={{ padding:'7px 8px', borderRadius:8, border:`1px solid ${P.line}`, background:P.surface, color:P.text, fontSize:12, fontFamily:FONT_BODY, cursor:'pointer', outline:'none', maxWidth:140 }}>
+            {LANGS.map(l=> <option key={l.code} value={l.code} style={{ background:P.surface, color:P.text }}>{l.flag} {l.label}</option>)}
           </select>
-          {/* theme toggle */}
-          <button onClick={toggleTheme} title="Toggle theme" style={{ width:34, height:34, borderRadius:3, border:`1px solid ${P.cyan}33`, background:`${P.cyan}10`, color:P.cyan, cursor:'pointer', fontSize:14, display:'flex', alignItems:'center', justifyContent:'center' }}>{isDark?'☀':'☾'}</button>
-          <div className="hide-mob"><HudButton onClick={go} accent={P.cyan} P={P}>{t('navLaunch')} →</HudButton></div>
-          <button className="show-mob" onClick={()=>setMenuOpen(!menuOpen)} style={{ background:'none', border:`1px solid ${P.cyan}33`, borderRadius:3, color:P.cyan, fontSize:18, cursor:'pointer', width:34, height:34 }}>{menuOpen?'✕':'☰'}</button>
+          <button onClick={toggleTheme} title="Theme" style={{ width:36, height:36, borderRadius:8, border:`1px solid ${P.line}`, background:P.surface, color:P.text, cursor:'pointer', fontSize:15, display:'flex', alignItems:'center', justifyContent:'center' }}>{isDark?'☀':'☾'}</button>
+          <div className="hide-mob"><Btn onClick={go} accent={P.cyan} P={P}>{t('navLaunch')}</Btn></div>
+          <button className="show-mob" onClick={()=>setMenuOpen(!menuOpen)} style={{ width:36, height:36, borderRadius:8, border:`1px solid ${P.line}`, background:P.surface, color:P.text, fontSize:18, cursor:'pointer' }}>{menuOpen?'✕':'☰'}</button>
         </div>
       </nav>
 
-      {/* ─── MOBILE DRAWER ─── */}
+      {/* MOBILE DRAWER */}
       {menuOpen && (
-        <div className="show-mob" style={{ position:'fixed', top:64, left:0, right:0, zIndex:299, background:P.dark?'rgba(2,3,8,0.98)':'rgba(238,242,248,0.98)', backdropFilter:'blur(20px)', borderBottom:`1px solid ${P.cyan}22`, padding:24, display:'flex', flexDirection:'column', gap:18 }}>
+        <div className="show-mob" style={{ position:'fixed', top:64, left:0, right:0, zIndex:99, background:P.surface, borderBottom:`1px solid ${P.line}`, padding:20, display:'flex', flexDirection:'column', gap:16 }}>
           {navLinks.map(([label,id])=>(
-            <button key={id} onClick={()=>scrollTo(id)} style={{ background:'none', border:'none', color:P.text, fontFamily:fd(lang), fontSize:16, letterSpacing:3, textAlign:'left', cursor:'pointer', fontWeight:700 }}>{label}</button>
+            <button key={id} onClick={()=>scrollTo(id)} style={{ background:'none', border:'none', color:P.text, fontFamily:fd(lang), fontSize:16, fontWeight:700, textAlign:'left', cursor:'pointer' }}>{label}</button>
           ))}
-          <button onClick={()=>{ navigate('/signin'); setMenuOpen(false) }} style={{ background:'none', border:'none', color:P.muted, fontFamily:fd(lang), fontSize:14, letterSpacing:3, textAlign:'left', cursor:'pointer' }}>{t('navLogin')}</button>
-          <select value={lang} onChange={e=>setLanguage(e.target.value)} style={{ padding:'12px', borderRadius:3, border:`1px solid ${P.cyan}33`, background:P.dark?'rgba(10,20,36,0.85)':'rgba(255,255,255,0.85)', color:P.text, fontSize:14, fontFamily:FONT_MONO, cursor:'pointer', outline:'none' }}>
-            {LANGS.map(l => <option key={l.code} value={l.code} style={{ background:P.bg, color:P.text }}>{l.flag} {l.label}</option>)}
+          <button onClick={()=>{navigate('/signin');setMenuOpen(false)}} style={{ background:'none', border:'none', color:P.muted, fontFamily:fd(lang), fontSize:14, textAlign:'left', cursor:'pointer' }}>{t('navLogin')}</button>
+          <select value={lang} onChange={e=>setLanguage(e.target.value)} style={{ padding:'12px', borderRadius:8, border:`1px solid ${P.line}`, background:P.bgAlt, color:P.text, fontSize:14, fontFamily:FONT_BODY }}>
+            {LANGS.map(l=> <option key={l.code} value={l.code}>{l.flag} {l.label}</option>)}
           </select>
-          <HudButton onClick={go} accent={P.cyan} big P={P}>{t('navLaunch')} →</HudButton>
+          <Btn onClick={go} accent={P.cyan} big full P={P}>{t('navLaunch')}</Btn>
         </div>
       )}
 
-      {/* ═══ HERO ═══ */}
-      <section id="hero" style={{ minHeight:'100vh', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', textAlign:'center', padding:isMobile?'100px 24px 60px':'100px 60px 80px', position:'relative', zIndex:1 }}>
-        <div style={{ fontFamily:FONT_MONO, fontSize:10, color:P.cyan, letterSpacing:4, marginBottom:32, display:'flex', alignItems:'center', gap:12, flexWrap:'wrap', justifyContent:'center' }}>
-          <div className="hide-mob" style={{ width:30, height:1, background:P.cyan }} />
-          DST-01 / {t('distNexus')}
-          <div className="hide-mob" style={{ width:30, height:1, background:P.cyan }} />
+      {/* HERO */}
+      <section id="top" style={{ position:'relative', zIndex:1, padding: isMobile?'110px 20px 50px':'130px 48px 70px', textAlign:'center' }}>
+        <div style={{ display:'inline-flex', alignItems:'center', gap:8, padding:'6px 14px', borderRadius:20, border:`1px solid ${P.line}`, background:P.surface, marginBottom:24, animation:'fadeUp .5s ease-out' }}>
+          <span style={{ width:7, height:7, borderRadius:'50%', background:'#28c840', boxShadow:'0 0 8px #28c840' }} />
+          <span style={{ fontFamily:FONT_MONO, fontSize:11, color:P.muted, letterSpacing:1 }}>{t('sys')}</span>
         </div>
 
-        {/* Compact orb */}
-        <div style={{ marginBottom:24, transform:'scale(0.6)', transformOrigin:'center bottom', opacity:0.8, animation:'floatY 4s ease-in-out infinite' }}><HoloOrb P={P} /></div>
+        <h1 style={{ fontFamily:fd(lang), fontWeight:900, fontSize:isMobile?'clamp(30px,8vw,40px)':'clamp(42px,5.5vw,68px)', lineHeight:1.08, letterSpacing:'-1.5px', color:P.text, maxWidth:900, margin:'0 auto', animation:'fadeUp .6s ease-out' }}>
+          {t('hero1')} <span style={{ background:`linear-gradient(90deg, ${P.cyan}, ${P.blue}, ${P.purple})`, WebkitBackgroundClip:'text', backgroundClip:'text', WebkitTextFillColor:'transparent', color:'transparent' }}>{t('hero2')}</span>
+        </h1>
 
-        {/* floating clip previews (desktop) */}
-        {!isMobile && (
-          <div style={{ position:'absolute', inset:0, pointerEvents:'none', zIndex:0 }}>
-            {[
-              { img:IMG.clip1, score:'9.8', top:'22%', left:'8%',  rot:-8, col:P.cyan },
-              { img:IMG.clip2, score:'9.4', top:'30%', right:'7%', rot:7,  col:P.purple },
-              { img:IMG.clip3, score:'9.1', bottom:'20%', left:'11%', rot:6, col:P.gold },
-            ].map((c,i)=>(
-              <div key={i} className="floating-clip" style={{ position:'absolute', top:c.top, bottom:c.bottom, left:c.left, right:c.right, width:120, height:200, transform:`rotate(${c.rot}deg)`, animationDelay:`${i*0.6}s`, borderRadius:8, overflow:'hidden', border:`1px solid ${c.col}55`, boxShadow:`0 12px 40px rgba(0,0,0,0.5), 0 0 24px ${c.col}33` }}>
-                <img src={c.img} alt="" style={{ width:'100%', height:'100%', objectFit:'cover', opacity:0.85 }} />
-                <div style={{ position:'absolute', inset:0, background:`linear-gradient(180deg, transparent 40%, ${P.bg}dd)` }} />
-                <div style={{ position:'absolute', top:8, right:8, fontFamily:FONT_MONO, fontSize:11, fontWeight:700, color:'#000', background:c.col, padding:'2px 8px', borderRadius:2, boxShadow:`0 0 12px ${c.col}` }}>{c.score}</div>
-                <div style={{ position:'absolute', top:8, left:8, fontFamily:FONT_MONO, fontSize:8, color:'#fff', background:'rgba(0,0,0,0.6)', padding:'2px 5px', borderRadius:2 }}>▶ 0:{28+i*14}</div>
-                <div style={{ position:'absolute', bottom:10, left:10, right:10, height:3, background:'rgba(255,255,255,0.15)', borderRadius:2 }}>
-                  <div style={{ width:`${parseFloat(c.score)*10}%`, height:'100%', background:c.col, borderRadius:2, boxShadow:`0 0 8px ${c.col}` }} />
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+        <p style={{ fontFamily:FONT_BODY, fontSize:isMobile?16:19, color:P.muted, lineHeight:1.7, maxWidth:600, margin:'22px auto 0', animation:'fadeUp .7s ease-out' }}>{t('heroSub')}</p>
 
-        <div style={{ marginBottom:16, position:'relative', zIndex:1 }}>
-          <div style={{ fontFamily:fd(lang), fontWeight:900, fontSize:isMobile?'clamp(30px,8vw,46px)':'clamp(46px,6vw,84px)', lineHeight:1.05, letterSpacing:'-2px', color:P.text, animation:'glitch 6s ease-in-out infinite' }}>{t('hero1')}</div>
-          <div style={{ display:'inline-block', fontFamily:fd(lang), fontWeight:900, fontSize:isMobile?'clamp(30px,8vw,46px)':'clamp(46px,6vw,84px)', lineHeight:1.05, letterSpacing:'-2px', backgroundImage:`linear-gradient(90deg, ${P.cyan}, ${P.blue}, ${P.purple}, ${P.cyan})`, backgroundSize:'300% auto', WebkitBackgroundClip:'text', backgroundClip:'text', WebkitTextFillColor:'transparent', color:'transparent', animation:'gradShift 4s linear infinite' }}>{t('hero2')}</div>
+        <div style={{ display:'flex', gap:14, flexWrap:'wrap', justifyContent:'center', margin:'32px 0 14px', animation:'fadeUp .8s ease-out' }}>
+          <Btn onClick={go} accent={P.cyan} big P={P}><Icon name="upload" size={16} color="#fff" stroke={2.2}/> {t('ctaPrimary')}</Btn>
+          <Btn onClick={()=>scrollTo('how')} ghost big P={P}><Icon name="play" size={14} color={P.text} fill={P.text} stroke={0}/> {t('ctaSecondary')}</Btn>
+        </div>
+        <div style={{ fontFamily:FONT_MONO, fontSize:11, color:P.muted, letterSpacing:1, marginBottom:48 }}>{t('trust')}</div>
+
+        {/* EDITOR MOCKUP */}
+        <div style={{ animation:'fadeUp 1s ease-out' }}>
+          <EditorMockup P={P} t={t} isMobile={isMobile} />
         </div>
 
-        <p style={{ fontFamily:FONT_BODY, fontSize:isMobile?15:18, color:P.muted, lineHeight:1.8, maxWidth:560, marginBottom:40, marginTop:16, position:'relative', zIndex:1 }}>{t('heroSub')}</p>
-
-        <div style={{ display:'flex', gap:16, flexWrap:'wrap', justifyContent:'center', marginBottom:16, position:'relative', zIndex:1 }}>
-          <HudButton onClick={go} accent={P.cyan} big P={P}>⚡ {t('ctaPrimary')}</HudButton>
-          <HudButton onClick={()=>scrollTo('how')} accent={P.muted} outline P={P}>▶ {t('ctaSecondary')}</HudButton>
-        </div>
-        <div style={{ fontFamily:FONT_MONO, fontSize:10, color:P.muted, letterSpacing:2, position:'relative', zIndex:1 }}>{t('trust')}</div>
-
-        {/* === AI VIDEO PROCESSOR DEMO — communicates the product clearly === */}
-        <div style={{ width:'100%', maxWidth:760, margin:'40px auto 0', position:'relative', zIndex:1, background: P.dark?'rgba(6,13,24,0.75)':'rgba(219,229,243,0.8)', backdropFilter:'blur(16px)', border:`1px solid ${P.cyan}22`, borderRadius:6, padding:isMobile?'16px 12px':'20px 24px' }}>
-          <HudCorner pos="tl" color={P.cyan} /><HudCorner pos="tr" color={P.cyan} />
-          <HudCorner pos="bl" color={P.cyan} /><HudCorner pos="br" color={P.cyan} />
-          <div style={{ fontFamily:FONT_MONO, fontSize:9, color:P.cyan, letterSpacing:3, marginBottom:12, textAlign:'center' }}>◈ LIVE AI PROCESSING DEMO</div>
-          <VideoTimeline P={P} />
-        </div>
-
-        <div style={{ marginTop:80, display:'grid', gridTemplateColumns:isMobile?'repeat(2,1fr)':'repeat(4,1fr)', gap:1, maxWidth:800, width:'100%', border:`1px solid ${P.cyan}22`, background:`${P.cyan}08`, position:'relative', zIndex:1 }}>
-          {[['2.4M+',t('stClips'),P.cyan],['96',t('stScore'),P.blue],['10×',t('stTime'),P.purple],['152K',t('stCreators'),P.gold]].map(([v,l,col],i)=>(
-            <div key={i} style={{ padding:isMobile?'20px 12px':'28px 16px', borderRight:i<3?`1px solid ${P.cyan}22`:'none', borderBottom:isMobile&&i<2?`1px solid ${P.cyan}22`:'none', textAlign:'center' }}>
-              <StatTicker value={v} label={l} color={col} P={P} />
+        {/* stats */}
+        <div style={{ display:'flex', flexWrap:'wrap', justifyContent:'center', gap:isMobile?24:56, marginTop:48 }}>
+          {[['2.4M+',t('stClips'),P.cyan],['96',t('stScore'),P.blue],['10×',t('stTime'),P.purple],['152K',t('stCreators'),P.gold]].map(([v,l,c],i)=>(
+            <div key={i} style={{ textAlign:'center' }}>
+              <div style={{ fontFamily:fd(lang), fontWeight:900, fontSize:isMobile?26:34, color:c }}>{v}</div>
+              <div style={{ fontFamily:FONT_MONO, fontSize:10, color:P.muted, letterSpacing:1, marginTop:2 }}>{l}</div>
             </div>
           ))}
         </div>
-
-        <div style={{ marginTop:56, display:'flex', flexDirection:'column', alignItems:'center', gap:8, opacity:0.4 }}>
-          <div style={{ fontFamily:FONT_MONO, fontSize:9, letterSpacing:3, color:P.muted }}>{t('scroll')}</div>
-          <div style={{ width:1, height:40, background:`linear-gradient(${P.cyan}, transparent)` }} />
-        </div>
       </section>
 
-      {/* ═══ FEATURES ═══ */}
-      <section id="features" style={{ padding:isMobile?'80px 24px':'120px 60px', position:'relative', zIndex:1 }}>
+      {/* FEATURES */}
+      <section id="features" style={{ position:'relative', zIndex:1, padding: isMobile?'60px 20px':'90px 48px' }}>
         <div style={{ maxWidth:1100, margin:'0 auto' }}>
-          <div style={{ marginBottom:64, display:'flex', alignItems:'center', gap:20 }}>
-            <div className="hide-mob" style={{ flex:1, height:1, background:`linear-gradient(90deg, transparent, ${P.blue}44)` }} />
-            <div style={{ textAlign:'center', flex:isMobile?1:'none' }}>
-              <div style={{ fontFamily:FONT_MONO, fontSize:10, color:P.blue, letterSpacing:4, marginBottom:8 }}>DST-02 / {t('distIntel')}</div>
-              <div style={{ fontFamily:fd(lang), fontWeight:900, fontSize:isMobile?26:48, letterSpacing:'-1px', color:P.text }}>{t('featTitle')}</div>
-            </div>
-            <div className="hide-mob" style={{ flex:1, height:1, background:`linear-gradient(90deg, ${P.blue}44, transparent)` }} />
+          <div style={{ textAlign:'center', marginBottom:48 }}>
+            <div style={{ fontFamily:FONT_MONO, fontSize:12, color:P.cyan, letterSpacing:2, marginBottom:10 }}>{t('navFeatures')}</div>
+            <h2 style={{ fontFamily:fd(lang), fontWeight:900, fontSize:isMobile?28:42, letterSpacing:'-1px', color:P.text }}>{t('featTitle')}</h2>
           </div>
-          <div style={{ display:'grid', gridTemplateColumns:isMobile?'1fr':'repeat(3,1fr)', gap:16 }}>
+          <div style={{ display:'grid', gridTemplateColumns:isMobile?'1fr':'repeat(3,1fr)', gap:18 }}>
             {FEATURES.map((f,i)=>{ const col=accentFor(f.key); return (
-              <GlassCard key={i} accent={col} P={P} style={{ animation:`dataStream .5s ease-out ${i*0.08}s both` }}>
-                <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:16 }}>
-                  <div style={{ width:52, height:52, borderRadius:4, border:`1px solid ${col}44`, background:`${col}12`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:24, color:col, boxShadow:`0 0 16px ${col}33` }}>{f.icon}</div>
-                  <div style={{ fontFamily:FONT_MONO, fontSize:11, color:col, fontWeight:700, letterSpacing:1 }}>{f.stat}</div>
+              <Card key={i} P={P} style={{ padding:26 }}>
+                <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:18 }}>
+                  <div style={{ width:46, height:46, borderRadius:12, background:`${col}1a`, display:'flex', alignItems:'center', justifyContent:'center' }}>
+                    <Icon name={f.icon} size={22} color={col} stroke={2} />
+                  </div>
+                  <span style={{ fontFamily:FONT_MONO, fontSize:11, color:col, fontWeight:700 }}>{f.stat}</span>
                 </div>
-                <div style={{ fontFamily:fd(lang), fontWeight:700, fontSize:13, letterSpacing:2, color:P.text, marginBottom:10 }}>{t(f.lk)}</div>
-                <div style={{ fontFamily:FONT_BODY, fontSize:14, color:P.muted, lineHeight:1.7 }}>{t(f.dk)}</div>
-              </GlassCard>
+                <div style={{ fontFamily:fd(lang), fontWeight:700, fontSize:16, color:P.text, marginBottom:8 }}>{t(f.lk)}</div>
+                <div style={{ fontFamily:FONT_BODY, fontSize:14.5, color:P.muted, lineHeight:1.65 }}>{t(f.dk)}</div>
+              </Card>
             )})}
           </div>
         </div>
       </section>
 
-      {/* ═══ SHOWCASE BAND ═══ */}
-      <section style={{ padding:isMobile?'40px 24px':'60px 60px', position:'relative', zIndex:1 }}>
-        <div style={{ maxWidth:1100, margin:'0 auto', display:'grid', gridTemplateColumns:isMobile?'1fr':'1fr 1fr', gap:16 }}>
-          <div style={{ position:'relative', minHeight:280, borderRadius:6, overflow:'hidden', border:`1px solid ${P.cyan}22` }}>
-            <img src={IMG.creator} alt="" style={{ width:'100%', height:'100%', objectFit:'cover', position:'absolute', inset:0, opacity:P.dark?0.55:0.7 }} />
-            <div style={{ position:'absolute', inset:0, background:`linear-gradient(135deg, ${P.bg}cc, ${P.navy}88, ${P.cyan}11)` }} />
-            <HudCorner pos="tl" color={P.cyan} /><HudCorner pos="tr" color={P.cyan} /><HudCorner pos="bl" color={P.cyan} /><HudCorner pos="br" color={P.cyan} />
-            <div style={{ position:'relative', zIndex:1, padding:32, height:'100%', display:'flex', flexDirection:'column', justifyContent:'flex-end' }}>
-              <div style={{ fontFamily:FONT_MONO, fontSize:10, color:P.cyan, letterSpacing:3, marginBottom:8 }}>{t('inputLabel')}</div>
-              <div style={{ fontFamily:fd(lang), fontWeight:700, fontSize:isMobile?22:28, color:P.text, lineHeight:1.15 }}>{t('inputTitle')}</div>
-              <div style={{ fontFamily:FONT_BODY, fontSize:14, color:P.muted, marginTop:10 }}>{t('inputDesc')}</div>
-            </div>
-          </div>
-          <div style={{ position:'relative', minHeight:280, borderRadius:6, overflow:'hidden', border:`1px solid ${P.purple}22` }}>
-            <img src={IMG.dataCore} alt="" style={{ width:'100%', height:'100%', objectFit:'cover', position:'absolute', inset:0, opacity:P.dark?0.5:0.65 }} />
-            <div style={{ position:'absolute', inset:0, background:`linear-gradient(135deg, ${P.purple}22, ${P.bg}cc, ${P.bg}ee)` }} />
-            <HudCorner pos="tl" color={P.purple} /><HudCorner pos="tr" color={P.purple} /><HudCorner pos="bl" color={P.purple} /><HudCorner pos="br" color={P.purple} />
-            <div style={{ position:'relative', zIndex:1, padding:32, height:'100%', display:'flex', flexDirection:'column', justifyContent:'flex-end' }}>
-              <div style={{ fontFamily:FONT_MONO, fontSize:10, color:P.purple, letterSpacing:3, marginBottom:8 }}>{t('outputLabel')}</div>
-              <div style={{ fontFamily:fd(lang), fontWeight:700, fontSize:isMobile?22:28, color:P.text, lineHeight:1.15 }}>{t('outputTitle')}</div>
-              <div style={{ fontFamily:FONT_BODY, fontSize:14, color:P.muted, marginTop:10 }}>{t('outputDesc')}</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══ HOW ═══ */}
-      <section id="how" style={{ padding:isMobile?'80px 24px':'120px 60px', position:'relative', zIndex:1, background:`linear-gradient(180deg, transparent, ${P.navy}88, transparent)` }}>
-        <div style={{ maxWidth:1000, margin:'0 auto' }}>
-          <div style={{ marginBottom:64, textAlign:'center' }}>
-            <div style={{ fontFamily:FONT_MONO, fontSize:10, color:P.purple, letterSpacing:4, marginBottom:8 }}>DST-03 / {t('distFlow')}</div>
-            <div style={{ fontFamily:fd(lang), fontWeight:900, fontSize:isMobile?26:48, letterSpacing:'-1px', color:P.text }}>{t('procTitle')}</div>
-          </div>
-          <div style={{ display:'grid', gridTemplateColumns:isMobile?'1fr':'repeat(4,1fr)', gap:0, position:'relative' }}>
-            {!isMobile && <div style={{ position:'absolute', top:40, left:'12.5%', right:'12.5%', height:1, background:`linear-gradient(90deg, ${P.purple}00, ${P.purple}66, ${P.cyan}66, ${P.cyan}00)`, zIndex:0 }} />}
-            {STEPS.map((s,i)=>{ const col=i<2?P.purple:P.cyan; return (
-              <div key={i} style={{ position:'relative', zIndex:1, padding:isMobile?'24px 0':'0 20px', textAlign:'center' }}>
-                <div style={{ width:80, height:80, borderRadius:'50%', border:`2px solid ${col}66`, background:`${col}12`, display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 20px', boxShadow:`0 0 24px ${col}33`, position:'relative' }}>
-                  <div style={{ fontFamily:fd(lang), fontWeight:900, fontSize:20, color:col }}>{s.n}</div>
-                  <div style={{ position:'absolute', inset:-8, borderRadius:'50%', border:`1px solid ${col}`, animation:`borderPulse 2s ease-in-out ${i*0.5}s infinite` }} />
+      {/* SHOWCASE BAND */}
+      <section style={{ position:'relative', zIndex:1, padding: isMobile?'20px 20px':'30px 48px' }}>
+        <div style={{ maxWidth:1100, margin:'0 auto', display:'grid', gridTemplateColumns:isMobile?'1fr':'1fr 1fr', gap:18 }}>
+          {[[IMG.creator,'cyan','inputLabel','inputTitle','inputDesc','film'],[IMG.dataCore,'purple','outputLabel','outputTitle','outputDesc','sparkles']].map(([img,ck,lab,ti,de,ic],i)=>{
+            const col=accentFor(ck); return (
+            <div key={i} style={{ position:'relative', minHeight:260, borderRadius:18, overflow:'hidden', border:`1px solid ${P.line}` }}>
+              <img src={img} alt="" style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', opacity:P.dark?0.45:0.7 }} />
+              <div style={{ position:'absolute', inset:0, background:`linear-gradient(135deg, ${P.bg}f0, ${P.bg}aa 60%, ${col}22)` }} />
+              <div style={{ position:'relative', zIndex:1, padding:30, height:'100%', display:'flex', flexDirection:'column', justifyContent:'flex-end' }}>
+                <div style={{ width:42, height:42, borderRadius:11, background:`${col}22`, display:'flex', alignItems:'center', justifyContent:'center', marginBottom:14 }}>
+                  <Icon name={ic} size={20} color={col} />
                 </div>
-                <div style={{ fontFamily:fd(lang), fontWeight:700, fontSize:12, letterSpacing:3, color:P.text, marginBottom:10 }}>{t(s.lk)}</div>
-                <div style={{ fontFamily:FONT_BODY, fontSize:13, color:P.muted, lineHeight:1.7 }}>{t(s.dk)}</div>
+                <div style={{ fontFamily:FONT_MONO, fontSize:10, color:col, letterSpacing:2, marginBottom:6 }}>{t(lab)}</div>
+                <div style={{ fontFamily:fd(lang), fontWeight:800, fontSize:isMobile?22:26, color:P.text, lineHeight:1.2 }}>{t(ti)}</div>
+                <div style={{ fontFamily:FONT_BODY, fontSize:14.5, color:P.muted, marginTop:10, lineHeight:1.6 }}>{t(de)}</div>
               </div>
+            </div>
+          )})}
+        </div>
+      </section>
+
+      {/* HOW IT WORKS */}
+      <section id="how" style={{ position:'relative', zIndex:1, padding: isMobile?'60px 20px':'90px 48px' }}>
+        <div style={{ maxWidth:1000, margin:'0 auto' }}>
+          <div style={{ textAlign:'center', marginBottom:50 }}>
+            <div style={{ fontFamily:FONT_MONO, fontSize:12, color:P.purple, letterSpacing:2, marginBottom:10 }}>{t('navProcess')}</div>
+            <h2 style={{ fontFamily:fd(lang), fontWeight:900, fontSize:isMobile?28:42, letterSpacing:'-1px', color:P.text }}>{t('procTitle')}</h2>
+          </div>
+          <div style={{ display:'grid', gridTemplateColumns:isMobile?'1fr':'repeat(4,1fr)', gap:18 }}>
+            {STEPS.map((s,i)=>{ const col=i<2?P.blue:P.purple; return (
+              <Card key={i} P={P} hover={false} style={{ padding:24, textAlign:'center', position:'relative' }}>
+                <div style={{ width:54, height:54, borderRadius:14, background:`${col}1a`, display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 16px' }}>
+                  <Icon name={s.icon} size={24} color={col} />
+                </div>
+                <div style={{ fontFamily:FONT_MONO, fontSize:11, color:col, marginBottom:6 }}>STEP {s.n}</div>
+                <div style={{ fontFamily:fd(lang), fontWeight:700, fontSize:15, color:P.text, marginBottom:8 }}>{t(s.lk)}</div>
+                <div style={{ fontFamily:FONT_BODY, fontSize:13.5, color:P.muted, lineHeight:1.6 }}>{t(s.dk)}</div>
+              </Card>
             )})}
           </div>
-          <div style={{ marginTop:60 }}>
-            <GlassCard accent={P.cyan} P={P}>
-              <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:20 }}>
-                <div>
-                  <div style={{ fontFamily:FONT_MONO, fontSize:9, color:P.cyan, letterSpacing:3, marginBottom:6 }}>{t('procSim')}</div>
-                  <div style={{ fontFamily:fd(lang), fontSize:16, color:P.text, fontWeight:700 }}>{t('procAvg')} <span style={{ color:P.cyan }}>4 min 32 sec</span></div>
-                  <div style={{ fontFamily:FONT_BODY, fontSize:13, color:P.muted, marginTop:4 }}>{t('procClips')}</div>
+          {/* processing summary strip */}
+          <Card P={P} hover={false} style={{ marginTop:24, padding:'22px 26px', display:'flex', flexWrap:'wrap', alignItems:'center', justifyContent:'space-between', gap:20 }}>
+            <div>
+              <div style={{ fontFamily:FONT_MONO, fontSize:10, color:P.cyan, letterSpacing:2, marginBottom:6 }}>{t('procSim')}</div>
+              <div style={{ fontFamily:fd(lang), fontWeight:700, fontSize:16, color:P.text }}>{t('procAvg')} <span style={{ color:P.cyan }}>4:32</span></div>
+              <div style={{ fontFamily:FONT_BODY, fontSize:13.5, color:P.muted, marginTop:3 }}>{t('procClips')}</div>
+            </div>
+            <div style={{ display:'flex', gap:22, flexWrap:'wrap' }}>
+              {[[t('peExtract'),P.purple,'20s'],[t('peTranscribe'),P.blue,'90s'],[t('peAnalyze'),P.cyan,'45s'],[t('peCut'),P.gold,'135s']].map(([l,c,tm])=>(
+                <div key={l} style={{ textAlign:'center' }}>
+                  <div style={{ fontFamily:FONT_MONO, fontSize:17, fontWeight:700, color:c }}>{tm}</div>
+                  <div style={{ fontFamily:FONT_MONO, fontSize:9, color:P.muted, letterSpacing:1 }}>{l}</div>
                 </div>
-                <div style={{ display:'flex', gap:16, flexWrap:'wrap' }}>
-                  {[[t('peExtract'),P.purple,'20s'],[t('peTranscribe'),P.blue,'90s'],[t('peAnalyze'),P.cyan,'45s'],[t('peCut'),P.gold,'135s']].map(([label,col,time])=>(
-                    <div key={label} style={{ textAlign:'center' }}>
-                      <div style={{ fontFamily:FONT_MONO, fontSize:18, fontWeight:700, color:col }}>{time}</div>
-                      <div style={{ fontFamily:FONT_MONO, fontSize:9, color:P.muted, letterSpacing:1 }}>{label}</div>
+              ))}
+            </div>
+          </Card>
+        </div>
+      </section>
+
+      {/* PRICING */}
+      <section id="pricing" style={{ position:'relative', zIndex:1, padding: isMobile?'60px 20px 80px':'90px 48px 120px' }}>
+        <div style={{ maxWidth:980, margin:'0 auto' }}>
+          <div style={{ textAlign:'center', marginBottom:50 }}>
+            <div style={{ fontFamily:FONT_MONO, fontSize:12, color:P.gold, letterSpacing:2, marginBottom:10 }}>{t('navPricing')}</div>
+            <h2 style={{ fontFamily:fd(lang), fontWeight:900, fontSize:isMobile?28:42, letterSpacing:'-1px', color:P.text }}>{t('priceTitle')}</h2>
+            <p style={{ fontFamily:FONT_BODY, fontSize:15, color:P.muted, marginTop:12 }}>{t('priceSub')}</p>
+          </div>
+          <div style={{ display:'grid', gridTemplateColumns:isMobile?'1fr':'repeat(3,1fr)', gap:18, alignItems:'start' }}>
+            {PLANS.map((p,i)=>{ const col=accentFor(p.key); return (
+              <Card key={i} P={P} hover={!p.hot} style={{ padding:28, position:'relative', border:p.hot?`2px solid ${col}`:`1px solid ${P.line}`, transform:p.hot&&!isMobile?'scale(1.04)':'none' }}>
+                {p.hot && <div style={{ position:'absolute', top:-12, left:'50%', transform:'translateX(-50%)', background:col, color:'#fff', fontFamily:FONT_MONO, fontSize:10, fontWeight:700, letterSpacing:1, padding:'4px 14px', borderRadius:20, whiteSpace:'nowrap' }}>{t('recommended')}</div>}
+                <div style={{ fontFamily:FONT_MONO, fontSize:11, color:col, letterSpacing:2, marginBottom:10 }}>{t('tierWord')} · {p.name}</div>
+                <div style={{ display:'flex', alignItems:'baseline', gap:4, marginBottom:18 }}>
+                  <span style={{ fontFamily:fd(lang), fontSize:46, fontWeight:900, color:P.text, letterSpacing:'-1px' }}>{p.price}</span>
+                  <span style={{ fontFamily:FONT_MONO, fontSize:13, color:P.muted }}>{t('perMo')}</span>
+                </div>
+                <Btn onClick={go} accent={col} full big={p.hot} P={P}>{p.hot?t('deploy'):t('initialize')}</Btn>
+                <div style={{ display:'flex', flexDirection:'column', gap:11, marginTop:20 }}>
+                  {p.fk.map((fkey,j)=>(
+                    <div key={j} style={{ display:'flex', alignItems:'center', gap:10 }}>
+                      <Icon name="check" size={16} color={col} stroke={2.5} />
+                      <span style={{ fontFamily:FONT_BODY, fontSize:14, color:P.muted }}>{t(fkey)}</span>
                     </div>
                   ))}
                 </div>
-              </div>
-            </GlassCard>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══ PRICING ═══ */}
-      <section id="pricing" style={{ padding:isMobile?'80px 24px 120px':'120px 60px 160px', position:'relative', zIndex:1 }}>
-        <div style={{ maxWidth:1000, margin:'0 auto' }}>
-          <div style={{ marginBottom:64, textAlign:'center' }}>
-            <div style={{ fontFamily:FONT_MONO, fontSize:10, color:P.gold, letterSpacing:4, marginBottom:8 }}>DST-04 / {t('distZone')}</div>
-            <div style={{ fontFamily:fd(lang), fontWeight:900, fontSize:isMobile?26:48, letterSpacing:'-1px', color:P.text }}>{t('priceTitle')}</div>
-            <div style={{ fontFamily:FONT_BODY, fontSize:16, color:P.muted, marginTop:12 }}>{t('priceSub')}</div>
-          </div>
-          <div style={{ display:'grid', gridTemplateColumns:isMobile?'1fr':'repeat(3,1fr)', gap:16, alignItems:'start' }}>
-            {PLANS.map((p,i)=>{ const col=accentFor(p.key); return (
-              <div key={i} style={{ position:'relative' }}>
-                {p.hot && <div style={{ position:'absolute', top:-16, left:'50%', transform:'translateX(-50%)', fontFamily:FONT_MONO, fontSize:9, letterSpacing:3, background:`linear-gradient(90deg, ${P.cyan}, ${P.blue})`, color:'#000', padding:'4px 16px', borderRadius:2, whiteSpace:'nowrap', fontWeight:700, boxShadow:`0 0 16px ${P.cyan}66`, zIndex:2 }}>◈ {t('recommended')}</div>}
-                <GlassCard accent={col} P={P} style={{ boxShadow:p.hot?`0 0 60px ${col}22`:'none', transform:p.hot&&!isMobile?'scale(1.03)':'none' }}>
-                  <div style={{ fontFamily:FONT_MONO, fontSize:9, color:col, letterSpacing:3, marginBottom:12 }}>{t('tierWord')} — {p.name}</div>
-                  <div style={{ display:'flex', alignItems:'baseline', gap:4, marginBottom:6 }}>
-                    <span style={{ fontFamily:fd(lang), fontSize:52, fontWeight:900, color:P.text, letterSpacing:'-2px', textShadow:p.hot?`0 0 30px ${col}66`:'none' }}>{p.price}</span>
-                    <span style={{ fontFamily:FONT_MONO, fontSize:12, color:P.muted }}>{t('perMo')}</span>
-                  </div>
-                  <div style={{ marginBottom:24 }}>
-                    <HudButton onClick={go} accent={col} big={p.hot} P={P}>{p.hot?`⚡ ${t('deploy')}`:t('initialize')}</HudButton>
-                  </div>
-                  <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
-                    {p.fk.map((fkey,j)=>(
-                      <div key={j} style={{ display:'flex', alignItems:'center', gap:10 }}>
-                        <div style={{ width:16, height:16, borderRadius:2, background:`${col}22`, border:`1px solid ${col}44`, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}><span style={{ color:col, fontSize:10 }}>✓</span></div>
-                        <span style={{ fontFamily:FONT_BODY, fontSize:13, color:P.muted }}>{t(fkey)}</span>
-                      </div>
-                    ))}
-                  </div>
-                </GlassCard>
-              </div>
+              </Card>
             )})}
           </div>
         </div>
       </section>
 
-      {/* ═══ FINAL CTA ═══ */}
-      <section style={{ padding:isMobile?'80px 24px':'120px 60px', textAlign:'center', position:'relative', zIndex:1 }}>
-        <div style={{ position:'absolute', inset:0, background:`radial-gradient(ellipse at center, ${P.cyan}12, transparent 60%)`, pointerEvents:'none' }} />
-        <div style={{ position:'relative', maxWidth:700, margin:'0 auto' }}>
-          <div style={{ fontFamily:FONT_MONO, fontSize:10, color:P.cyan, letterSpacing:4, marginBottom:16 }}>SYSTEM READY — AWAITING AUTHORIZATION</div>
-          <div style={{ fontFamily:fd(lang), fontWeight:900, fontSize:isMobile?36:64, letterSpacing:'-2px', color:P.text, marginBottom:12, textShadow:`0 0 60px ${P.cyan}44` }}>{t('finalTitle1')}<br /><span style={{ color:P.cyan }}>{t('finalTitle2')}</span></div>
-          <p style={{ fontFamily:FONT_BODY, fontSize:17, color:P.muted, marginBottom:40, lineHeight:1.7 }}>{t('finalSub')}</p>
-          <HudButton onClick={go} accent={P.cyan} big P={P}>⚡ {t('finalCta')}</HudButton>
-          <div style={{ marginTop:16, fontFamily:FONT_MONO, fontSize:10, color:P.muted, letterSpacing:2 }}>{t('trust')}</div>
-        </div>
+      {/* FINAL CTA */}
+      <section style={{ position:'relative', zIndex:1, padding:isMobile?'10px 20px 70px':'20px 48px 100px' }}>
+        <Card P={P} hover={false} style={{ maxWidth:900, margin:'0 auto', padding:isMobile?'40px 24px':'60px 40px', textAlign:'center', background:`linear-gradient(135deg, ${P.cyan}14, ${P.purple}14)`, border:`1px solid ${P.cyan}33` }}>
+          <h2 style={{ fontFamily:fd(lang), fontWeight:900, fontSize:isMobile?30:48, letterSpacing:'-1.5px', color:P.text, lineHeight:1.05 }}>{t('finalTitle1')} <span style={{ color:P.cyan }}>{t('finalTitle2')}</span></h2>
+          <p style={{ fontFamily:FONT_BODY, fontSize:16, color:P.muted, margin:'16px auto 30px', maxWidth:520, lineHeight:1.6 }}>{t('finalSub')}</p>
+          <div style={{ display:'flex', justifyContent:'center' }}><Btn onClick={go} accent={P.cyan} big P={P}><Icon name="upload" size={16} color="#fff" stroke={2.2}/> {t('finalCta')}</Btn></div>
+          <div style={{ fontFamily:FONT_MONO, fontSize:11, color:P.muted, letterSpacing:1, marginTop:16 }}>{t('trust')}</div>
+        </Card>
       </section>
 
       {/* FOOTER */}
-      <footer style={{ padding:isMobile?'24px 20px':'32px 60px', borderTop:`1px solid ${P.cyan}15`, background:P.dark?'rgba(2,3,8,0.95)':'rgba(238,242,248,0.95)', display:'flex', justifyContent:'space-between', alignItems:'center', flexWrap:'wrap', gap:16, position:'relative', zIndex:1 }}>
-        <div style={{ fontFamily:fd(lang), fontWeight:900, fontSize:13, letterSpacing:4, color:P.muted }}>CLIPGEN<span style={{ color:P.cyan }}>.AI</span></div>
-        <div style={{ fontFamily:FONT_MONO, fontSize:10, color:P.muted, letterSpacing:2 }}>© 2077 CLIPGEN.AI — ALL RIGHTS RESERVED</div>
-        <div style={{ display:'flex', gap:24 }}>
+      <footer style={{ position:'relative', zIndex:1, borderTop:`1px solid ${P.line}`, background:P.bgAlt, padding:isMobile?'24px 20px':'28px 48px', display:'flex', flexWrap:'wrap', alignItems:'center', justifyContent:'space-between', gap:16 }}>
+        <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+          <div style={{ width:30, height:30, borderRadius:8, background:`linear-gradient(135deg, ${P.cyan}, ${P.blue})`, display:'flex', alignItems:'center', justifyContent:'center' }}><Icon name="film" size={15} color="#fff" stroke={2.2}/></div>
+          <span style={{ fontFamily:fd(lang), fontWeight:900, fontSize:14, color:P.text }}>ClipGen<span style={{ color:P.cyan }}>.AI</span></span>
+        </div>
+        <div style={{ fontFamily:FONT_MONO, fontSize:11, color:P.muted }}>© {new Date().getFullYear()} ClipGen.AI — {t('sys')}</div>
+        <div style={{ display:'flex', gap:22 }}>
           {navLinks.map(([label,id])=>(
-            <button key={id} onClick={()=>scrollTo(id)} style={{ background:'none', border:'none', cursor:'pointer', fontFamily:FONT_MONO, fontSize:9, letterSpacing:3, color:P.muted }} onMouseEnter={e=>e.target.style.color=P.cyan} onMouseLeave={e=>e.target.style.color=P.muted}>{label}</button>
+            <button key={id} onClick={()=>scrollTo(id)} style={{ background:'none', border:'none', cursor:'pointer', fontFamily:FONT_BODY, fontSize:13, color:P.muted }}
+              onMouseEnter={e=>e.target.style.color=P.text} onMouseLeave={e=>e.target.style.color=P.muted}>{label}</button>
           ))}
         </div>
       </footer>
