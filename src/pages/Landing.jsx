@@ -885,6 +885,52 @@ function Card({ children, P, style:s={}, hover=true }) {
 }
 
 /* ════════════════════════════════════════════════════════════════
+   HERO ANIMATION HELPERS
+   ════════════════════════════════════════════════════════════════ */
+// Word-by-word rise-in reveal (works for any language/script)
+function WordReveal({ text, delay=0, gradient, P }) {
+  const words = String(text).split(' ')
+  return words.map((w,i) => (
+    <span key={i} style={{ display:'inline-block', whiteSpace:'pre',
+      animation:`wordUp .7s cubic-bezier(.2,.9,.3,1) ${(delay + i*0.09).toFixed(2)}s both${gradient?', gradFlow 5s linear infinite':''}`,
+      ...(gradient ? { backgroundImage:`linear-gradient(90deg, ${P.cyan}, ${P.blue}, ${P.purple}, ${P.cyan})`, backgroundSize:'300% auto', WebkitBackgroundClip:'text', backgroundClip:'text', WebkitTextFillColor:'transparent', color:'transparent' } : {}),
+    }}>{w}{i < words.length-1 ? '\u00A0' : ''}</span>
+  ))
+}
+
+// Rotating output-format word (universal platform names — no translation needed)
+function RotatingFormat({ P }) {
+  const FORMATS = [['TikTok',P.cyan],['Reels',P.pink],['Shorts',P.purple],['YouTube',P.blue],['Podcasts',P.gold]]
+  const [idx,setIdx] = useState(0)
+  useEffect(() => { const id = setInterval(()=>setIdx(i=>(i+1)%FORMATS.length), 1900); return ()=>clearInterval(id) }, [])
+  const [word,col] = FORMATS[idx]
+  return (
+    <div style={{ display:'inline-flex', alignItems:'center', gap:10, padding:'8px 16px', borderRadius:30, border:`1px solid ${P.line}`, background:P.surface, boxShadow:P.dark?'0 4px 14px rgba(0,0,0,0.25)':'0 4px 14px rgba(15,30,55,0.06)' }}>
+      <Icon name="share" size={15} color={P.muted} stroke={2} />
+      <span style={{ fontFamily:FONT_MONO, fontSize:12, color:P.muted, letterSpacing:1 }}>auto-publish to</span>
+      <span style={{ position:'relative', display:'inline-block', height:'1.35em', minWidth:78, overflow:'hidden', textAlign:'left' }}>
+        <span key={idx} style={{ display:'inline-block', fontFamily:FONT_DISPLAY2, fontWeight:800, fontSize:14, color:col, animation:'flipUp .5s cubic-bezier(.2,.9,.3,1)' }}>{word}</span>
+      </span>
+    </div>
+  )
+}
+
+// Count-up number for stats
+function CountUp({ value, color, font, size }) {
+  const m = String(value).match(/^([\d.]+)(.*)$/)
+  const target = m ? parseFloat(m[1]) : 0
+  const suffix = m ? m[2] : String(value)
+  const [n,setN] = useState(0)
+  useEffect(() => {
+    let f=0, raf; const total=55
+    const step=()=>{ f++; const p=f/total; setN(target<10?Math.round(target*p*10)/10:Math.round(target*p)); if(f<total) raf=requestAnimationFrame(step); else setN(target) }
+    raf=requestAnimationFrame(step); return ()=>cancelAnimationFrame(raf)
+  }, [target])
+  return <span style={{ fontFamily:font, fontWeight:900, fontSize:size, color }}>{n}{suffix}</span>
+}
+
+
+/* ════════════════════════════════════════════════════════════════
    EDITOR MOCKUP  — the centerpiece: a believable AI clipping app
    ════════════════════════════════════════════════════════════════ */
 const MOCK_CLIPS = [
@@ -1067,12 +1113,20 @@ export default function Landing() {
         @keyframes popIn{0%{opacity:0;transform:scale(.85)}100%{opacity:1;transform:scale(1)}}
         @keyframes fadeUp{0%{opacity:0;transform:translateY(16px)}100%{opacity:1;transform:translateY(0)}}
         @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+        @keyframes wordUp{0%{opacity:0;transform:translateY(28px) rotate(2deg)}100%{opacity:1;transform:translateY(0) rotate(0)}}
+        @keyframes gradFlow{0%{background-position:0% 50%}100%{background-position:300% 50%}}
+        @keyframes flipUp{0%{opacity:0;transform:translateY(110%)}100%{opacity:1;transform:translateY(0)}}
+        @keyframes drift{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(40px,-30px) scale(1.08)}66%{transform:translate(-30px,20px) scale(.96)}}
+        @keyframes shimmerLine{0%{transform:translateX(-100%)}100%{transform:translateX(300%)}}
         @media(max-width:859px){.hide-mob{display:none!important;}}
         @media(min-width:860px){.show-mob{display:none!important;}}
       `}</style>
 
       {/* soft background accent */}
       <div style={{ position:'fixed', inset:0, zIndex:0, pointerEvents:'none', background:`radial-gradient(900px 500px at 70% -5%, ${P.cyan}14, transparent 60%), radial-gradient(700px 500px at 0% 10%, ${P.purple}12, transparent 55%)` }} />
+      {/* drifting blobs */}
+      <div style={{ position:'fixed', top:'8%', left:'12%', width:340, height:340, borderRadius:'50%', zIndex:0, pointerEvents:'none', background:`radial-gradient(circle, ${P.cyan}1f, transparent 70%)`, filter:'blur(20px)', animation:'drift 18s ease-in-out infinite' }} />
+      <div style={{ position:'fixed', top:'20%', right:'8%', width:300, height:300, borderRadius:'50%', zIndex:0, pointerEvents:'none', background:`radial-gradient(circle, ${P.purple}1f, transparent 70%)`, filter:'blur(20px)', animation:'drift 22s ease-in-out infinite reverse' }} />
 
       {/* NAV */}
       <nav style={{ position:'fixed', top:0, left:0, right:0, zIndex:100, height:64, display:'flex', alignItems:'center', justifyContent:'space-between', padding:PAD,
@@ -1120,33 +1174,39 @@ export default function Landing() {
 
       {/* HERO */}
       <section id="top" style={{ position:'relative', zIndex:1, padding: isMobile?'110px 20px 50px':'130px 48px 70px', textAlign:'center' }}>
-        <div style={{ display:'inline-flex', alignItems:'center', gap:8, padding:'6px 14px', borderRadius:20, border:`1px solid ${P.line}`, background:P.surface, marginBottom:24, animation:'fadeUp .5s ease-out' }}>
+        <div style={{ display:'inline-flex', alignItems:'center', gap:8, padding:'6px 14px', borderRadius:20, border:`1px solid ${P.line}`, background:P.surface, marginBottom:24, animation:'fadeUp .5s ease-out both' }}>
           <span style={{ width:7, height:7, borderRadius:'50%', background:'#28c840', boxShadow:'0 0 8px #28c840' }} />
           <span style={{ fontFamily:FONT_MONO, fontSize:11, color:P.muted, letterSpacing:1 }}>{t('sys')}</span>
         </div>
 
-        <h1 style={{ fontFamily:fd(lang), fontWeight:900, fontSize:isMobile?'clamp(30px,8vw,40px)':'clamp(42px,5.5vw,68px)', lineHeight:1.08, letterSpacing:'-1.5px', color:P.text, maxWidth:900, margin:'0 auto', animation:'fadeUp .6s ease-out' }}>
-          {t('hero1')} <span style={{ background:`linear-gradient(90deg, ${P.cyan}, ${P.blue}, ${P.purple})`, WebkitBackgroundClip:'text', backgroundClip:'text', WebkitTextFillColor:'transparent', color:'transparent' }}>{t('hero2')}</span>
+        <h1 key={lang} style={{ fontFamily:fd(lang), fontWeight:900, fontSize:isMobile?'clamp(30px,8vw,40px)':'clamp(42px,5.5vw,68px)', lineHeight:1.08, letterSpacing:'-1.5px', color:P.text, maxWidth:920, margin:'0 auto' }}>
+          <WordReveal text={t('hero1')} delay={0.15} P={P} />{'\u00A0'}
+          <WordReveal text={t('hero2')} delay={0.15 + String(t('hero1')).split(' ').length*0.09} gradient P={P} />
         </h1>
 
-        <p style={{ fontFamily:FONT_BODY, fontSize:isMobile?16:19, color:P.muted, lineHeight:1.7, maxWidth:600, margin:'22px auto 0', animation:'fadeUp .7s ease-out' }}>{t('heroSub')}</p>
+        <p style={{ fontFamily:FONT_BODY, fontSize:isMobile?16:19, color:P.muted, lineHeight:1.7, maxWidth:600, margin:'22px auto 0', animation:'fadeUp .7s ease-out .5s both' }}>{t('heroSub')}</p>
 
-        <div style={{ display:'flex', gap:14, flexWrap:'wrap', justifyContent:'center', margin:'32px 0 14px', animation:'fadeUp .8s ease-out' }}>
+        <div style={{ display:'flex', gap:14, flexWrap:'wrap', justifyContent:'center', margin:'30px 0 14px', animation:'fadeUp .7s ease-out .65s both' }}>
           <Btn onClick={go} accent={P.cyan} big P={P}><Icon name="upload" size={16} color="#fff" stroke={2.2}/> {t('ctaPrimary')}</Btn>
           <Btn onClick={()=>scrollTo('how')} ghost big P={P}><Icon name="play" size={14} color={P.text} fill={P.text} stroke={0}/> {t('ctaSecondary')}</Btn>
         </div>
-        <div style={{ fontFamily:FONT_MONO, fontSize:11, color:P.muted, letterSpacing:1, marginBottom:48 }}>{t('trust')}</div>
+        <div style={{ fontFamily:FONT_MONO, fontSize:11, color:P.muted, letterSpacing:1, marginBottom:24 }}>{t('trust')}</div>
+
+        {/* rotating platform formats */}
+        <div style={{ marginBottom:48, animation:'fadeUp .7s ease-out .8s both' }}><RotatingFormat P={P} /></div>
 
         {/* EDITOR MOCKUP */}
-        <div style={{ animation:'fadeUp 1s ease-out' }}>
-          <EditorMockup P={P} t={t} isMobile={isMobile} />
+        <div style={{ animation:'fadeUp 1s ease-out .9s both' }}>
+          <div style={{ animation:'floaty 7s ease-in-out infinite' }}>
+            <EditorMockup P={P} t={t} isMobile={isMobile} />
+          </div>
         </div>
 
         {/* stats */}
         <div style={{ display:'flex', flexWrap:'wrap', justifyContent:'center', gap:isMobile?24:56, marginTop:48 }}>
           {[['2.4M+',t('stClips'),P.cyan],['96',t('stScore'),P.blue],['10×',t('stTime'),P.purple],['152K',t('stCreators'),P.gold]].map(([v,l,c],i)=>(
             <div key={i} style={{ textAlign:'center' }}>
-              <div style={{ fontFamily:fd(lang), fontWeight:900, fontSize:isMobile?26:34, color:c }}>{v}</div>
+              <CountUp value={v} color={c} font={fd(lang)} size={isMobile?26:34} />
               <div style={{ fontFamily:FONT_MONO, fontSize:10, color:P.muted, letterSpacing:1, marginTop:2 }}>{l}</div>
             </div>
           ))}
