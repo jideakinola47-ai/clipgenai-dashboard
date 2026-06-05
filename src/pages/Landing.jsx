@@ -32,7 +32,7 @@ function makePalette(d) {
     glass:   d ? 'rgba(26,33,48,0.7)'   : 'rgba(255,255,255,0.85)',
     cyan:    d ? '#22d3ee'              : '#0891b2',
     blue:    d ? '#3b82f6'              : '#2563eb',
-    purple:  d ? '#a78bfa'              : '#7c3aed',
+    purple:  d ? '#8b5cf6'              : '#7c3aed',
     pink:    d ? '#fb7185'              : '#e11d63',
     gold:    d ? '#fbbf24'              : '#d97706',
   }
@@ -828,7 +828,7 @@ const STEPS = [
 
 const PLANS = [
   { name:'STARTER', price:'€29', key:'blue',   hot:false, fk:['pStarter1','pStarter2','pStarter3','pStarter4','pStarter5'] },
-  { name:'PRO',     price:'€59', key:'cyan',   hot:true,  fk:['pPro1','pPro2','pPro3','pPro4','pPro5','pPro6'] },
+  { name:'PRO',     price:'€59', key:'purple', hot:true,  fk:['pPro1','pPro2','pPro3','pPro4','pPro5','pPro6'] },
   { name:'AGENCY',  price:'€99', key:'purple', hot:false, fk:['pAgency1','pAgency2','pAgency3','pAgency4','pAgency5','pAgency6'] },
 ]
 
@@ -852,6 +852,51 @@ const ICON_PATHS = {
 function Icon({ name, size=20, color='currentColor', stroke=2, fill='none' }) {
   return <svg width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke={color} strokeWidth={stroke}
     strokeLinecap="round" strokeLinejoin="round" dangerouslySetInnerHTML={{ __html: ICON_PATHS[name] || '' }} />
+}
+
+/* Flying connected dots — subtle, brand-tinted (toned down, not "space") */
+function ParticleField({ P }) {
+  const ref = useRef(null)
+  useEffect(() => {
+    const c = ref.current; if (!c) return
+    const ctx = c.getContext('2d'); let w, h
+    const resize = () => { w = c.width = window.innerWidth; h = c.height = window.innerHeight }
+    resize(); window.addEventListener('resize', resize)
+    const N = Math.max(28, Math.min(64, Math.floor(window.innerWidth / 26)))
+    const dot = P.purple, line = P.cyan
+    const pts = Array.from({ length:N }, () => ({ x:Math.random()*w, y:Math.random()*h, vx:(Math.random()-.5)*.22, vy:(Math.random()-.5)*.22, r:Math.random()*1.6+.6 }))
+    let raf
+    const hex2 = (n) => Math.max(0, Math.min(255, Math.round(n))).toString(16).padStart(2,'0')
+    const draw = () => {
+      ctx.clearRect(0,0,w,h)
+      for (const p of pts) {
+        p.x += p.vx; p.y += p.vy
+        if (p.x < 0 || p.x > w) p.vx *= -1
+        if (p.y < 0 || p.y > h) p.vy *= -1
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fillStyle = dot + '66'; ctx.fill()
+      }
+      for (let i=0;i<N;i++) for (let j=i+1;j<N;j++) {
+        const dx = pts[i].x-pts[j].x, dy = pts[i].y-pts[j].y, d = Math.hypot(dx,dy)
+        if (d < 130) { ctx.beginPath(); ctx.moveTo(pts[i].x,pts[i].y); ctx.lineTo(pts[j].x,pts[j].y)
+          ctx.strokeStyle = line + hex2((1 - d/130) * 45); ctx.lineWidth = .5; ctx.stroke() }
+      }
+      raf = requestAnimationFrame(draw)
+    }
+    draw()
+    return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', resize) }
+  }, [P.purple, P.cyan])
+  return <canvas ref={ref} style={{ position:'fixed', inset:0, zIndex:0, pointerEvents:'none', opacity:P.dark?0.55:0.4 }} />
+}
+
+/* Brand logo — drops in /logo.png automatically; branded fallback until then */
+function Logo({ P, size=36 }) {
+  const [err, setErr] = useState(false)
+  if (!err) return <img src="/logo.png" alt="ClipGen.AI" onError={()=>setErr(true)} style={{ width:size, height:size, borderRadius:9, objectFit:'contain' }} />
+  return (
+    <div style={{ width:size, height:size, borderRadius:9, background:`linear-gradient(135deg, ${P.purple}, ${P.blue})`, display:'flex', alignItems:'center', justifyContent:'center', boxShadow:`0 4px 14px ${P.purple}55` }}>
+      <Icon name="film" size={size*0.5} color="#fff" stroke={2.2} />
+    </div>
+  )
 }
 
 /* ════════════════════════════════════════════════════════════════
@@ -893,7 +938,7 @@ function WordReveal({ text, delay=0, gradient, P }) {
   return words.map((w,i) => (
     <span key={i} style={{ display:'inline-block', whiteSpace:'pre',
       animation:`wordUp .7s cubic-bezier(.2,.9,.3,1) ${(delay + i*0.09).toFixed(2)}s both${gradient?', gradFlow 5s linear infinite':''}`,
-      ...(gradient ? { backgroundImage:`linear-gradient(90deg, ${P.cyan}, ${P.blue}, ${P.purple}, ${P.cyan})`, backgroundSize:'300% auto', WebkitBackgroundClip:'text', backgroundClip:'text', WebkitTextFillColor:'transparent', color:'transparent' } : {}),
+      ...(gradient ? { backgroundImage:`linear-gradient(90deg, ${P.purple}, ${P.blue}, ${P.cyan}, ${P.purple})`, backgroundSize:'300% auto', WebkitBackgroundClip:'text', backgroundClip:'text', WebkitTextFillColor:'transparent', color:'transparent' } : {}),
     }}>{w}{i < words.length-1 ? '\u00A0' : ''}</span>
   ))
 }
@@ -1123,20 +1168,20 @@ export default function Landing() {
       `}</style>
 
       {/* soft background accent */}
-      <div style={{ position:'fixed', inset:0, zIndex:0, pointerEvents:'none', background:`radial-gradient(900px 500px at 70% -5%, ${P.cyan}14, transparent 60%), radial-gradient(700px 500px at 0% 10%, ${P.purple}12, transparent 55%)` }} />
+      <div style={{ position:'fixed', inset:0, zIndex:0, pointerEvents:'none', background:`radial-gradient(900px 500px at 70% -5%, ${P.purple}1a, transparent 60%), radial-gradient(700px 500px at 0% 10%, ${P.cyan}12, transparent 55%)` }} />
+      {/* flying dots (brought back, subtle) */}
+      <ParticleField P={P} />
       {/* drifting blobs */}
-      <div style={{ position:'fixed', top:'8%', left:'12%', width:340, height:340, borderRadius:'50%', zIndex:0, pointerEvents:'none', background:`radial-gradient(circle, ${P.cyan}1f, transparent 70%)`, filter:'blur(20px)', animation:'drift 18s ease-in-out infinite' }} />
-      <div style={{ position:'fixed', top:'20%', right:'8%', width:300, height:300, borderRadius:'50%', zIndex:0, pointerEvents:'none', background:`radial-gradient(circle, ${P.purple}1f, transparent 70%)`, filter:'blur(20px)', animation:'drift 22s ease-in-out infinite reverse' }} />
+      <div style={{ position:'fixed', top:'8%', left:'12%', width:340, height:340, borderRadius:'50%', zIndex:0, pointerEvents:'none', background:`radial-gradient(circle, ${P.purple}22, transparent 70%)`, filter:'blur(20px)', animation:'drift 18s ease-in-out infinite' }} />
+      <div style={{ position:'fixed', top:'20%', right:'8%', width:300, height:300, borderRadius:'50%', zIndex:0, pointerEvents:'none', background:`radial-gradient(circle, ${P.cyan}1c, transparent 70%)`, filter:'blur(20px)', animation:'drift 22s ease-in-out infinite reverse' }} />
 
       {/* NAV */}
       <nav style={{ position:'fixed', top:0, left:0, right:0, zIndex:100, height:64, display:'flex', alignItems:'center', justifyContent:'space-between', padding:PAD,
         background: scrolled?P.glass:'transparent', backdropFilter:scrolled?'blur(14px)':'none', borderBottom:`1px solid ${scrolled?P.line:'transparent'}`, transition:'all .3s' }}>
         <div style={{ display:'flex', alignItems:'center', gap:10, cursor:'pointer' }} onClick={()=>window.scrollTo({top:0,behavior:'smooth'})}>
-          <div style={{ width:36, height:36, borderRadius:9, background:`linear-gradient(135deg, ${P.cyan}, ${P.blue})`, display:'flex', alignItems:'center', justifyContent:'center', boxShadow:`0 4px 14px ${P.cyan}44` }}>
-            <Icon name="film" size={18} color="#fff" stroke={2.2} />
-          </div>
+          <Logo P={P} size={36} />
           <div>
-            <div style={{ fontFamily:fd(lang), fontWeight:900, fontSize:16, letterSpacing:0.5, color:P.text }}>ClipGen<span style={{ color:P.cyan }}>.AI</span></div>
+            <div style={{ fontFamily:fd(lang), fontWeight:900, fontSize:16, letterSpacing:0.5, color:P.text }}>ClipGen<span style={{ color:P.purple }}>.AI</span></div>
             <div style={{ fontFamily:FONT_MONO, fontSize:8, color:P.muted, letterSpacing:1.5 }}>{t('sys')}</div>
           </div>
         </div>
@@ -1153,7 +1198,7 @@ export default function Landing() {
             {LANGS.map(l=> <option key={l.code} value={l.code} style={{ background:P.surface, color:P.text }}>{l.flag} {l.label}</option>)}
           </select>
           <button onClick={toggleTheme} title="Theme" style={{ width:36, height:36, borderRadius:8, border:`1px solid ${P.line}`, background:P.surface, color:P.text, cursor:'pointer', fontSize:15, display:'flex', alignItems:'center', justifyContent:'center' }}>{isDark?'☀':'☾'}</button>
-          <div className="hide-mob"><Btn onClick={go} accent={P.cyan} P={P}>{t('navLaunch')}</Btn></div>
+          <div className="hide-mob"><Btn onClick={go} accent={P.purple} P={P}>{t('navLaunch')}</Btn></div>
           <button className="show-mob" onClick={()=>setMenuOpen(!menuOpen)} style={{ width:36, height:36, borderRadius:8, border:`1px solid ${P.line}`, background:P.surface, color:P.text, fontSize:18, cursor:'pointer' }}>{menuOpen?'✕':'☰'}</button>
         </div>
       </nav>
@@ -1168,7 +1213,7 @@ export default function Landing() {
           <select value={lang} onChange={e=>setLanguage(e.target.value)} style={{ padding:'12px', borderRadius:8, border:`1px solid ${P.line}`, background:P.bgAlt, color:P.text, fontSize:14, fontFamily:FONT_BODY }}>
             {LANGS.map(l=> <option key={l.code} value={l.code}>{l.flag} {l.label}</option>)}
           </select>
-          <Btn onClick={go} accent={P.cyan} big full P={P}>{t('navLaunch')}</Btn>
+          <Btn onClick={go} accent={P.purple} big full P={P}>{t('navLaunch')}</Btn>
         </div>
       )}
 
@@ -1187,7 +1232,7 @@ export default function Landing() {
         <p style={{ fontFamily:FONT_BODY, fontSize:isMobile?16:19, color:P.muted, lineHeight:1.7, maxWidth:600, margin:'22px auto 0', animation:'fadeUp .7s ease-out .5s both' }}>{t('heroSub')}</p>
 
         <div style={{ display:'flex', gap:14, flexWrap:'wrap', justifyContent:'center', margin:'30px 0 14px', animation:'fadeUp .7s ease-out .65s both' }}>
-          <Btn onClick={go} accent={P.cyan} big P={P}><Icon name="upload" size={16} color="#fff" stroke={2.2}/> {t('ctaPrimary')}</Btn>
+          <Btn onClick={go} accent={P.purple} big P={P}><Icon name="upload" size={16} color="#fff" stroke={2.2}/> {t('ctaPrimary')}</Btn>
           <Btn onClick={()=>scrollTo('how')} ghost big P={P}><Icon name="play" size={14} color={P.text} fill={P.text} stroke={0}/> {t('ctaSecondary')}</Btn>
         </div>
         <div style={{ fontFamily:FONT_MONO, fontSize:11, color:P.muted, letterSpacing:1, marginBottom:24 }}>{t('trust')}</div>
@@ -1330,10 +1375,10 @@ export default function Landing() {
 
       {/* FINAL CTA */}
       <section style={{ position:'relative', zIndex:1, padding:isMobile?'10px 20px 70px':'20px 48px 100px' }}>
-        <Card P={P} hover={false} style={{ maxWidth:900, margin:'0 auto', padding:isMobile?'40px 24px':'60px 40px', textAlign:'center', background:`linear-gradient(135deg, ${P.cyan}14, ${P.purple}14)`, border:`1px solid ${P.cyan}33` }}>
-          <h2 style={{ fontFamily:fd(lang), fontWeight:900, fontSize:isMobile?30:48, letterSpacing:'-1.5px', color:P.text, lineHeight:1.05 }}>{t('finalTitle1')} <span style={{ color:P.cyan }}>{t('finalTitle2')}</span></h2>
+        <Card P={P} hover={false} style={{ maxWidth:900, margin:'0 auto', padding:isMobile?'40px 24px':'60px 40px', textAlign:'center', background:`linear-gradient(135deg, ${P.purple}1a, ${P.cyan}14)`, border:`1px solid ${P.purple}33` }}>
+          <h2 style={{ fontFamily:fd(lang), fontWeight:900, fontSize:isMobile?30:48, letterSpacing:'-1.5px', color:P.text, lineHeight:1.05 }}>{t('finalTitle1')} <span style={{ color:P.purple }}>{t('finalTitle2')}</span></h2>
           <p style={{ fontFamily:FONT_BODY, fontSize:16, color:P.muted, margin:'16px auto 30px', maxWidth:520, lineHeight:1.6 }}>{t('finalSub')}</p>
-          <div style={{ display:'flex', justifyContent:'center' }}><Btn onClick={go} accent={P.cyan} big P={P}><Icon name="upload" size={16} color="#fff" stroke={2.2}/> {t('finalCta')}</Btn></div>
+          <div style={{ display:'flex', justifyContent:'center' }}><Btn onClick={go} accent={P.purple} big P={P}><Icon name="upload" size={16} color="#fff" stroke={2.2}/> {t('finalCta')}</Btn></div>
           <div style={{ fontFamily:FONT_MONO, fontSize:11, color:P.muted, letterSpacing:1, marginTop:16 }}>{t('trust')}</div>
         </Card>
       </section>
@@ -1341,8 +1386,8 @@ export default function Landing() {
       {/* FOOTER */}
       <footer style={{ position:'relative', zIndex:1, borderTop:`1px solid ${P.line}`, background:P.bgAlt, padding:isMobile?'24px 20px':'28px 48px', display:'flex', flexWrap:'wrap', alignItems:'center', justifyContent:'space-between', gap:16 }}>
         <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-          <div style={{ width:30, height:30, borderRadius:8, background:`linear-gradient(135deg, ${P.cyan}, ${P.blue})`, display:'flex', alignItems:'center', justifyContent:'center' }}><Icon name="film" size={15} color="#fff" stroke={2.2}/></div>
-          <span style={{ fontFamily:fd(lang), fontWeight:900, fontSize:14, color:P.text }}>ClipGen<span style={{ color:P.cyan }}>.AI</span></span>
+          <Logo P={P} size={30} />
+          <span style={{ fontFamily:fd(lang), fontWeight:900, fontSize:14, color:P.text }}>ClipGen<span style={{ color:P.purple }}>.AI</span></span>
         </div>
         <div style={{ fontFamily:FONT_MONO, fontSize:11, color:P.muted }}>© {new Date().getFullYear()} ClipGen.AI — {t('sys')}</div>
         <div style={{ display:'flex', gap:22 }}>
