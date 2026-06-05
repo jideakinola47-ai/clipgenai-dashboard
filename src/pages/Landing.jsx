@@ -949,7 +949,7 @@ function HudButton({ children, onClick, accent, big, outline, P }) {
   const fg = P.dark ? '#000' : '#fff'
   return (
     <button onClick={onClick} onMouseEnter={()=>setH(true)} onMouseLeave={()=>setH(false)} style={{
-      position:'relative', overflow:'hidden', fontFamily:fd(lang), fontWeight:700,
+      position:'relative', overflow:'hidden', fontFamily: P?.fontD || FONT_DISPLAY, fontWeight:700,
       fontSize: big?14:12, letterSpacing:3, padding: big?'18px 48px':'12px 24px', borderRadius:2,
       background: outline ? 'transparent' : (h ? col : `${col}22`),
       color: outline ? col : (h ? fg : col),
@@ -1109,7 +1109,7 @@ function StatTicker({ value, label, color, P }) {
   const suffix = value.replace(/[0-9.]/g,'')
   return (
     <div style={{ textAlign:'center' }}>
-      <div style={{ fontFamily:fd(lang), fontSize:34, fontWeight:900, color, textShadow:`0 0 20px ${color}66`, letterSpacing:'-1px' }}>{cur}{suffix}</div>
+      <div style={{ fontFamily:FONT_DISPLAY, fontSize:34, fontWeight:900, color, textShadow:`0 0 20px ${color}66`, letterSpacing:'-1px' }}>{cur}{suffix}</div>
       <div style={{ fontFamily:FONT_MONO, fontSize:10, color:P.muted, letterSpacing:2, marginTop:4 }}>{label}</div>
     </div>
   )
@@ -1143,7 +1143,7 @@ export default function Landing() {
   const navigate = useNavigate()
   const [isDark, setIsDark] = useState(() => localStorage.getItem('clipgen_theme') !== 'light')
   const toggleTheme = () => setIsDark(d => { localStorage.setItem('clipgen_theme', d ? 'light' : 'dark'); return !d })
-  const P = makePalette(isDark)
+  const P = { ...makePalette(isDark), fontD: fd(lang) }
 
   const [lang, setLang] = useState(() => localStorage.getItem('clipgen_lang') || 'en')
   const t = (k) => (I18N[lang] || EN)[k] || EN[k] || k
