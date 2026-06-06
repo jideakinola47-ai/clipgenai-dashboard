@@ -8,11 +8,17 @@ import { useNavigate } from 'react-router-dom'
    diacritics (Č Š Ž Ū Ę etc). We swap to Exo 2 for any language
    that uses extended Latin characters.
    ════════════════════════════════════════════════════════════════ */
-const FONT_DISPLAY  = "'Orbitron','Exo 2',monospace"   // ASCII headlines
-const FONT_DISPLAY2 = "'Exo 2','Rajdhani',monospace"   // extended-Latin headlines (lt, pl, cs…)
-const FONT_BODY     = "'Rajdhani','Share Tech Mono',sans-serif"
-const FONT_MONO     = "'Share Tech Mono','Courier New',monospace"
-// Languages that need extended Latin fallback (Orbitron lacks diacritics)
+/* ════════════════════════════════════════════════════════════════
+   FONTS — premium, professional type system
+   Space Grotesk = modern high-end display, natively covers Lithuanian/
+   Polish/Czech diacritics (Č Š Ž Ū Ė …) so no font-swap hack needed.
+   Inter = clean premium body. JetBrains Mono = crisp technical labels.
+   ════════════════════════════════════════════════════════════════ */
+const FONT_DISPLAY  = "'Space Grotesk','Exo 2',sans-serif"
+const FONT_DISPLAY2 = "'Space Grotesk','Exo 2',sans-serif"
+const FONT_BODY     = "'Inter',-apple-system,'Segoe UI',sans-serif"
+const FONT_MONO     = "'JetBrains Mono','Courier New',monospace"
+// Space Grotesk already covers extended Latin, but keep the helper for safety.
 const EXTENDED_LATIN = new Set(['lt','pl','cs','sk','hu','ro','tr','et','lv','hr','sr','sl','ca','is','fi','da','no','sv'])
 const fd = (lang) => EXTENDED_LATIN.has(lang) ? FONT_DISPLAY2 : FONT_DISPLAY
 
@@ -862,9 +868,9 @@ function ParticleField({ P }) {
     const ctx = c.getContext('2d'); let w, h
     const resize = () => { w = c.width = window.innerWidth; h = c.height = window.innerHeight }
     resize(); window.addEventListener('resize', resize)
-    const N = Math.max(28, Math.min(64, Math.floor(window.innerWidth / 26)))
+    const N = Math.max(36, Math.min(80, Math.floor(window.innerWidth / 22)))
     const dot = P.purple, line = P.cyan
-    const pts = Array.from({ length:N }, () => ({ x:Math.random()*w, y:Math.random()*h, vx:(Math.random()-.5)*.22, vy:(Math.random()-.5)*.22, r:Math.random()*1.6+.6 }))
+    const pts = Array.from({ length:N }, () => ({ x:Math.random()*w, y:Math.random()*h, vx:(Math.random()-.5)*.5, vy:(Math.random()-.5)*.5, r:Math.random()*1.8+.7 }))
     let raf
     const hex2 = (n) => Math.max(0, Math.min(255, Math.round(n))).toString(16).padStart(2,'0')
     const draw = () => {
@@ -885,7 +891,7 @@ function ParticleField({ P }) {
     draw()
     return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', resize) }
   }, [P.purple, P.cyan])
-  return <canvas ref={ref} style={{ position:'fixed', inset:0, zIndex:0, pointerEvents:'none', opacity:P.dark?0.55:0.4 }} />
+  return <canvas ref={ref} style={{ position:'fixed', inset:0, zIndex:0, pointerEvents:'none', opacity:P.dark?0.7:0.5 }} />
 }
 
 /* Brand logo — drops in /logo.png automatically; branded fallback until then */
@@ -1150,7 +1156,7 @@ export default function Landing() {
   return (
     <div dir={isRTL?'rtl':'ltr'} style={{ fontFamily:FONT_BODY, background:P.bg, color:P.text, minHeight:'100vh', overflowX:'hidden', transition:'background .3s, color .3s' }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@400;600;700;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap&subset=latin,latin-ext');
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap&subset=latin,latin-ext');
         *{box-sizing:border-box;margin:0;padding:0;}
         html{scroll-behavior:smooth;}
         ::selection{background:${P.cyan}33;}
